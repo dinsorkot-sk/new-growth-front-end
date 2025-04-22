@@ -24,11 +24,11 @@ import React from "react";
 // }
 export default function Navbar() {
     return (
-      <div className="flex justify-between items-center bg-blue-900 py-4 px-10">
+      <div className="flex justify-between items-center bg-[#0A2463] py-4 px-10">
         <div className="text-xl font-bold text-white">โครงการผลิตบัณฑิตพันธ์ใหม่</div>
         <div className="flex space-x-6 text-white">
-          <div>Home</div>
-          <div>About Us</div>
+          <div><a href="">Home</a></div>
+          <div><a href="/about">About Us</a></div>
           <div>Courses</div>
           <div>Admissions</div>
           <div>News & Events</div>
