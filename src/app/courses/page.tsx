@@ -274,7 +274,7 @@ export default function Home() {
                 
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">All S-Curve Industries</div>
-                <div className="my-2 text-sm text-[#4B5563]"> Browse all our courses supporting Thailand's targeted S-Curve industries for economic growth.</div>
+                <div className="my-2 text-sm text-[#4B5563]"> Browse all our courses supporting Thailand is targeted S-Curve industries for economic growth.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>

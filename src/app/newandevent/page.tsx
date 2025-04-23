@@ -2,6 +2,7 @@
 'use client'
 
 import React, { useState } from 'react';
+
 import { Search, Filter, ArrowRight, Clock, Calendar, Users } from 'lucide-react';
 export default function Home() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -89,6 +90,26 @@ export default function Home() {
         }
       ];
 
+      const images = [
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Person using laptop in classroom
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // People working on computers
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Audience in auditorium
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Hands working on tablet
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // People in a seminar
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // People with sticky notes on whiteboard
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Person working with papers
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Group discussion with tablet
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Group discussion with tablet
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Group discussion with tablet
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Group discussion with tablet
+        'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg', // Group discussion with tablet
+      ];
+
+      const [displayCount, setDisplayCount] = useState(8);
+      const handleLoadMore = () => {
+        // เพิ่มจำนวนรูปที่แสดงอีก 8 รูป แต่ไม่เกินจำนวนรูปทั้งหมด
+        setDisplayCount(prevCount => Math.min(prevCount + 8, images.length));
+      };
       const categories = ['All', 'Partnership', 'Event', 'Course', 'Achievement', 'Announcement'];
     
       const filteredNews = newsItems.filter(item => {
@@ -103,8 +124,8 @@ export default function Home() {
         <div className="text-3xl font-bold">ข่าวสารและกิจกรรม</div>
         <div className="text-wrap max-w-2xl text-base mt-5">ติดตามข่าวสาร กิจกรรม และความสำเร็จล่าสุดจากโครงการฝึกอบรมบัณฑิตไทยแลนด์ 4.0</div>
     </div>
-    <div className=" bg-[#F9FAFB] p-10 md:p-10 ">
-    <div className="min-h-screen bg-gray-50 p-4 md:p-10">
+    <div className=" bg-[#F9FAFB] p-4 md:p-4 ">
+    <div className=" bg-gray-50 p-4 md:p-10">
         <div className="mx-auto">
           {/* Search Bar */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -119,7 +140,7 @@ export default function Home() {
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
             
-            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+            <div className="flex items-center gap-2 w-full md:w-auto justify-center md:justify-end">
               <select 
                 className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filter}
@@ -165,13 +186,13 @@ export default function Home() {
       </div>
     </div>
     
-    <div className="bg-white py-10 px-4 md:px-10">
-      <div className="max-w-7xl mx-auto">
+    <div className="bg-white py-10 px-10 md:px-14">
+      <div className=" mx-auto">
         <h2 className="text-2xl font-bold text-blue-900 mb-8">กิจกรรมที่กำลังจะเกิดขึ้น</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#E5E7EB]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
           {events.map((event, index) => (
-            <div key={event.id} className="flex flex-col ">
+            <div key={event.id} className="flex flex-col bg-[#E5E7EB] p-5  rounded-xl">
               <div className="flex items-start">
                 <div className="mr-3 text-blue-400">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -197,6 +218,36 @@ export default function Home() {
         </div>
       </div>
     </div>
+
+    <div className="container mx-auto  py-8 px-14 xl:px-20 ">
+      {/* หัวข้อ */}
+      <h1 className="text-2xl font-bold text-blue-900 mb-6">บรรยากาศโครงการ</h1>
+      
+      {/* แสดงรูปภาพในรูปแบบ grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {images.slice(0, displayCount).map((image, index) => (
+          <div key={index} className="rounded-lg overflow-hidden h-48">
+            <img 
+              src={image}
+              alt={`Program atmosphere ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+      
+      {/* ปุ่ม "ดูเพิ่มเติม" จะซ่อนเมื่อแสดงรูปครบทั้งหมดแล้ว */}
+      {displayCount < images.length && (
+        <div className="flex justify-center">
+          <button 
+            onClick={handleLoadMore}
+            className="bg-blue-400 hover:bg-blue-500 text-white py-2 px-8 rounded-md transition-colors duration-300">
+            ดูเพิ่มเติม
+          </button>
+        </div>
+      )}
+    </div>
+    
     
     </div>
   );
