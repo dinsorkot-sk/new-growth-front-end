@@ -12,12 +12,12 @@ export default function Home() {
     </div>
     <div className=" bg-[#F9FAFB] p-10 md:p-20 grid grid-cols-1 md:grid-cols-2">
         <div className="pr-0 md:pr-10 ">
-            <div className="text-2xl font-bold">เป้าหมาย ของเรา</div>
+            <div className="text-2xl font-bold text-[#0A2463]">เป้าหมาย ของเรา</div>
             <div className="mt-3 text-sm text-[#374151]" >โครงการฝึกอบรมบัณฑิต Thailand 4.0 มีเป้าหมายเพื่อสร้างบุคลากรที่มีประสิทธิภาพสูงในอุตสาหกรรม New Growth Engine ตามนโยบาย Thailand 4.0 และปฏิรูปการศึกษาระดับอุดมศึกษาของไทย เรามุ่งมั่นที่จะเชื่อมช่องว่างระหว่างความรู้ทางวิชาการและความต้องการของอุตสาหกรรมโดยจัดให้มีการฝึกอบรมภาคปฏิบัติเกี่ยวกับเทคโนโลยีที่ล้ำสมัยและแนวทางปฏิบัติทางธุรกิจ</div>
             <div className="text-sm mt-3 text-[#374151]">โครงการของเราได้รับการออกแบบมาเพื่อผลิตบัณฑิตที่ไม่เพียงแต่เชี่ยวชาญด้านเทคนิคเท่านั้น แต่ยังมีความสามารถด้านการคิดวิเคราะห์ การแก้ปัญหา และการเป็นผู้ประกอบการที่จำเป็นในการขับเคลื่อนการสร้างสรรค์นวัตกรรมและการเติบโตทางเศรษฐกิจในอุตสาหกรรมหลักของประเทศไทยอีกด้วย</div>
         </div>
         <div className="px-0 md:px-5  mt-5 md:mt-0 ">
-        <div className="text-2xl font-bold">วิสัยทัศน์ของเรา</div>
+        <div className="text-2xl font-bold text-[#0A2463]">วิสัยทัศน์ของเรา</div>
         <div className="mt-3 text-sm text-[#374151]">เราตั้งเป้าว่าประเทศไทยจะเป็นศูนย์กลางนวัตกรรมและความก้าวหน้าทางเทคโนโลยีในภูมิภาคเอเชียตะวันออกเฉียงใต้ โดยมีแรงงานที่มีทักษะสูงที่ขับเคลื่อนการเติบโตทางเศรษฐกิจและการพัฒนาอย่างยั่งยืนใน ทุกภาคส่วน</div>
         <div className="text-sm mt-3 text-[#374151]">ด้วยโครงการของเราตั้งเป้าที่จะมีส่วนสนับสนุนการเปลี่ยนแปลงประเทศไทยให้เป็นเศรษฐกิจที่ขับเคลื่อนด้วย คุณค่าซึ่งขับเคลื่อนด้วยนวัตกรรม เทคโนโลยี และความคิดสร้างสรรค์ สอดคล้องกับโมเดลเศรษฐกิจไทยแลนด์ 4.0 ของรัฐบาล</div>
         </div>
@@ -99,26 +99,26 @@ export default function Home() {
       </div>
     </div>
     <div className=" bg-[#F9FAFB] p-10 md:p-20 ">
-    <h2 className="text-center text-2xl font-bold text-blue-900 mb-8">Program Sponsors</h2>
+    <h2 className="text-center text-2xl font-bold text-[#0A2463] mb-8">Program Sponsors</h2>
     <div className="flex flex-wrap justify-center">
     <div className="text-center w-55 h-32 p-5 bg-white shadow-md rounded-lg m-4 flex items-center justify-center">
-      <div>Ministry of Education</div>
+      <div className="text-[#6B7280]">Ministry of Education</div>
     </div>
     
     <div className="text-center w-55 h-32 p-5 bg-white shadow-md rounded-lg m-4 flex items-center justify-center">
-      <div>Ministry of Digital Economy</div>
+      <div className="text-[#6B7280]">Ministry of Digital Economy</div>
     </div>
     
     <div className="text-center w-55 h-32 p-5 bg-white shadow-md rounded-lg m-4 flex items-center justify-center">
-      <div>National Science and Technology Development Agency</div>
+      <div className="text-[#6B7280]">National Science and Technology Development Agency</div>
     </div>
     
     <div className="text-center w-55 h-32 p-5 bg-white shadow-md rounded-lg m-4 flex items-center justify-center">
-      <div>Digital Economy Promotion Agency</div>
+      <div className="text-[#6B7280]">Digital Economy Promotion Agency</div>
     </div>
     
     <div className="text-center w-55 h-32 p-5 bg-white shadow-md rounded-lg m-4 flex items-center justify-center">
-      <div>Thailand Board of Investment</div>
+      <div className="text-[#6B7280]">Thailand Board of Investment</div>
     </div>
   </div>
     </div>
