@@ -7,19 +7,19 @@ export default function Home() {
   return (
     <div>
     <div className=" bg-[#0A2463] h-70  text-white p-10 md:p-20 ">
-        <div className="text-3xl font-bold">About The Program</div>
-        <div className="text-wrap max-w-2xl text-lg mt-5">Building Thailand's future workforce through innovative education and industry partnerships.</div>
+        <div className="text-3xl font-bold">เกี่ยวกับโครงการของเรา</div>
+        <div className="text-wrap max-w-2xl text-lg mt-5">สร้างกำลังแรงงานแห่งอนาคตของประเทศไทยผ่านการศึกษาเชิงนวัตกรรมและความร่วมมือทางอุตสาหกรรม</div>
     </div>
     <div className=" bg-[#F9FAFB] p-10 md:p-20 grid grid-cols-1 md:grid-cols-2">
-        <div className="pr-0 md:pr-10">
-            <div className="text-2xl font-bold">Our Mission</div>
-            <div className="mt-3 text-sm">The Thailand 4.0 Graduate Training Program aims to create high-performance personnel in the New Growth Engine industry according to the Thailand 4.0 policy and reform Thai higher education. We work to bridge the gap between academic knowledge and industry needs by providing practical, hands-on training in  technologies and business practices.</div>
-            <div className="text-sm mt-3">Our program is designed to produce graduates who are not only technically proficient but also possess the critical thinking, problem-solving, and entrepreneurial skills needed to drive innovation and economic growth in Thailand's key industries.</div>
+        <div className="pr-0 md:pr-10 ">
+            <div className="text-2xl font-bold">เป้าหมาย ของเรา</div>
+            <div className="mt-3 text-sm text-[#374151]" >โครงการฝึกอบรมบัณฑิต Thailand 4.0 มีเป้าหมายเพื่อสร้างบุคลากรที่มีประสิทธิภาพสูงในอุตสาหกรรม New Growth Engine ตามนโยบาย Thailand 4.0 และปฏิรูปการศึกษาระดับอุดมศึกษาของไทย เรามุ่งมั่นที่จะเชื่อมช่องว่างระหว่างความรู้ทางวิชาการและความต้องการของอุตสาหกรรมโดยจัดให้มีการฝึกอบรมภาคปฏิบัติเกี่ยวกับเทคโนโลยีที่ล้ำสมัยและแนวทางปฏิบัติทางธุรกิจ</div>
+            <div className="text-sm mt-3 text-[#374151]">โครงการของเราได้รับการออกแบบมาเพื่อผลิตบัณฑิตที่ไม่เพียงแต่เชี่ยวชาญด้านเทคนิคเท่านั้น แต่ยังมีความสามารถด้านการคิดวิเคราะห์ การแก้ปัญหา และการเป็นผู้ประกอบการที่จำเป็นในการขับเคลื่อนการสร้างสรรค์นวัตกรรมและการเติบโตทางเศรษฐกิจในอุตสาหกรรมหลักของประเทศไทยอีกด้วย</div>
         </div>
-        <div className="px-0 md:px-5  mt-5 md:mt-0">
-        <div className="text-2xl font-bold">Our Vision</div>
-        <div className="mt-3 text-sm">We envision Thailand as a hub for innovation and technological advancement in Southeast Asia, with a highly skilled workforce driving economic growth and sustainable development across all sectors.</div>
-        <div className="text-sm mt-3">Through our program, we aim to contribute to the transformation of Thailand into a value-based economy that is driven by innovation, technology, and creativity, in line with the government's Thailand 4.0 economic model.</div>
+        <div className="px-0 md:px-5  mt-5 md:mt-0 ">
+        <div className="text-2xl font-bold">วิสัยทัศน์ของเรา</div>
+        <div className="mt-3 text-sm text-[#374151]">เราตั้งเป้าว่าประเทศไทยจะเป็นศูนย์กลางนวัตกรรมและความก้าวหน้าทางเทคโนโลยีในภูมิภาคเอเชียตะวันออกเฉียงใต้ โดยมีแรงงานที่มีทักษะสูงที่ขับเคลื่อนการเติบโตทางเศรษฐกิจและการพัฒนาอย่างยั่งยืนใน ทุกภาคส่วน</div>
+        <div className="text-sm mt-3 text-[#374151]">ด้วยโครงการของเราตั้งเป้าที่จะมีส่วนสนับสนุนการเปลี่ยนแปลงประเทศไทยให้เป็นเศรษฐกิจที่ขับเคลื่อนด้วย คุณค่าซึ่งขับเคลื่อนด้วยนวัตกรรม เทคโนโลยี และความคิดสร้างสรรค์ สอดคล้องกับโมเดลเศรษฐกิจไทยแลนด์ 4.0 ของรัฐบาล</div>
         </div>
     </div>
     <div className="bg-[#F9FAFB] p-8 md:p-12 py-10 rounded-lg shadow-sm">
@@ -41,10 +41,9 @@ export default function Home() {
           </p> */}
           <div className=" p-2"><div className="bg-blue-100 p-2 rounded-full"><FontAwesomeIcon icon={faBullseye} className="bg-blue-100" style={{color: "#002594" , width: "20px", height: "20px"}} /></div></div>
           <div>
-            <div className="text-lg font-bold text-[#0A2463]">Develop Industry-Ready Skills</div>
-            <div className="my-2 text-sm">Equip graduates with practical skills and knowledge that align with the 
-            needs of Thailand's targeted S-Curve industries, ensuring immediate 
-            employability and value addition to employers.</div>
+            <div className="text-lg font-bold text-[#0A2463]">พัฒนาทักษะให้พร้อมสำหรับอุตสาหกรรม</div>
+            <div className="my-2 text-sm text-[#4B5563]">เสริมทักษะและความรู้เชิงปฏิบัติให้แก่บัณฑิตที่สอดคล้องกับความต้องการของอุตสาหกรรม 
+            S-Curve เป้าหมายของประเทศไทย เพื่อให้มั่นใจได้ว่าจะมีการจ้างงานได้ทันทีและ เพิ่มมูลค่าให้กับนายจ้าง</div>
             </div>
         </div>
         
@@ -63,10 +62,8 @@ export default function Home() {
           </p> */}
           <div className=" p-2"><div className="bg-blue-100 p-2 rounded-full"><FontAwesomeIcon icon={faCircleCheck} className="bg-blue-100" style={{color: "#002594" , width: "20px", height: "20px"}} /></div></div>
           <div>
-            <div className="text-lg font-bold text-[#0A2463]">Foster Innovation</div>
-            <div className="my-2 text-sm">Cultivate a mindset of innovation and entrepreneurship among 
-            participants, encouraging them to develop new solutions to real-world 
-            problems and create value-added products and services.</div>
+            <div className="text-lg font-bold text-[#0A2463]">ส่งเสริมนวัตกรรม</div>
+            <div className="my-2 text-sm text-[#4B5563]">ปลูกฝังทัศนคติด้านนวัตกรรมและการเป็นผู้ประกอบการให้กับผู้เข้าร่วม โดยส่งเสริมให้พวกเขาพัฒนาโซลูชั่นใหม่ๆ เพื่อแก้ไขปัญหาในโลกแห่งความเป็นจริง และสร้างผลิตภัณฑ์และบริการที่มีมูลค่าเพิ่ม</div>
             </div>
         </div>
         
@@ -75,10 +72,8 @@ export default function Home() {
           
           <div className=" p-2"><div className="bg-blue-100 p-2 rounded-full"><FontAwesomeIcon icon={faUser} className="bg-blue-100" style={{color: "#002594" , width: "20px", height: "20px"}} /></div></div>
           <div>
-            <div className="text-lg font-bold text-[#0A2463]">Strengthen Industry-Academia Collaboration</div>
-            <div className="my-2 text-sm"> Build strong partnerships between educational institutions and industry real-
-            players to ensure curriculum relevance and provide students with 
-            experience through internships and collaborative projects.</div>
+            <div className="text-lg font-bold text-[#0A2463]">เสริมสร้างความร่วมมือระหว่างอุตสาหกรรมและสถาบันการศึกษา</div>
+            <div className="my-2 text-sm text-[#4B5563]"> สร้างความร่วมมือที่แข็งแกร่งระหว่างสถาบันการศึกษาและผู้เล่นในอุตสาหกรรมเพื่อให้แน่ใจว่าหลักสูตรมีความเกี่ยวข้องและมอบประสบการณ์จริงให้กับนักศึกษาผ่านการฝึกงานและโครงการความร่วมมือ</div>
             </div>
         </div>
         
@@ -97,10 +92,8 @@ export default function Home() {
           </p> */}
             <div className=" p-2"><div className="bg-blue-100 p-2 rounded-full"><FontAwesomeIcon icon={faAward} className="bg-blue-100" style={{color: "#002594" , width: "20px", height: "20px"}} /></div></div>
           <div>
-            <div className="text-lg font-bold text-[#0A2463]">Support Economic Transformation</div>
-            <div className="my-2 text-sm"> Contribute to Thailand's economic transformation by producing skilled 
-            professionals who can drive growth in high-value industries and help 
-            the country escape the middle-income trap.</div>
+            <div className="text-lg font-bold text-[#0A2463]">สนับสนุนการเปลี่ยนแปลงทางเศรษฐกิจ</div>
+            <div className="my-2 text-sm text-[#4B5563]"> มีส่วนร่วมในการเปลี่ยนแปลงทางเศรษฐกิจของประเทศไทยโดยผลิตบุคลากรที่มีทักษะซึ่งสามารถขับเคลื่อนการเติบโตในอุตสาหกรรมที่มีมูลค่าสูง และช่วยให้ประเทศหลุด พ้นจากกับดักรายได้ปานกลาง</div>
             </div>
         </div>
       </div>
@@ -129,7 +122,7 @@ export default function Home() {
     </div>
   </div>
     </div>
-    <div className="bg-[#F9FAFB] container mx-auto px-4 py-8">
+    {/* <div className="bg-[#F9FAFB] container mx-auto px-4 py-8">
   <h2 className="text-center text-blue-800 text-2xl font-bold mb-10">Our History</h2>
   
   <div className="relative max-w-3xl mx-auto">
@@ -204,7 +197,7 @@ export default function Home() {
       </div>
     </div>
   </div>
-</div>
+</div> */}
     </div>
   );
 }

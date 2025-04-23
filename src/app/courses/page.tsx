@@ -81,8 +81,8 @@ export default function Home() {
   return (
     <div>
     <div className=" bg-[#0A2463] h-70  text-white py-10 md:py-20 px-14 xl:px-20 ">
-        <div className="text-3xl font-bold">Our Courses</div>
-        <div className="text-wrap max-w-2xl text-lg mt-5">Discover our industry-focused training programs designed to prepare you for Thailand's New Growth Engine industries.</div>
+        <div className="text-3xl font-bold">หลักสูตรของเรา</div>
+        <div className="text-wrap max-w-2xl text-base mt-5">ค้นพบโปรแกรมการฝึกอบรมที่เน้นอุตสาหกรรมของเราซึ่งออกแบบมาเพื่อเตรียมคุณให้พร้อมสำหรับอุตสาหกรรม New Growth Engine ของประเทศไทย</div>
     </div>
     <div className=" bg-[#F9FAFB] p-10 md:p-10 ">
     <div className="min-h-screen bg-gray-50 p-4 ">
@@ -100,7 +100,7 @@ export default function Home() {
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
           
-          <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full md:w-auto justify-center">
             <Filter className="h-5 w-5 text-gray-600" />
             <select 
               className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -166,7 +166,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Objective 1 */}
-            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2  bg-[#F9FAFB]">
+            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2  bg-[#E5E7EB]">
               {/* <div className="flex items-center mb-3">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
                   1
@@ -181,13 +181,13 @@ export default function Home() {
              
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">AI & Data Science</div>
-                <div className="my-2 text-sm">Learn machine learning, data analytics, and artificial intelligence applications for various industries.</div>
+                <div className="my-2 text-sm text-[#4B5563]">Learn machine learning, data analytics, and artificial intelligence applications for various industries.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>
             
             {/* Objective 2 */}
-            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#F9FAFB]">
+            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#E5E7EB]">
               {/* <div className="flex items-center mb-3">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
                   2
@@ -202,24 +202,24 @@ export default function Home() {
               
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">Robotics & Automation</div>
-                <div className="my-2 text-sm">Develop skills in robotics engineering, industrial automation, and smart manufacturing systems.</div>
+                <div className="my-2 text-sm text-[#4B5563]">Develop skills in robotics engineering, industrial automation, and smart manufacturing systems.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>
             
             {/* Objective 3 */}
-            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#F9FAFB]">
+            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#E5E7EB]">
               
               
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">Digital Innovation</div>
-                <div className="my-2 text-sm"> Explore digital transformation, entrepreneurship, and business model innovation for the digital economy.</div>
+                <div className="my-2 text-sm text-[#4B5563]"> Explore digital transformation, entrepreneurship, and business model innovation for the digital economy.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>
             
             {/* Objective 4 */}
-            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#F9FAFB]">
+            <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#E5E7EB]">
               {/* <div className="flex items-center mb-3">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
                   4
@@ -234,12 +234,12 @@ export default function Home() {
                 
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">Internet of Things</div>
-                <div className="my-2 text-sm"> Master IoT technologies, smart devices, and connected systems for various applications.</div>
+                <div className="my-2 text-sm text-[#4B5563]"> Master IoT technologies, smart devices, and connected systems for various applications.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>
              {/* Objective 5 */}
-             <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#F9FAFB]" >
+             <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#E5E7EB]" >
               {/* <div className="flex items-center mb-3">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
                   4
@@ -254,12 +254,12 @@ export default function Home() {
                 
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">Biotechnology</div>
-                <div className="my-2 text-sm"> Study advanced biotechnology, genomics, and their applications in healthcare and agriculture.</div>
+                <div className="my-2 text-sm text-[#4B5563]"> Study advanced biotechnology, genomics, and their applications in healthcare and agriculture.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>
              {/* Objective 6 */}
-             <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#F9FAFB]">
+             <div className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#E5E7EB]">
               {/* <div className="flex items-center mb-3">
                 <div className="bg-blue-100 p-2 rounded-full mr-3">
                   4
@@ -274,7 +274,7 @@ export default function Home() {
                 
               <div>
                 <div className="text-lg font-bold text-[#0A2463]">All S-Curve Industries</div>
-                <div className="my-2 text-sm"> Browse all our courses supporting Thailand's targeted S-Curve industries for economic growth.</div>
+                <div className="my-2 text-sm text-[#4B5563]"> Browse all our courses supporting Thailand's targeted S-Curve industries for economic growth.</div>
                 <div className='text-[#39A9DB] text-sm'>View Business Courses</div>
                 </div>
             </div>

@@ -1,0 +1,203 @@
+
+'use client'
+
+import React, { useState } from 'react';
+import { Search, Filter, ArrowRight, Clock, Calendar, Users } from 'lucide-react';
+export default function Home() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filter, setFilter] = useState('All');
+    
+    const newsItems = [
+        {
+          id: 1,
+          title: 'Thailand 4.0 Program Partners with Leading Tech Companies',
+          description: 'New partnership provides students with internship opportunities at top tech firms in Thailand. The initiative aims to bridge the gap between academia and industry.',
+          date: 'December 10, 2023',
+          category: 'Partnership',
+          image: 'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg'
+        },
+        {
+          id: 2,
+          title: 'Graduates Showcase Innovative Projects at Tech Expo 2023',
+          description: 'Students presented their final projects to industry leaders and potential employers at the annual Tech Expo.',
+          date: 'November 28, 2023',
+          category: 'Event',
+          image: 'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg'
+        },
+        {
+          id: 3,
+          title: 'New AI & Machine Learning Course Launching in February 2024',
+          description: 'The program announces a new specialized course in Artificial Intelligence and Machine Learning, designed to boost skills.',
+          date: 'November 15, 2023',
+          category: 'Course',
+          image: 'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg'
+        },
+        {
+          id: 4,
+          title: 'Thailand 4.0 Students Win National Innovation Competition',
+          description: 'A team of students from our Digital Innovation course secured first place at the National Innovation Challenge.',
+          date: 'October 22, 2023',
+          category: 'Achievement',
+          image: 'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg'
+        },
+        {
+          id: 5,
+          title: 'Ministry of Digital Economy Announces Additional Funding for Thailand 4.0 Program',
+          description: 'The government has allocated additional budget to expand the program to more universities across Thailand.',
+          date: 'October 5, 2023',
+          category: 'Announcement',
+          image: 'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg'
+        },
+        {
+          id: 6,
+          title: 'International Technology Conference to be Hosted by Thailand 4.0 Program',
+          description: 'The program will host its first international conference on emerging technologies in March 2024, featuring speakers from leading tech companies.',
+          date: 'September 18, 2023',
+          category: 'Event',
+          image: 'https://cdn-cakae.nitrocdn.com/HNXbhKzVPUNXWpRTNzWDzAgzHZYmqDrJ/assets/images/optimized/rev-b9ddf3b/zortout.com/wp-content/uploads/2020/08/consumers-isometric-composition_1284-26384.jpg'
+        }
+      ];
+
+      const events = [
+        {
+          id: 1,
+          title: 'Open House: Explore Thailand 4.0 Program',
+          description: 'Join us for an informative session about our training programs, meet instructors, and tour our facilities. Registration required.',
+          date: 'January 15, 2024',
+          icon: 'calendar' // ใช้สำหรับแสดงไอคอน
+        },
+        {
+          id: 2,
+          title: 'Industry Talk: Future of AI in Thailand',
+          description: 'A panel discussion with industry experts on the growing role of artificial intelligence in Thailand s economic development.',
+          date: 'February 5, 2024',
+          icon: 'calendar'
+        },
+        {
+          id: 3,
+          title: 'Workshop: Introduction to Robotics',
+          description: 'A hands-on workshop introducing basic robotics concepts and applications. Open to prospective students and the general public.',
+          date: 'February 20, 2024',
+          icon: 'calendar'
+        },
+        {
+          id: 4,
+          title: 'Career Fair: Thailand 4.0 Industries',
+          description: 'Connect with potential employers from Thailand s leading technology and innovation companies. Bring your resume and portfolio.',
+          date: 'March 10, 2024',
+          icon: 'calendar'
+        }
+      ];
+
+      const categories = ['All', 'Partnership', 'Event', 'Course', 'Achievement', 'Announcement'];
+    
+      const filteredNews = newsItems.filter(item => {
+        const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              item.description.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesFilter = filter === 'All' || item.category === filter;
+        return matchesSearch && matchesFilter;
+      });
+  return (
+    <div>
+    <div className=" bg-[#0A2463] h-70  text-white py-10 md:py-20 px-14 xl:px-20 ">
+        <div className="text-3xl font-bold">ข่าวสารและกิจกรรม</div>
+        <div className="text-wrap max-w-2xl text-base mt-5">ติดตามข่าวสาร กิจกรรม และความสำเร็จล่าสุดจากโครงการฝึกอบรมบัณฑิตไทยแลนด์ 4.0</div>
+    </div>
+    <div className=" bg-[#F9FAFB] p-10 md:p-10 ">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-10">
+        <div className="mx-auto">
+          {/* Search Bar */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="Search news..."
+                className="w-full border border-gray-300 rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </div>
+            
+            <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+              <select 
+                className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              >
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* News Header - ใช้ภาษาไทยตามภาพ */}
+          <h1 className="text-2xl font-bold text-blue-900 mb-6">ข่าวสารและกิจกรรมล่าสุด</h1>
+
+          {/* News Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredNews.map(news => (
+              <div key={news.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <div className="relative">
+                  <img src={news.image} alt={news.title} className="w-full h-48 object-cover" />
+                  <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">
+                    {news.category}
+                  </span>
+                </div>
+                
+                <div className="p-4 flex-grow">
+                  <p className="text-xs text-gray-500 mb-2">{news.date}</p>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">{news.title}</h3>
+                  <p className="text-sm text-gray-600 mb-4">{news.description}</p>
+                </div>
+                
+                <div className="px-4 pb-4">
+                  <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800">
+                    Read More
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div className="bg-white py-10 px-4 md:px-10">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold text-blue-900 mb-8">กิจกรรมที่กำลังจะเกิดขึ้น</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#E5E7EB]">
+          {events.map((event, index) => (
+            <div key={event.id} className="flex flex-col ">
+              <div className="flex items-start">
+                <div className="mr-3 text-blue-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <p className="text-sm text-blue-400">{event.date}</p>
+              </div>
+              
+              <h3 className="font-semibold text-lg mt-2">{event.title}</h3>
+              <p className="text-sm text-gray-600 mt-1 mb-3">{event.description}</p>
+              
+              <div className="mt-auto">
+                <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800">
+                  Learn More
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    
+    </div>
+  );
+}
