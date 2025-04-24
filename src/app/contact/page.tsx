@@ -27,7 +27,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-
+    {/* ส่วนที่2 */}
       <div className="w-full bg-[#F9FAFB]">
         <div className="h-[785]">
           <div className="grid grid-cols-2 gap-4 p-20">
@@ -260,6 +260,7 @@ export default function Home() {
         </div>
       </div>
 
+    {/* ส่วนที่3 */}
       <div className="w-full bg-[#FFFFFF]">
         <div className="h-[580px] p-20">
           <div className="text-center text-[#0A2463] text-xl font-bold">
@@ -275,6 +276,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
     </div>
   );
 }
