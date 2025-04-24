@@ -43,7 +43,7 @@ export default function Navbar() {
     { name: "Admissions", path: "/admissions" },
     { name: "News & Events", path: "/newandevent" },
     { name: "E-learning", path: "/elearning" },
-    { name: "FAQ", path: "/faq" },
+    { name: "Q & A", path: "/qanda" },
     { name: "Contact", path: "/contact" }
   ];
 

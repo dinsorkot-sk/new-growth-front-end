@@ -71,7 +71,7 @@ export default function Home() {
                 className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-blue-50 transition-colors"
                 onClick={() => toggleFAQ(index)}
               >
-                <h3 className="font-medium text-[#0A2463]">{faq.question}</h3>
+                <h3 className="font-medium text-[#0A2463] text-lg">{faq.question}</h3>
                 <svg
                   className={`w-5 h-5 text-blue-600 transform transition-transform ${
                     openIndex === index ? 'rotate-180' : ''
@@ -84,11 +84,11 @@ export default function Home() {
                 </svg>
               </button>
               <div
-                className={`px-6 pb-4 text-[#4B5563] ${
+                className={`px-6 py-4 text-[#4B5563] ${
                   openIndex === index ? 'block' : 'hidden'
                 }`}
               >
-                <p className='text-[#4B5563]'>{faq.answer}</p>
+                <p className='text-[#4B5563] text-sm '>{faq.answer}</p>
               </div>
             </div>
           ))}
