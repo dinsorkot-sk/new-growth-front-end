@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 export default function ResourcesPage() {
@@ -18,7 +18,8 @@ export default function ResourcesPage() {
       pages: null,
       author: 'Dr. Somchai Jaidee',
       date: 'October 15, 2023',
-      icon: 'video'
+      icon: 'video',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
     },
     {
       id: 2,
@@ -29,7 +30,8 @@ export default function ResourcesPage() {
       pages: '32',
       author: 'Prof. Apinya Thongchai',
       date: 'September 20, 2023',
-      icon: 'document'
+      icon: 'document',
+      url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
     },
     {
       id: 3,
@@ -119,23 +121,112 @@ export default function ResourcesPage() {
   };
 
   // Function to render the appropriate action button
-  const renderActionButton = (type) => {
-    if (type === 'Video') {
-      return (
-        <button className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center">
-          <span className="mr-2">▶️</span>
-          <span>Watch Video</span>
-        </button>
-      );
-    } else {
-      return (
-        <button className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center">
-          <span className="mr-2">📄</span>
-          <span>View Document</span>
-        </button>
-      );
+  // const renderActionButton = (type) => {
+  //   if (type === 'Video') {
+  //     return (
+  //       <button className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center">
+  //         <span className="mr-2">▶️</span>
+  //         <span>Watch Video</span>
+  //       </button>
+  //     );
+  //   } else {
+  //     return (
+  //       <button className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center">
+  //         <span className="mr-2">📄</span>
+  //         <span>View Document</span>
+  //       </button>
+  //     );
+  //   }
+  // };
+
+
+  const handleDownload = async (url: string, defaultFileName?: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      
+      // ตรวจสอบประเภทของไฟล์จาก Content-Type
+      const contentType = response.headers.get('content-type');
+      let fileName = defaultFileName;
+      
+      // ถ้าไม่ได้กำหนดชื่อไฟล์ ให้สร้างจาก url และ content-type
+      if (!fileName) {
+        // ดึงชื่อไฟล์จาก URL ถ้ามี
+        const urlParts = url.split('/');
+        const urlFileName = urlParts[urlParts.length - 1].split('?')[0];
+        
+        if (urlFileName && urlFileName.includes('.')) {
+          fileName = urlFileName;
+        } else {
+          // กำหนดนามสกุลตาม content-type
+          if (contentType) {
+            if (contentType.includes('video')) {
+              fileName = 'video.mp4';
+            } else if (contentType.includes('pdf')) {
+              fileName = 'document.pdf';
+            } else if (contentType.includes('image')) {
+              fileName = 'image.jpg';
+            } else if (contentType.includes('audio')) {
+              fileName = 'audio.mp3';
+            } else {
+              fileName = 'downloaded_file';
+            }
+          } else {
+            fileName = 'downloaded_file';
+          }
+        }
+      }
+  
+      const blobUrl = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  
+      window.URL.revokeObjectURL(blobUrl); // เคลียร์ blob ออก
+      
+      return { success: true, fileName, contentType };
+    } catch (error) {
+      console.error('Download failed:', error);
+      return { success: false, error };
     }
   };
+
+  
+  const renderActionButton = (resource) => {
+  const handleClick = () => {
+    
+    if (resource.icon === 'video') {
+      // ถ้าเป็นวิดีโอ เปิดลิงก์ในหน้าต่างใหม่ (หรือจะทำ modal video player ก็ได้)
+      window.open(resource.url, '_blank');
+
+    } else {
+      // ถ้าเป็นเอกสาร เปิดเอกสาร
+      window.open(resource.url, '_blank');
+    }
+  };
+  
+  return (
+    <button
+      onClick={handleClick}
+      className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center"
+    >
+      <span className="mr-2">
+        {resource.icon === 'video' ? '▶️' : '📄'}
+      </span>
+      <span>{resource.icon === 'video' ? 'Watch Video' : 'View Document'}</span>
+    </button>
+   
+  );
+};
+
+
+
+// Simple Video Player Component
+
 
    // Learning paths structure for display
    const learningPaths = [
@@ -245,7 +336,7 @@ export default function ResourcesPage() {
   const videoResources = resources.filter(resource => resource.icon === 'video');
   const documentResources = resources.filter(resource => resource.icon === 'document');
   return (
-    <div className="container mx-auto  ">
+    <div className="mx-auto ">
         <div className=" bg-[#0A2463] md:h-50  text-white py-10  px-10  ">
         <div className="text-3xl font-bold text-white">แหล่งข้อมูลการเรียนรู้แบบออนไลน์</div>
         <div className="text-wrap max-w-2xl text-base mt-5 text-white">เข้าถึงวิดีโอการฝึกอบรม เอกสารประกอบ แบบฝึกหัด และสื่อการเรียนรู้เพื่อสนับสนุนการศึกษาของคุณ</div>
@@ -309,8 +400,11 @@ export default function ResourcesPage() {
                 </div>
                 
                 <div className="flex flex-col items-center  space-y-3 mt-3 md:mt-0">
-                  {renderActionButton(resource.type)}
-                  <button className="flex  items-center  text-white hover:text-blue-500 transition-colors text-sm">
+                {renderActionButton(resource)}
+                  <button onClick={() => handleDownload(
+        resource.url, 
+        `${resource.title}.${resource.type === 'Video' ? 'mp4' : 'pdf'}`
+      )} className="flex  items-center  text-white hover:text-blue-500 transition-colors text-sm">
                     <span className="mr-2 ">⬇️</span>
                     <span className='text-[#374151]'>Download</span>
                   </button>
@@ -321,7 +415,7 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      <div className="container mx-auto  py-8 px-10 ">
+      <div className=" mx-auto  py-8 px-10 ">
       {/* Learning Paths */}
       <h1 className="text-2xl font-bold text-[#0A2463] mb-8">เส้นทางการเรียนรู้ที่โดดเด่น</h1>
 
