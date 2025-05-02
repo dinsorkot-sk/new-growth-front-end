@@ -415,7 +415,7 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      <div className=" mx-auto  py-8 px-10 ">
+      <div className=" mx-auto  py-8 px-10 bg-[#FFFFFF]">
       {/* Learning Paths */}
       <h1 className="text-2xl font-bold text-[#0A2463] mb-8">เส้นทางการเรียนรู้ที่โดดเด่น</h1>
 

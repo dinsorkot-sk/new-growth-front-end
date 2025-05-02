@@ -19,18 +19,19 @@ export default function Home() {
     <div>
       {/* ส่วนเเรก */}
       <div className="w-full bg-[#0A2463]">
-        <div className="h-[260px] p-20">
-          <div className="text-3xl font-bold text-white">ติดต่อเรา</div>
-          <div className="pt-6 text-lg">
+        <div className="p-6 sm:p-10 md:p-20 h-auto md:h-full">
+          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">ติดต่อเรา</div>
+          <div className="pt-4 sm:pt-5 md:pt-6 text-base sm:text-lg text-white">
             มีคำถามเกี่ยวกับโปรแกรมของเราหรือไม่
             ทีมงานของเรายินดีให้ความช่วยเหลือคุณ
           </div>
         </div>
       </div>
+
     {/* ส่วนที่2 */}
       <div className="w-full bg-[#F9FAFB]">
-        <div className="h-[785]">
-          <div className="grid grid-cols-2 gap-4 p-20">
+        <div className="h-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 md:p-20">
             <div className="text-3xl text-[#0A2463] font-bold">
               ติดต่อเรา
               <div className="pt-10">
@@ -46,7 +47,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <div className="text-base font-thin">Location</div>
+                    <div className="text-base font-bold text-[#0A2463]">Location</div>
                     <div className="pt-2 text-xs text-[#4B5563]">
                       123 Education Building Bangkok University Bangkok,
                       Thailand 10110
@@ -67,7 +68,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <div className="text-base font-thin">Phone</div>
+                    <div className="text-base font-bold text-[#0A2463]">Phone</div>
                     <div className="pt-2 text-xs text-[#4B5563] ">
                       Main Office: +66 2 123 4567 <br />
                       Admissions: +66 2 123 4568
@@ -88,7 +89,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <div className="text-base font-thin">Email</div>
+                    <div className="text-base font-bold text-[#0A2463]">Email</div>
                     <div className="pt-2 text-xs text-[#4B5563]">
                       General Inquiries: info@thailand40edu.th
                       <br />
@@ -112,7 +113,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="flex flex-col">
-                    <div className="text-base font-thin">Office Hours</div>
+                    <div className="text-base font-bold text-[#0A2463]">Office Hours</div>
                     <div className="pt-2 text-xs text-[#4B5563]">
                       Monday - Friday: 8:30 AM - 4:30 PM
                       <br />
@@ -171,7 +172,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="text-3xl text-[#0A2463] font-bold">
+            <div className="text-3xl text-[#0A2463] font-bold ">
               ส่งข้อความถึงเรา
               <div className="flex gap-6">
                 <div className="flex flex-col">
@@ -180,7 +181,7 @@ export default function Home() {
                   </div>
                   <div className="pt-2">
                     <input
-                      className="w-[288px] h-[40px] bg-[#FFFFFF] border border-[#D1D5DB] "
+                      className="w-full h-[40px] bg-[#FFFFFF] border border-[#D1D5DB] "
                       type="text"
                     />
                   </div>
@@ -193,7 +194,7 @@ export default function Home() {
                     </div>
                     <div className="pt-2">
                       <input
-                        className="w-[288px] h-[40px] bg-[#FFFFFF] border border-[#D1D5DB]"
+                        className="w-full h-[40px] bg-[#FFFFFF] border border-[#D1D5DB]"
                         type="text"
                       />
                     </div>
@@ -205,7 +206,7 @@ export default function Home() {
                   เบอร์โทรศัพท์
                   <div className="pt-2">
                     <input
-                      className="pt-2 w-[600px] h-[42px] bg-[#ffffff]  border border-[#D1D5DB] rounded-lg"
+                      className="pt-2 w-full h-[42px] bg-[#ffffff]  border border-[#D1D5DB] rounded-lg"
                       type="text"
                     />
                   </div>
@@ -219,7 +220,7 @@ export default function Home() {
                     </div>
                     <div className="pt-2">
                       <select
-                        className="pt-2 w-[600px] h-[42px] bg-[#ffffff] border border-[#D1D5DB] text-black text-lg font-thin rounded-lg"
+                        className="pt-2 w-full h-[42px] bg-[#ffffff] border border-[#D1D5DB] text-black text-lg font-thin rounded-lg"
                         name=""
                         id=""
                       >
@@ -235,13 +236,13 @@ export default function Home() {
                 </div>
                 <div className="pt-2">
                   <input
-                    className="w-[600px] h-[140px] bg-white border border-[#D1D5DB] rounded-lg text-black text-lg"
+                    className="w-full h-[140px] bg-white border border-[#D1D5DB] rounded-lg text-black text-lg"
                     type="text"
                   />
                 </div>
               </div>
               <div className="pt-6">
-                <div className="flex items-center gap-10 p-6 w-[180px] h-[50px] bg-[#39A9DB] rounded-lg">
+                <div className="flex items-center justify-center md:justify-start gap-2 p-4 w-full md:w-[180px] h-[50px] bg-[#39A9DB] rounded-lg cursor-pointer">
                   <div className="">
                     <FontAwesomeIcon
                       icon={faComment}
@@ -262,14 +263,14 @@ export default function Home() {
 
     {/* ส่วนที่3 */}
       <div className="w-full bg-[#FFFFFF]">
-        <div className="h-[580px] p-20">
-          <div className="text-center text-[#0A2463] text-xl font-bold">
+        <div className="h-full px-4 py-12 sm:px-6 lg:px-20 lg:py-20">
+          <div className="text-center text-[#0A2463] text-lg sm:text-xl font-bold">
             ที่อยู่เรา
           </div>
 
           <div className="flex justify-center items-center pt-8">
-            <div className=" w-[1250px] h-[385px] bg-[#E5E7EB] rounded-xl">
-              <div className="text-center text-xs text-[#6B7280] p-40 ">
+            <div className="w-full max-w-[1250px] h-[250px] sm:h-[300px] md:h-[350px] lg:h-[385px] bg-gray-200 rounded-xl">
+              <div className="flex items-center justify-center h-full px-4 text-center text-xs text-gray-500 ">
                 Map would be displayed here
               </div>
             </div>

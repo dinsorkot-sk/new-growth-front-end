@@ -219,7 +219,7 @@ export default function Home() {
       </div>
     </div>
 
-    <div className=" mx-auto  py-8 px-14 xl:px-20 ">
+    <div className=" mx-auto  py-8 px-14 xl:px-20 bg-[#F9FAFB]">
       {/* หัวข้อ */}
       <h1 className="text-2xl font-bold text-blue-900 mb-6">บรรยากาศโครงการ</h1>
       

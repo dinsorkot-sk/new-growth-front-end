@@ -48,14 +48,14 @@ export default function Home() {
     <div>
       {/* ส่วนเเรก */}
       <div className="w-full bg-[#0A2463]">
-        <div className="h-[360px] p-20">
-          <div className="text-3xl font-bold text-white">การรับสมัคร</div>
-          <div className="pt-6 text-lg">
+        <div className="h-full px-4 py-10 sm:px-6 md:px-20 md:py-20">
+          <div className="text-2xl sm:text-3xl font-bold text-white">การรับสมัคร</div>
+          <div className="pt-4 sm:pt-6 text-base sm:text-lg text-white">
             เข้าร่วมโครงการฝึกอบรมชั้นนำของประเทศไทยสำหรับอุตสาหกรรม New Growth
             Engine ขณะนี้เปิดรับสมัครสำหรับกลุ่มปี 2024 แล้ว
           </div>
-          <div className="pt-8">
-            <div className="flex justify-center items-center w-[130px] h-[50px] rounded-md bg-[#39A9DB]">
+          <div className="pt-6 sm:pt-8">
+            <div className="flex justify-center sm:justify-center items-center w-[130px] h-[50px] rounded-md bg-[#39A9DB] text-white font-medium">
               เข้าร่วมกับเรา
             </div>
           </div>
@@ -64,13 +64,13 @@ export default function Home() {
 
       {/* ส่วนที่2 */}
       <div className="w-full bg-[#FFFFFF]">
-        <div className="p-12 h-[420px] ">
-          <div className="text-2xl text-center text-[#0A2463] font-bold">
+        <div className="px-4 py-10 sm:px-6 md:px-12 md:py-12">
+          <div className="text-xl sm:text-2xl text-center text-[#0A2463] font-bold">
             กำหนดเวลาการสมัคร
           </div>
 
           <div className="pt-2">
-            <div className="grid grid-cols-3 gap-4 pt-8">
+            <div className="grid grid-cols-1 pt-6 sm:grid-cols-2 md:grid-cols-3  gap-6">
               <div className="flex flex-col items-center text-center w-full h-[205px] bg-[#F9FAFB] rounded-lg p-6">
                 <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE] ">
                   <FontAwesomeIcon
@@ -82,7 +82,7 @@ export default function Home() {
                     }}
                   />
                 </div>
-                <div className="pt-4 text-lg text-[#0A2463] font-bold">
+                <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
                   ระยะเวลาการรับสมัคร
                 </div>
                 <div className="pt-2 text-xs text-[#4B5563] ">
@@ -101,7 +101,7 @@ export default function Home() {
                     }}
                   />
                 </div>
-                <div className="pt-4 text-lg text-[#0A2463] font-bold">
+                <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
                   คัดเลือก
                 </div>
                 <div className="pt-2 text-xs text-[#4B5563] ">
@@ -120,7 +120,7 @@ export default function Home() {
                     }}
                   />
                 </div>
-                <div className="pt-4 text-lg text-[#0A2463] font-bold">
+                <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
                   เริ่มอบรม
                 </div>
                 <div className="pt-2 text-xs text-[#4B5563] ">
@@ -134,13 +134,13 @@ export default function Home() {
 
       {/* ส่วนที่ 3 */}
       <div className="w-full bg-[#F9FAFB]">
-        <div className="h-[545px] p-20">
-          <div className="text-2xl font-bold text-[#0A2463]">
+        <div className="h-full md:p-20">
+          <div className="text-xl md:text-2xl font-bold text-[#0A2463]">
             คุณสมบัติผู้เข้าร่วม
           </div>
 
-          <div className="grid grid-cols-2 w-full h-[380px]">
-            <div className=" text-lg  text-[#0A2463] font-bold pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-0 mt-6">
+            <div className="text-base md:text-lg text-[#0A2463] font-bold pt-6">
               คุณสมบัติทั่วไป
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -193,8 +193,8 @@ export default function Home() {
                 <div className="font-bold text-sm">ความมุ่งมั่น:</div>
                 สามารถมุ่งมั่นกับโปรแกรมได้เต็มเวลาตลอดระยะเวลาที่ดำเนินไป
               </div>
-              <div className="pt-4 w-[600px] ">
-                <div className="flex items-center border-l-4 border-[#FACC15] bg-[#FEFCE8] h-[60px] p-4 gap-2">
+              <div className="pt-4 w-full ">
+                <div className="flex items-center border-l-4 border-[#FACC15] bg-[#FEFCE8] h-auto w-auto p-4 gap-2 md:max-w-[600px]">
                   <FontAwesomeIcon
                     icon={faCircleDot}
                     style={{
@@ -301,8 +301,8 @@ export default function Home() {
       </div>
 
       {/* ส่วนที่ 4 */}
-      <div className="h-[960px] bg-[#ffffff]">
-        <div className="p-20">
+      <div className="h-full bg-[#ffffff]">
+        <div className="px-4 sm:px-6 md:px-20 py-12">
           <div className="text-center text-[#0A2463] text-2xl font-bold">
             ขั้นตอนการสมัคร
           </div>
@@ -310,17 +310,17 @@ export default function Home() {
             <div className="max-w-4xl mx-auto p-6 bg-white">
               <div className="relative">
                 {/* Vertical line */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-blue-200"></div>
+                <div className=" hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-blue-200"></div>
 
                 {steps.map((step, index) => (
                   <div
                     key={step.number}
-                    className={`flex mb-16 relative text-[#0A2463]`}
+                    className={`relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]`}
                   >
                     {/* Left side content */}
                     <div
-                      className={`w-1/2 ${
-                        index % 2 === 0 ? "pr-12 text-right" : "opacity-0"
+                      className={`w-full md:w-1/2 text-center ${
+                        index % 2 === 0 ? "pr-12 " : "opacity-0"
                       }`}
                     >
                       {index % 2 === 0 && (
@@ -336,7 +336,7 @@ export default function Home() {
                     </div>
 
                     {/* Circle in center */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="hidden md:block z-10 mb-4 md:mb-0 md:absolute md:left-1/2 transform md:-translate-x-1/2">
                       <div className="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">
                         {step.number}
                       </div>
@@ -344,7 +344,7 @@ export default function Home() {
 
                     {/* Right side content */}
                     <div
-                      className={`w-1/2 ${
+                      className={`w-full md:w-1/2 text-center ${
                         index % 2 === 1 ? "pl-12" : "opacity-0"
                       }`}
                     >
@@ -368,17 +368,17 @@ export default function Home() {
       </div>
 
       {/* ส่วนที่ 5 */}
-      <div className="h-[330px] bg-[#39A9DB]">
-        <div className="p-20 text-center">
-          <div className="text-2xl font-bold text-white">พร้อมสมัครหรือยัง</div>
+      <div className="h-full bg-[#39A9DB]">
+        <div className="px-6 py-16 sm:px-10 md:px-20 text-center">
+          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">พร้อมสมัครหรือยัง</div>
 
-          <div className="pt-6 text-lg text-white">
+          <div className="pt-4 sm:pt-6 text-base sm:text-lg md:text-xl text-white">
             ก้าวแรกสู่อาชีพในอุตสาหกรรม New Growth Engine ของประเทศไทย
             เปิดรับสมัครสำหรับกลุ่มปี 2024 แล้ว
           </div>
 
-          <div className="flex justify-center items-center pt-10">
-            <div className="flex justify-center items-center w-[245px] h-[52px] bg-white rounded-md text-[#0A2463] ">
+          <div className="flex justify-center items-center pt-8 sm:pt-10">
+            <div className="flex justify-center items-center w-[200px] sm:w-[245px] h-[48px] sm:h-[52px] bg-white rounded-md text-[#0A2463] text-sm sm:text-base font-medium cursor-pointer hover:bg-gray-100 transition">
               เริ่มต้นการสมัครของคุณ
             </div>
           </div>
