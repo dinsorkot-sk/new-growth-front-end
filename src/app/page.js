@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGreaterThan,
@@ -13,7 +17,22 @@ import {
   faCalendar,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+
 export default function Home() {
+  const [newsList, setNewsList] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/news")
+      .then((res) => {
+        setNewsList(res.data.data); // เข้าถึงข้อมูลจาก API
+        console.log(res.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching news:", error);
+      });
+  }, []);
+
   return (
     <div>
       <div className="w-full bg-[#7d7d7e]">
@@ -24,7 +43,7 @@ export default function Home() {
           </p>
           <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl ">
             สร้างคนที่มีสมรรถนะสูงสำหรับอุตสาหกรรม New Growth Engine ตามนโยบาย
-            Thailand 4.0 <br className="hidden sm:block"/>
+            Thailand 4.0 <br className="hidden sm:block" />
             และปฏิรูปการอุดมศึกษาไทย
           </p>
 
@@ -55,7 +74,8 @@ export default function Home() {
           <p className="pt-8 md:pt-8 text-center text-sm md:text-base">
             เพื่อสร้างบุคลากรที่มีประสิทธิภาพสูงในอุตสาหกรรม New Growth Engine
             ตามนโยบายไทยแลนด์ 4.0
-            <br className="hidden md:block" /> และปฏิรูปการศึกษาระดับอุดมศึกษาของไทย
+            <br className="hidden md:block" />{" "}
+            และปฏิรูปการศึกษาระดับอุดมศึกษาของไทย
             โดยพัฒนาบัณฑิตให้มีทักษะที่ล้ำสมัย
             <br className="hidden md:block" />
             พร้อมที่จะขับเคลื่อนการสร้างสรรค์นวัตกรรมและการเติบโตทางเศรษฐกิจ
@@ -415,120 +435,161 @@ export default function Home() {
       {/* ส่วนที่5 */}
       <div className="w-full bg-[#F9FAFB]">
         <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
-          <div className="flex  justify-between text-[#0A2463] text-2xl font-bold  sm:text-2xl font-bold ">
+          <div className="flex justify-between text-[#0A2463] text-2xl font-bold">
             ข่าวเเละกิจกรรม
             <div className="text-[#39A9DB] text-xs">ดูข่าว ทั้งหมด</div>
           </div>
 
+          {/* ใช้ grid นอก loop */}
           <div className="pt-4 sm:pt-6 md:pt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20">
-              <div className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg ">
-                {/* ส่วนรูปภาพ 40% */}
-                <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
-                  <Image
-                    src="/Img_Homepage/pig1.jpg"
-                    alt="รูปภาพตัวอย่าง"
-                    fill
-                    className="object-cover"
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-2  gap-6 sm:gap-8 md:gap-12 lg:gap-20">
+              {newsList.map((news) => {
+                const decodedContent = news.content.replace(/\\"/g, '"');
+                const imgMatch = decodedContent.match(
+                  /<img[^>]+src="([^">]+)"/
+                );
+                const imageFromContent = imgMatch ? imgMatch[1] : null;
+                const cleanedContent = decodedContent.replace(
+                  /<img[^>]*>/g,
+                  ""
+                );
 
-                  <div className="absolute p-4">
-                    <div className="flex justify-center items-center w-[100px] h-[30px] rounded-[9999px] bg-[#0A2463]">
-                      <p className="text-white text-[10px]">Partnership</p>
+                return (
+                  <div
+                    key={news.id}
+                    className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg"
+                  >
+                    {/* รูปภาพ */}
+                    <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
+                      <img
+                        src={
+                          news.image?.image_path
+                            ? `http://localhost:3001/${news.image.image_path}`
+                            : "/fallback.jpg"
+                        }
+                        alt={news.title}
+                        className="w-full h-40 object-cover rounded"
+                      />
+                    </div>
+
+                    {/* เนื้อหา */}
+                    <div className="h-[50%] p-4">
+                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
+                        <FontAwesomeIcon
+                          icon={faCalendar}
+                          style={{
+                            color: "#0A2463",
+                            width: "14px",
+                            height: "14px",
+                          }}
+                        />
+                        {new Date(news.published_date).toLocaleDateString()}
+                      </div>
+
+                      <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
+                        {news.title}
+                      </div>
+
+                      <div
+                        className="text-[#4B5563] text-xs pt-2 sm:pt-4"
+                        dangerouslySetInnerHTML={{ __html: cleanedContent }}
+                      />
+
+                      <div className="text-blue-600 text-xs mt-3">
+                        หมวดหมู่:{" "}
+                        {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
+                      </div>
+
+                      <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold">
+                        Read More
+                        <FontAwesomeIcon
+                          icon={faArrowRight}
+                          style={{
+                            color: "#0A2463",
+                            width: "12px",
+                            height: "12px",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* ส่วนข้อความ 60% */}
-                <div className="h-[50%] p-4 ">
-                  <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                    <FontAwesomeIcon
-                      icon={faCalendar}
-                      style={{
-                        color: "#0A2463",
-                        width: "14px",
-                        height: "14px",
-                      }}
-                    />
-                    December 10, 2023
-                  </div>
-                  <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
-                    Thailand 4.0 Program Partners with Leading Tech Companies
-                  </div>
-                  <div className="text-[#4B5563] text-xs pt-2 sm:pt-4">
-                    New partnership provides students with internship
-                    opportunities at top tech firms in Thailand.
-                  </div>
-
-                  <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold">
-                    Read More
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      style={{
-                        color: "#0A2463",
-                        width: "12px",
-                        height: "12px",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* การ์ด2 */}
-              <div className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg">
-                {/* ส่วนรูปภาพ 40% */}
-                <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
-                  <Image
-                    src="/Img_Homepage/pig1.jpg"
-                    alt="รูปภาพตัวอย่าง"
-                    fill
-                    className="object-cover"
-                  />
-
-                  <div className="absolute p-4">
-                    <div className="flex justify-center items-center w-[100px] h-[30px] rounded-[9999px] bg-[#0A2463]">
-                      <p className="text-white text-[10px]">Event</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ส่วนข้อความ 60% */}
-                <div className="h-[50%] p-4 ">
-                  <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                    <FontAwesomeIcon
-                      icon={faCalendar}
-                      style={{
-                        color: "#0A2463",
-                        width: "14px",
-                        height: "14px",
-                      }}
-                    />
-                    November 28, 2023
-                  </div>
-                  <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
-                    Graduates Showcase Innovative Projects at Tech Expo 2023{" "}
-                  </div>
-                  <div className="text-[#4B5563] text-xs pt-2 sm:pt-4">
-                    Students presented their final projects to industry leaders
-                    and potential employers.{" "}
-                  </div>
-
-                  <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold">
-                    Read More
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      style={{
-                        color: "#0A2463",
-                        width: "12px",
-                        height: "12px",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </div>
+      </div>
+
+      <div>
+        {/* {newsList.map((news) => (
+            <div key={news.id} className="bg-white rounded-lg shadow-md p-4">
+              <img
+                src={
+                  news.image?.image_path
+                    ? `http://localhost:3001/${news.image.image_path}`
+                    : "/fallback.jpg"
+                }
+                alt={news.title}
+                className="w-full h-40 object-cover rounded"
+              />
+
+              <div className="mt-4 text-xs text-gray-500">
+                {new Date(news.published_date).toLocaleDateString()}
+              </div>
+              <div className="text-lg font-bold text-blue-900 mt-2">
+                {news.title}
+              </div>
+              <div
+                className="text-sm text-gray-700 mt-1"
+                dangerouslySetInnerHTML={{ __html: news.content }}
+              />
+              <div className="text-blue-600 text-xs mt-3">
+                หมวดหมู่: {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
+              </div>
+            </div>
+          ))} */}
+        {/* 
+          {newsList.map((news) => {
+            const decodedContent = news.content.replace(/\\"/g, '"');
+            const imgMatch = decodedContent.match(/<img[^>]+src="([^">]+)"/);
+            const imageFromContent = imgMatch ? imgMatch[1] : null;
+            const cleanedContent = decodedContent.replace(/<img[^>]*>/g, "");
+
+            console.log("✅ extracted image:", imageFromContent);
+            console.log("🧾 image path:", news.image?.image_path);
+
+            return (
+              <div key={news.id} className="bg-white rounded-lg shadow-md p-4">
+                <img 
+                  src={
+                    news.image?.image_path
+                      ? `http://localhost:3001/${news.image.image_path}`
+                      : "/fallback.jpg"
+                  }
+                  alt={news.title}
+                  className="w-full h-40 object-cover rounded"
+                />
+
+                <div className="mt-4 text-xs text-gray-500">
+                  {new Date(news.published_date).toLocaleDateString()}
+                </div>
+
+                <div className="text-lg font-bold text-blue-900 mt-2">
+                  {news.title}
+                </div>
+
+                <div
+                  className="text-sm text-gray-700 mt-1"
+                  dangerouslySetInnerHTML={{ __html: cleanedContent }}
+                />
+
+                <div className="text-blue-600 text-xs mt-3">
+                  หมวดหมู่: {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
+                </div>
+              </div>
+            );
+          })}
+         */}
       </div>
 
       {/* ส่วนที่6 */}
@@ -550,8 +611,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 }
