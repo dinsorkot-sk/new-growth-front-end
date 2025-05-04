@@ -202,7 +202,7 @@ export default function Home() {
                 <p className="text-sm text-blue-400">{event.date}</p>
               </div>
               
-              <h3 className="font-semibold text-lg mt-2">{event.title}</h3>
+              <h3 className="font-semibold text-lg mt-2 text-[#0A2463]">{event.title}</h3>
               <p className="text-sm text-gray-600 mt-1 mb-3">{event.description}</p>
               
               <div className="mt-auto">

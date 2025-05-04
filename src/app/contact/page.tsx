@@ -242,7 +242,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="pt-6">
-                <div className="flex items-center justify-center md:justify-start gap-2 p-4 w-full md:w-[180px] h-[50px] bg-[#39A9DB] rounded-lg cursor-pointer">
+                <div className="flex items-center justify-around md:justify-around gap-2 p-4 w-full md:w-[180px] h-[50px] bg-[#39A9DB] rounded-lg cursor-pointer">
                   <div className="">
                     <FontAwesomeIcon
                       icon={faComment}
