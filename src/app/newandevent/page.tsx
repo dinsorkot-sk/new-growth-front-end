@@ -273,6 +273,7 @@ export default function Home() {
     prev: null,
     next: null
   });
+  const [images, setVibeImages] = useState([]);
 
   // Fetch news from API
   useEffect(() => {
@@ -288,6 +289,10 @@ export default function Home() {
         const data = await response.json();
         setNewsItems(data.data);
         setPagination(data.pagination);
+        // ดึงรูปภาพ
+      const images = await fetchVibeImages();
+      setVibeImages(images);
+
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -296,6 +301,7 @@ export default function Home() {
     };
 
     fetchNews();
+    
   }, []);
 
   // Load more news function
@@ -395,10 +401,27 @@ export default function Home() {
 
   // For the gallery section
   const [displayCount, setDisplayCount] = useState(8);
-  const images = [
-    'upload/image-1746425401979-674470988.png',
+  // const images = [
+  //   'upload/image-1746425401979-674470988.png',
     
-  ];
+  // ];
+
+  const fetchVibeImages = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/image/getAllImage/vibe?offset=0&limit=10');
+      const data = await response.json();
+      
+      // Extract only the image paths from vibe-type images
+      const vibeImages = data.images
+        .filter(image => image.ref_type === 'vibe')
+        .map(image => image.image_path);
+      console.log("asdadad : ",vibeImages)
+      return vibeImages;
+    } catch (error) {
+      console.error('Error fetching vibe images:', error);
+      return []; // Return empty array as fallback
+    }
+  };
 
   const handleLoadMore = () => {
     setDisplayCount(prevCount => Math.min(prevCount + 8, images.length));
@@ -541,9 +564,10 @@ export default function Home() {
         
       
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          
           {images.slice(0, displayCount).map((image, index) => (
             <div key={index} className="rounded-lg overflow-hidden h-48">
-              {images}
+            
               <img 
                 src={`http://localhost:3001/${image}`}
                 alt={`Program atmosphere ${index + 1}`}
