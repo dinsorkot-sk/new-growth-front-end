@@ -20,6 +20,7 @@ import {
 
 export default function Home() {
   const [newsList, setNewsList] = useState([]);
+  const [courseList, setCourseList] = useState([]);
 
   useEffect(() => {
     axios
@@ -32,6 +33,45 @@ export default function Home() {
         console.error("Error fetching news:", error);
       });
   }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/course")
+      .then((res) => {
+        setCourseList(res.data.data); // เข้าถึงข้อมูลจาก API
+        console.log(res.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching news:", error);
+      });
+  }, []);
+
+  const dateFormatter = (p_date) => {
+    const date = new Date(p_date);
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+    return formatter.format(date);
+  };
+
+  const [coursePage, setCoursePage] = useState(1);
+  const coursesPerPage = 6;
+  const paginatedCourses = courseList.slice(
+    (coursePage - 1) * coursesPerPage,
+    coursePage * coursesPerPage
+  );
+  const totalCoursePages = Math.ceil(courseList.length / coursesPerPage);
+
+  // Pagination สำหรับข่าว
+  const [newsPage, setNewsPage] = useState(1);
+  const newsPerPage = 4;
+  const paginatedNews = newsList.slice(
+    (newsPage - 1) * newsPerPage,
+    newsPage * newsPerPage
+  );
+  const totalNewsPages = Math.ceil(newsList.length / newsPerPage);
 
   return (
     <div>
@@ -194,241 +234,114 @@ export default function Home() {
       </div>
 
       {/* ส่วนที่ 4 */}
-      <div className="w-full bg-[#ffffff] ">
-        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20 ">
+      <div className="w-full bg-[#ffffff]">
+        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
           <div className="flex justify-between text-[#0A2463] text-xl sm:text-xl md:text-2xl font-bold">
             หลักสูตรเเนะนำ
             <div className="text-[#39A9DB] text-xs">ดูหลักสูตร ทั้งหมด</div>
           </div>
           {/* การ์ด */}
-          <div className="pt-4 sm:pt-6  md:pt-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20 ">
-              <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidde">
-                {/* ส่วนรูปภาพ 40% */}
-                <div className="relative h-[45%] w-full">
-                  <Image
-                    src="/Img_Homepage/pig1.jpg"
-                    alt="รูปภาพตัวอย่าง"
-                    fill
-                    className="object-cover"
-                  />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
+            {paginatedCourses.map((course) => {
+              return (
+                <div className="pt-4 sm:pt-6 md:pt-8">
+                  <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden">
+                    {/* ส่วนรูปภาพ 40% */}
+                    <div className="relative h-[45%] w-full">
+                      <img
+                        src={
+                          course.image?.image_path
+                            ? `http://localhost:3001${course.image.image_path}`
+                            : "/fallback.jpg"
+                        }
+                        alt={course.title}
+                        className="w-full h-40 object-cover rounded"
+                      />
+                    </div>
 
-                  <div className="absolute p-4">
-                    <div className="flex justify-center items-center w-[100px] h-[30px] rounded-[9999px] bg-[#39A9DB]">
-                      <p className="text-white text-[10px]">AI & DATA</p>
+                    {/* ส่วนข้อความ 60% */}
+                    <div className="h-[60%] p-4">
+                      <div className="text-[#0A2463] text-base font-bold">
+                        {course.name}
+                      </div>
+                      <div className="text-[#4B5563] text-xs pt-4">
+                        {course.description}
+                      </div>
+                      <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 pt-4 text-[#4B5563] text-xs">
+                        <div className="flex items-center gap-1">
+                          <FontAwesomeIcon
+                            icon={faClock}
+                            style={{
+                              color: "#0A2463",
+                              width: "14px",
+                              height: "14px",
+                            }}
+                          />
+                          12 weeks
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            style={{
+                              color: "#0A2463",
+                              width: "12px",
+                              height: "12px",
+                            }}
+                          />
+                          {dateFormatter(course.updated_at)}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FontAwesomeIcon
+                            icon={faUserGroup}
+                            style={{
+                              color: "#0A2463",
+                              width: "12px",
+                              height: "12px",
+                            }}
+                          />
+                          120 student
+                        </div>
+                      </div>
+
+                      <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]">
+                        View Details{" "}
+                        <FontAwesomeIcon
+                          icon={faArrowRight}
+                          style={{
+                            color: "#0A2463",
+                            width: "12px",
+                            height: "12px",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                {/* ส่วนข้อความ 60% */}
-                <div className="h-[60%] p-4 ">
-                  <div className="text-[#0A2463] text-base font-bold">
-                    Artificial Intelligence and Machine <br /> Learning
-                  </div>
-                  <div className="text-[#4B5563] text-xs pt-4">
-                    Instructor: Dr. Somchai Jaidee
-                  </div>
-                  <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 pt-4 text-[#4B5563] text-xs">
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faClock}
-                        style={{
-                          color: "#0A2463",
-                          width: "14px",
-                          height: "14px",
-                        }}
-                      />
-                      12 weeks
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        style={{
-                          color: "#0A2463",
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
-                      feb 15,2024
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faUserGroup}
-                        style={{
-                          color: "#0A2463",
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
-                      120 student
-                    </div>
-                  </div>
-
-                  <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]">
-                    View Details{" "}
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      style={{
-                        color: "#0A2463",
-                        width: "12px",
-                        height: "12px",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden">
-                {/* ส่วนรูปภาพ 40% */}
-
-                <div className="relative h-[45%] w-full">
-                  <Image
-                    src="/Img_Homepage/pig1.jpg"
-                    alt="รูปภาพตัวอย่าง"
-                    fill
-                    className="object-cover "
-                  />
-
-                  <div className="absolute p-4">
-                    <div className="flex justify-center items-center w-[100px] h-[30px] rounded-[9999px] bg-[#39A9DB]">
-                      <p className="text-white text-[10px]">Robotics</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ส่วนข้อความ 60% */}
-                <div className="h-[60%] p-4 ">
-                  <div className="text-[#0A2463] text-base font-bold">
-                    Artificial Intelligence and Machine <br /> Learning
-                  </div>
-                  <div className="text-[#4B5563] text-xs pt-4">
-                    Instructor: Dr. Somchai Jaidee
-                  </div>
-                  <div className="flex gap-5 pt-4 text-[#4B5563] text-xs">
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faClock}
-                        style={{
-                          color: "#0A2463",
-                          width: "14px",
-                          height: "14px",
-                        }}
-                      />
-                      12 weeks
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        style={{
-                          color: "#0A2463",
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
-                      feb 15,2024
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faUserGroup}
-                        style={{
-                          color: "#0A2463",
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
-                      120 student
-                    </div>
-                  </div>
-
-                  <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]">
-                    View Details{" "}
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      style={{
-                        color: "#0A2463",
-                        width: "12px",
-                        height: "12px",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden">
-                {/* ส่วนรูปภาพ 40% */}
-                <div className="relative h-[45%] w-full">
-                  <Image
-                    src="/Img_Homepage/pig1.jpg"
-                    alt="รูปภาพตัวอย่าง"
-                    fill
-                    className="object-cover"
-                  />
-
-                  <div className="absolute p-4">
-                    <div className="flex justify-center items-center w-[100px] h-[30px] rounded-[9999px] bg-[#39A9DB]">
-                      <p className="text-white text-[10px]">Business</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ส่วนข้อความ 60% */}
-                <div className="h-[60%] p-4 ">
-                  <div className="text-[#0A2463] text-base font-bold">
-                    Artificial Intelligence and Machine <br /> Learning
-                  </div>
-                  <div className="text-[#4B5563] text-xs pt-4">
-                    Instructor: Dr. Somchai Jaidee
-                  </div>
-                  <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 pt-4 text-[#4B5563] text-xs">
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faClock}
-                        style={{
-                          color: "#0A2463",
-                          width: "14px",
-                          height: "14px",
-                        }}
-                      />
-                      12 weeks
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        style={{
-                          color: "#0A2463",
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
-                      feb 15,2024
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faUserGroup}
-                        style={{
-                          color: "#0A2463",
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
-                      120 student
-                    </div>
-                  </div>
-                  <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]">
-                    View Details{" "}
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      style={{
-                        color: "#0A2463",
-                        width: "12px",
-                        height: "12px",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
+        </div>
+
+        <div className="flex justify-center pt-8 gap-2 pb-8">
+          <button
+            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
+            disabled={coursePage === 1}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ก่อนหน้า
+          </button>
+          <span className="px-2 text-sm text-[#0A2463] font-medium">
+            หน้า {coursePage} / {totalCoursePages}
+          </span>
+          <button
+            onClick={() =>
+              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
+            }
+            disabled={coursePage === totalCoursePages}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ถัดไป
+          </button>
         </div>
       </div>
 
@@ -443,7 +356,7 @@ export default function Home() {
           {/* ใช้ grid นอก loop */}
           <div className="pt-4 sm:pt-6 md:pt-8">
             <div className="grid grid-cols-1 md:grid-cols-2  gap-6 sm:gap-8 md:gap-12 lg:gap-20">
-              {newsList.map((news) => {
+              {paginatedNews.map((news) => {
                 const decodedContent = news.content.replace(/\\"/g, '"');
                 const imgMatch = decodedContent.match(
                   /<img[^>]+src="([^">]+)"/
@@ -517,6 +430,28 @@ export default function Home() {
               })}
             </div>
           </div>
+        </div>
+
+        <div className="flex justify-center pt-8 gap-2 pb-8">
+          <button
+            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
+            disabled={coursePage === 1}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ก่อนหน้า
+          </button>
+          <span className="px-2 text-sm text-[#0A2463] font-medium">
+            หน้า {coursePage} / {totalCoursePages}
+          </span>
+          <button
+            onClick={() =>
+              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
+            }
+            disabled={coursePage === totalCoursePages}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ถัดไป
+          </button>
         </div>
       </div>
 
