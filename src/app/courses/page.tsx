@@ -303,7 +303,7 @@ export default function Home() {
   });
   const [offset, setOffset] = useState(0);
   const [categories, setCategories] = useState(['All']);
-  const limit = 10;
+  const limit = 9;
 
   // Fetch courses from API
   useEffect(() => {
