@@ -24,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/news")
+      .get(`${process.env.NEXT_PUBLIC_API}/news`)
       .then((res) => {
         setNewsList(res.data.data); // เข้าถึงข้อมูลจาก API
         console.log(res.data.data);
@@ -36,7 +36,7 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/course")
+      .get(`${process.env.NEXT_PUBLIC_API}/course`)
       .then((res) => {
         setCourseList(res.data.data); // เข้าถึงข้อมูลจาก API
         console.log(res.data.data);
@@ -90,6 +90,7 @@ export default function Home() {
           {/* button */}
           <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
             <div className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
+            <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
               <div className="flex justify-evenly items-center w-full text-center text-sm">
                 เข้าร่วมโครงการ
                 <FontAwesomeIcon
@@ -97,6 +98,7 @@ export default function Home() {
                   style={{ color: "#ffffff", width: "13px", height: "13px" }}
                 />
               </div>
+              </a>
             </div>
             <div className="px-6 h-12 bg-[#ffffff] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
               <div className="flex justify-evenly items-center w-full text-center text-sm text-[#0A2463]">
@@ -244,14 +246,14 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
             {paginatedCourses.map((course) => {
               return (
-                <div className="pt-4 sm:pt-6 md:pt-8">
+                <div key={course.id} className="pt-4 sm:pt-6 md:pt-8">
                   <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden">
                     {/* ส่วนรูปภาพ 40% */}
                     <div className="relative h-[45%] w-full">
                       <img
                         src={
                           course.image?.image_path
-                            ? `http://localhost:3001${course.image.image_path}`
+                            ? `${process.env.NEXT_PUBLIC_IMG}/${course.image.image_path}`
                             : "/fallback.jpg"
                         }
                         alt={course.title}
@@ -377,7 +379,7 @@ export default function Home() {
                       <img
                         src={
                           news.image?.image_path
-                            ? `http://localhost:3001/${news.image.image_path}`
+                            ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
                             : "/fallback.jpg"
                         }
                         alt={news.title}
@@ -539,9 +541,12 @@ export default function Home() {
               New Growth Engine
             </div>
             <div className="pt-4 md:pt-6">
-              <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer hover:bg-gray-100 transition-all">
+              
+              <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
+              <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer hover:bg-gray-100 transition-all" >
                 เข้าร่วม
               </div>
+              </a>
             </div>
           </div>
         </div>

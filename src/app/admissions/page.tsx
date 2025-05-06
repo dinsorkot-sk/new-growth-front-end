@@ -55,9 +55,11 @@ export default function Home() {
             Engine ขณะนี้เปิดรับสมัครสำหรับกลุ่มปี 2024 แล้ว
           </div>
           <div className="pt-6 sm:pt-8">
+          <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
             <div className="flex justify-center sm:justify-center items-center w-[130px] h-[50px] rounded-md bg-[#39A9DB] text-white font-medium">
               เข้าร่วมกับเรา
             </div>
+            </a>
           </div>
         </div>
       </div>

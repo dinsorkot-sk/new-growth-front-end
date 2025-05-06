@@ -87,9 +87,11 @@ export default function Navbar() {
 
         {/* Apply Button - Desktop */}
         <div className="hidden xl:block">
-          <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors">
+        <a href={`${process.env.NEXT_PUBLIC_REGISTER}`} className="w-full">
+          <button  className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors">
           เข้าร่วมกับเรา
           </button>
+          </a>
         </div>
       </div>
 
@@ -107,9 +109,13 @@ export default function Navbar() {
               {item.name}
             </a>
           ))}
-          <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white mt-2 transition-colors">
-            เข้าร่วมกับเรา
+          
+          <a href={`${process.env.NEXT_PUBLIC_REGISTER}`} className="w-full">
+          <button  className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors w-full">
+          เข้าร่วมกับเรา
           </button>
+          </a>
+          
         </div>
       )}
     </nav>

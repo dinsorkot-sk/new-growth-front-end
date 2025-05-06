@@ -310,7 +310,7 @@ export default function Home() {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3001/api/course?offset=${offset}&limit=${limit}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/course?offset=${offset}&limit=${limit}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -347,7 +347,7 @@ export default function Home() {
             : 'General',
           industries: course.industries || [],
           image: course.image 
-            ? `http://localhost:3001${course.image.image_path}` 
+            ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path}` 
             : '/api/placeholder/400/320'
         }));
         

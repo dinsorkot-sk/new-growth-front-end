@@ -280,7 +280,7 @@ export default function Home() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3001/api/news?offset=0&limit=10');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/news?offset=0&limit=10`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch news data');
@@ -408,7 +408,7 @@ export default function Home() {
 
   const fetchVibeImages = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/image/getAllImage/vibe?offset=0&limit=10');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
       const data = await response.json();
       
       // Extract only the image paths from vibe-type images
@@ -479,7 +479,7 @@ export default function Home() {
                     <div key={news.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
                       <div className="relative">
                         <img 
-                          src={`http://localhost:3001/${news.image?.image_path}`} 
+                          src={`${process.env.NEXT_PUBLIC_IMG}/${news.image?.image_path}`} 
                           alt={news.title} 
                           className="w-full h-48 object-cover" 
                           
@@ -569,7 +569,7 @@ export default function Home() {
             <div key={index} className="rounded-lg overflow-hidden h-48">
             
               <img 
-                src={`http://localhost:3001/${image}`}
+                src={`${process.env.NEXT_PUBLIC_IMG}/${image}`}
                 alt={`Program atmosphere ${index + 1}`}
                 className="w-full h-full object-cover"
               />

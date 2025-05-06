@@ -24,7 +24,7 @@ export default function ResourcesPage() {
     const fetchResources = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3001/api/document/getallDocumentAndResouceVideo?offset=${pagination.offset}&limit=${pagination.limit}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/document/getallDocumentAndResouceVideo?offset=${pagination.offset}&limit=${pagination.limit}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -51,7 +51,7 @@ export default function ResourcesPage() {
     
     // Get file URL from file_path if available
     const file = item.files && item.files.length > 0 ? item.files[0] : null;
-    const fileUrl = file ? `http://localhost:3001/${file.file_path.replace(/\\/g, '/')}` : '';
+    const fileUrl = file ? `${process.env.NEXT_PUBLIC_IMG}/${file.file_path.replace(/\\/g, '/')}` : '';
     
     // Format date
     const date = new Date(item.published_date).toLocaleDateString('th-TH', {
@@ -222,8 +222,8 @@ const downloadResource = async (resource) => {
   try {
     // กำหนด URL ตามประเภทของไฟล์
     const downloadUrl = resource.type === 'Video' 
-      ? `http://localhost:3001/api/video/downloadVideo/${resource.id}`
-      : `http://localhost:3001/api/document/downloadDocument/${resource.id}`;
+      ? `${process.env.NEXT_PUBLIC_API}/video/downloadVideo/${resource.id}`
+      : `${process.env.NEXT_PUBLIC_API}/document/downloadDocument/${resource.id}`;
     
     // เรียกใช้ฟังก์ชัน handleDownload
     const result = await handleDownload(
