@@ -391,7 +391,7 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Search courses or instructors..."
-                  className="w-full border border-gray-300 rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-[black] border border-gray-300 rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -401,7 +401,7 @@ export default function Home() {
               <div className="flex items-center gap-2 w-full md:w-auto justify-center">
                 <Filter className="h-5 w-5 text-gray-600" />
                 <select 
-                  className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border text-[black] border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
