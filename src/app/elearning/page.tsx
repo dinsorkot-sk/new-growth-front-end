@@ -560,8 +560,8 @@ const downloadResource = async (resource) => {
         )}
       </div>
 
-      {/* Learning Paths */}
-      <div className="mx-auto py-8 px-10 bg-[#FFFFFF]">
+   
+      {/* <div className="mx-auto py-8 px-10 bg-[#FFFFFF]">
         <h1 className="text-2xl font-bold text-[#0A2463] mb-8">เส้นทางการเรียนรู้ที่โดดเด่น</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
@@ -606,7 +606,7 @@ const downloadResource = async (resource) => {
         </div>
       </div>
 
-      {/* Additional Resources */}
+      
       <div className="bg-[#F9FAFB] px-10 pt-4 pb-6">
         <h2 className="text-2xl font-bold text-blue-900 mb-4">แหล่งข้อมูลเพิ่มเติม</h2>
 
@@ -625,7 +625,7 @@ const downloadResource = async (resource) => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

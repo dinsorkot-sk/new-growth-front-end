@@ -289,8 +289,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, ArrowRight, Clock, Calendar, Users } from 'lucide-react';
-
+import { useRouter } from 'next/navigation';
 export default function Home() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
   const [courses, setCourses] = useState([]);
@@ -371,6 +372,9 @@ export default function Home() {
     return matchesSearch && matchesFilter;
   });
 
+  const handleViewDetails = (courseId) => {
+    router.push(`/courses/${courseId}`);
+  };
   return (
     <div>
       <div className="bg-[#0A2463] text-white py-10 md:py-20 px-14 xl:px-20">
@@ -387,7 +391,7 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Search courses or instructors..."
-                  className="w-full text-[black] border border-gray-300 rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -397,7 +401,7 @@ export default function Home() {
               <div className="flex items-center gap-2 w-full md:w-auto justify-center">
                 <Filter className="h-5 w-5 text-gray-600" />
                 <select 
-                  className="border text-[black] border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
@@ -465,7 +469,7 @@ export default function Home() {
                       </div>
                       
                       <div className="border-t border-gray-100 p-4">
-                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800">
+                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800"  onClick={() => handleViewDetails(course.id)}>
                           View Details
                           <ArrowRight className="h-4 w-4 ml-1" />
                         </button>
@@ -491,7 +495,7 @@ export default function Home() {
                   >
                     Previous
                   </button>
-                  <span className="px-4 py-2 text-[black] rounded">
+                  <span className="px-4 py-2  rounded">
                     Page {Math.floor(offset / limit) + 1} of {pagination.totalPages}
                   </span>
                   <button 
@@ -508,7 +512,7 @@ export default function Home() {
         </div>
       </div>
       
-      <div className="bg-[#FFFFFF] px-14 md:px-14 py-10 shadow-sm">
+      {/* <div className="bg-[#FFFFFF] px-14 md:px-14 py-10 rounded-lg shadow-sm">
         <h2 className="text-center text-2xl font-bold text-blue-900 mb-8">Course Categories</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -524,7 +528,7 @@ export default function Home() {
             </div>
           ))}
           
-          {/* Placeholder cards if not enough categories from API */}
+       
           {categories.filter(category => category !== 'All').length < 6 && Array(6 - categories.filter(category => category !== 'All').length).fill().map((_, index) => (
             <div key={`placeholder-${index}`} className="border border-gray-200 rounded-lg p-6 shadow-sm flex gap-2 bg-[#E5E7EB]">
               <div>
@@ -537,7 +541,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

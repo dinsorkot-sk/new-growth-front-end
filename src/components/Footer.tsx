@@ -41,11 +41,11 @@ export default function Footer() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-blue-300">About Us</a></li>
-                <li><a href="#" className="hover:text-blue-300">Our Courses</a></li>
-                <li><a href="#" className="hover:text-blue-300">Admissions</a></li>
-                <li><a href="#" className="hover:text-blue-300">News & Events</a></li>
-                <li><a href="#" className="hover:text-blue-300">Contact Us</a></li>
+                <li><a href="/about" className="hover:text-blue-300">About Us</a></li>
+                <li><a href="/courses" className="hover:text-blue-300">Our Courses</a></li>
+                <li><a href="/admissions" className="hover:text-blue-300">Admissions</a></li>
+                <li><a href="/newandevent" className="hover:text-blue-300">News & Events</a></li>
+                <li><a href="/contact" className="hover:text-blue-300">Contact Us</a></li>
               </ul>
             </div>
   
@@ -53,11 +53,10 @@ export default function Footer() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-blue-300">E-learning Materials</a></li>
-                <li><a href="#" className="hover:text-blue-300">FAQ</a></li>
-                <li><a href="#" className="hover:text-blue-300">Apply Now</a></li>
-                <li><a href="#" className="hover:text-blue-300">Student Portal</a></li>
-                <li><a href="#" className="hover:text-blue-300">Privacy Policy</a></li>
+                <li><a href="/elearning" className="hover:text-blue-300">E-learning Materials</a></li>
+                <li><a href="/qanda" className="hover:text-blue-300">Q and A</a></li>
+                <li><a href={process.env.NEXT_PUBLIC_REGISTER} className="hover:text-blue-300">Apply Now</a></li>
+                
               </ul>
             </div>
   

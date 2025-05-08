@@ -529,7 +529,7 @@ export default function Home() {
         </div>
       </div>
       
-      <div className="bg-white py-10 px-10 md:px-14">
+      {/* <div className="bg-white py-10 px-10 md:px-14">
         <div className="mx-auto">
           <h2 className="text-2xl font-bold text-blue-900 mb-8">กิจกรรมที่กำลังจะเกิดขึ้น</h2>
           
@@ -556,7 +556,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="mx-auto py-8 px-14 xl:px-20 bg-[#F9FAFB]">
       
