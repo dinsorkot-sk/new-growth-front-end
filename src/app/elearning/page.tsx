@@ -425,7 +425,7 @@ const downloadResource = async (resource) => {
       </div>
 
       {/* Search and filter bar */}
-      <div className="w-full bg-white py-8 md:flex items-center justify-between space-x-4 px-10">
+      <div className="w-full bg-white text-[black] py-8 md:flex items-center justify-between space-x-4 px-10">
         <input
           type="text"
           placeholder="Search resources..."

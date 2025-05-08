@@ -339,7 +339,7 @@ export default function Home() {
     
     <div className="flex flex-col">
         {/* เพิ่มฟิลด์กรอกชื่อ */}
-        <div className="mb-4">
+        <div className="mb-4 text-[black]">
             <label htmlFor="replyName" className="block text-sm font-medium text-gray-700 mb-1">ชื่อของคุณ</label>
             <input
                 type="text"
@@ -352,11 +352,11 @@ export default function Home() {
             />
         </div>
         
-        <textarea
+        <textarea 
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             placeholder="เขียนคำตอบของคุณที่นี่..."
-            className="w-full border border-gray-300 rounded-lg p-4 min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full text-[black] border border-gray-300 rounded-lg p-4 min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isSubmitting}
         ></textarea>
         

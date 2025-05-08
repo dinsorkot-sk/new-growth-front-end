@@ -18,9 +18,17 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
+const backgroundImages = [
+  "./img/images.jpg",
+  "./img/360_F_255226859_Rhqr5hflr2esVXHQE1sS1bWxmZxs0gWI.jpg",
+  "./img/premium_photo-1661767552224-ef72bb6b671f.jpg",
+];
+
 export default function Home() {
   const [newsList, setNewsList] = useState([]);
   const [courseList, setCourseList] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
 
   useEffect(() => {
     axios
@@ -44,6 +52,16 @@ export default function Home() {
       .catch((error) => {
         console.error("Error fetching news:", error);
       });
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % backgroundImages.length
+      );
+    }, 5000); // เปลี่ยนทุก 5 วินาที
+
+    return () => clearInterval(interval);
   }, []);
 
   const dateFormatter = (p_date) => {
@@ -75,7 +93,12 @@ export default function Home() {
 
   return (
     <div>
-      <div className="w-full bg-[#7d7d7e]">
+      <div
+        className="w-full bg-cover bg-center transition-all duration-1000"
+        style={{
+          backgroundImage: `url(${backgroundImages[currentImageIndex]})`,
+        }}
+      >
         <div className="flex min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
           <p className="text-4xl font-bold sm:text-3xl md:text-4xl ">
             โครงการผลิตบัณฑิตพันธุ์ใหม่
@@ -90,14 +113,14 @@ export default function Home() {
           {/* button */}
           <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
             <div className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-            <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
-              <div className="flex justify-evenly items-center w-full text-center text-sm">
-                เข้าร่วมโครงการ
-                <FontAwesomeIcon
-                  icon={faGreaterThan}
-                  style={{ color: "#ffffff", width: "13px", height: "13px" }}
-                />
-              </div>
+              <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
+                <div className="flex justify-evenly items-center w-full text-center text-sm">
+                  เข้าร่วมโครงการ
+                  <FontAwesomeIcon
+                    icon={faGreaterThan}
+                    style={{ color: "#ffffff", width: "13px", height: "13px" }}
+                  />
+                </div>
               </a>
             </div>
             <div className="px-6 h-12 bg-[#ffffff] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
@@ -541,11 +564,10 @@ export default function Home() {
               New Growth Engine
             </div>
             <div className="pt-4 md:pt-6">
-              
               <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
-              <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer hover:bg-gray-100 transition-all" >
-                เข้าร่วม
-              </div>
+                <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer hover:bg-gray-100 transition-all">
+                  เข้าร่วม
+                </div>
               </a>
             </div>
           </div>
