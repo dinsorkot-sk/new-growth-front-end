@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const visitorTracked = cookieStore.get('visitor_tracked');
   
   // ถ้ายังไม่มี cookie แสดงว่าเป็นผู้เข้าชมใหม่

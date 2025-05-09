@@ -1,3 +1,4 @@
+
 // 'use client'
 
 // import React, { useState, useEffect } from 'react';
@@ -11,12 +12,18 @@
 //   const [course, setCourse] = useState(null);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
+//   const [username, setUsername] = useState('');
+//   const [score, setScore] = useState(5);
+//   const [comment, setComment] = useState('');
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [submitMessage, setSubmitMessage] = useState('');
+//   const [submitError, setSubmitError] = useState('');
 
 //   useEffect(() => {
 //     const fetchCourseData = async () => {
 //       try {
 //         setLoading(true);
-//         const response = await fetch(`http://localhost:3001/api/course/${params}`);
+//         const response = await fetch(`${process.env.NEXT_PUBLIC_API}/course/${params}`);
         
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch course data');
@@ -49,6 +56,59 @@
 //       month: 'long',
 //       day: 'numeric'
 //     });
+//   };
+
+//   const handleSubmitReview = async (e) => {
+//     e.preventDefault();
+    
+//     if (!username.trim() || !comment.trim()) {
+//       setSubmitError('กรุณากรอกชื่อผู้ใช้และความคิดเห็น');
+//       return;
+//     }
+
+//     try {
+//       setIsSubmitting(true);
+//       setSubmitError('');
+      
+//       const reviewData = {
+//         username: username,
+//         score: score,
+//         comment: comment,
+//         course_id: course.id
+//       };
+      
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API}/review`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(reviewData),
+//       });
+      
+//       if (!response.ok) {
+//         throw new Error('Failed to submit review');
+//       }
+      
+//       const data = await response.json();
+//       console.log('Review submitted:', data);
+      
+//       // Reset form
+//       setUsername('');
+//       setScore(5);
+//       setComment('');
+//       setSubmitMessage('ส่งความคิดเห็นเรียบร้อยแล้ว');
+      
+//       // Clear success message after 3 seconds
+//       setTimeout(() => {
+//         setSubmitMessage('');
+//       }, 3000);
+      
+//     } catch (err) {
+//       console.error('Error submitting review:', err);
+//       setSubmitError('เกิดข้อผิดพลาดในการส่งความคิดเห็น กรุณาลองใหม่อีกครั้ง');
+//     } finally {
+//       setIsSubmitting(false);
+//     }
 //   };
 
 //   if (loading) {
@@ -99,12 +159,6 @@
         
 //         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
 //           <div className="md:w-1/2 ">
-//             {/* {course.industries && course.industries.length > 0 && (
-//               <span className="bg-[#39A9DB] text-white text-xs font-semibold px-3 py-1 rounded-xl mb-4 inline-block ">
-//                 {course.industries[0].name}
-//               </span>
-//             )} */}
-            
 //             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center">{course.name}</h1>
             
 //             <div className="flex items-center mb-2 justify-center">
@@ -146,113 +200,130 @@
 //                 <p className="text-gray-700">{course.description || 'ไม่มีข้อมูล'}</p>
 //               </div>
               
-              
-              
 //               {/* Reviews Section */}
-//               <div>
-//                 <h2 className="text-xl font-bold mb-4">รีวิวจากผู้เรียน</h2>
+//             <div className="mb-8">
+//   <h2 className="text-xl font-bold mb-4">รีวิวจากผู้เรียน</h2>
+//   {!course.review || course.review.length === 0 ? (
+//     <div className="text-center py-6 text-gray-500">ยังไม่มีรีวิวสำหรับคอร์สนี้</div>
+//   ) : (
+//     course.review.map(review => (
+//       <div key={review.id} className="border rounded-lg p-4 mb-4 shadow-sm hover:shadow transition-shadow">
+//         <div className="flex items-start">
+//           <div 
+//             className="text-white rounded-full w-10 h-10 flex items-center justify-center mr-3"
+//             style={{ backgroundColor: review.avatarColor || "#4F46E5" }} // ใช้สีเริ่มต้นถ้าไม่มี avatarColor
+//           >
+//             <span className="text-lg font-medium">{review.username ? review.username.charAt(0).toUpperCase() : "U"}</span>
+//           </div>
+//           <div className="flex-grow">
+//             <div className="flex justify-between items-center mb-1">
+//               <span className="font-medium">{review.username}</span>
+//               <div className="flex items-center">
+//                 <span className="text-sm text-gray-500">{review.created_at ? new Date(review.created_at).toLocaleDateString('th-TH') : review.date}</span>
+//               </div>
+//             </div>
+//             <div className="flex items-center mb-2">
+//               {[1, 2, 3, 4, 5].map((star) => (
+//                 <Star
+//                   key={star}
+//                   className="h-4 w-4"
+//                   fill={star <= review.score ? "#FFB800" : "none"}
+//                   stroke={star <= review.score ? "#FFB800" : "#D1D5DB"}
+//                 />
+//               ))}
+//               <span className="ml-2 text-sm">{review.score}/5</span>
+//             </div>
+//             <p className="text-gray-700">{review.comment}</p>
+//           </div>
+//         </div>
+//       </div>
+//     ))
+//   )}
+// </div>
+              
+//               {/* Comment Form Section */}
+//               <div className="bg-white border rounded-lg p-6 shadow-sm">
+//                 <h3 className="text-lg font-bold mb-4">เพิ่มความคิดเห็นของคุณ</h3>
                 
-//                 {/* Review 1 */}
-//                 <div className="border rounded-lg p-4 mb-4">
-//                   <div className="flex items-start">
-//                     <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-//                       <span>j</span>
-//                     </div>
-//                     <div className="flex-grow">
-//                       <div className="flex justify-between items-center mb-1">
-//                         <span className="font-medium">john_doe</span>
-//                         <div className="flex items-center">
-//                           <span className="text-sm text-gray-500 mr-2">7 พฤษภาคม 2568</span>
-//                           <button className="text-red-500">
-//                             <Trash className="h-4 w-4" />
-//                           </button>
-//                         </div>
-//                       </div>
-//                       <div className="flex items-center mb-2">
-//                         {[1, 2, 3, 4, 5].map((star, i) => (
+//                 {submitMessage && (
+//                   <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+//                     {submitMessage}
+//                   </div>
+//                 )}
+                
+//                 {submitError && (
+//                   <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+//                     {submitError}
+//                   </div>
+//                 )}
+                
+//                 <form onSubmit={handleSubmitReview}>
+//                   <div className="mb-4">
+//                     <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+//                       ชื่อผู้ใช้ *
+//                     </label>
+//                     <input
+//                       type="text"
+//                       id="username"
+//                       value={username}
+//                       onChange={(e) => setUsername(e.target.value)}
+//                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                       required
+//                     />
+//                   </div>
+                  
+//                   <div className="mb-4">
+//                     <label className="block text-sm font-medium text-gray-700 mb-1">
+//                       คะแนน *
+//                     </label>
+//                     <div className="flex items-center">
+//                       {[1, 2, 3, 4, 5].map((star) => (
+//                         <button
+//                           key={star}
+//                           type="button"
+//                           onClick={() => setScore(star)}
+//                           className="focus:outline-none mr-1"
+//                         >
 //                           <Star 
-//                             key={i}
-//                             className="h-4 w-4" 
-//                             fill={star <= 4.5 ? "#FFB800" : "none"}
-//                             stroke={star <= 4.5 ? "#FFB800" : "#D1D5DB"}
+//                             className="h-6 w-6 cursor-pointer" 
+//                             fill={star <= score ? "#FFB800" : "none"}
+//                             stroke={star <= score ? "#FFB800" : "#D1D5DB"}
 //                           />
-//                         ))}
-//                         <span className="ml-2 text-sm">4.5/5</span>
-//                       </div>
-//                       <p className="text-gray-700">คอร์สดีมากๆ</p>
+//                         </button>
+//                       ))}
+//                       <span className="ml-2 text-sm">{score}/5</span>
 //                     </div>
 //                   </div>
-//                 </div>
-                
-//                 {/* Review 2 */}
-//                 <div className="border rounded-lg p-4 mb-4">
-//                   <div className="flex items-start">
-//                     <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-//                       <span>j</span>
-//                     </div>
-//                     <div className="flex-grow">
-//                       <div className="flex justify-between items-center mb-1">
-//                         <span className="font-medium">john_doe</span>
-//                         <div className="flex items-center">
-//                           <span className="text-sm text-gray-500 mr-2">7 พฤษภาคม 2568</span>
-//                           <button className="text-red-500">
-//                             <Trash className="h-4 w-4" />
-//                           </button>
-//                         </div>
-//                       </div>
-//                       <div className="flex items-center mb-2">
-//                         {[1, 2, 3, 4, 5].map((star, i) => (
-//                           <Star 
-//                             key={i}
-//                             className="h-4 w-4" 
-//                             fill={star <= 4.5 ? "#FFB800" : "none"}
-//                             stroke={star <= 4.5 ? "#FFB800" : "#D1D5DB"}
-//                           />
-//                         ))}
-//                         <span className="ml-2 text-sm">4.5/5</span>
-//                       </div>
-//                       <p className="text-gray-700">คอร์สดีมากๆ</p>
-//                     </div>
+                  
+//                   <div className="mb-4">
+//                     <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
+//                       ความคิดเห็น *
+//                     </label>
+//                     <textarea
+//                       id="comment"
+//                       value={comment}
+//                       onChange={(e) => setComment(e.target.value)}
+//                       rows="4"
+//                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                       required
+//                     ></textarea>
 //                   </div>
-//                 </div>
-                
-//                 {/* Review 3 */}
-//                 <div className="border rounded-lg p-4">
-//                   <div className="flex items-start">
-//                     <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-//                       <span>j</span>
-//                     </div>
-//                     <div className="flex-grow">
-//                       <div className="flex justify-between items-center mb-1">
-//                         <span className="font-medium">john_doe</span>
-//                         <div className="flex items-center">
-//                           <span className="text-sm text-gray-500 mr-2">7 พฤษภาคม 2568</span>
-//                           <button className="text-red-500">
-//                             <Trash className="h-4 w-4" />
-//                           </button>
-//                         </div>
-//                       </div>
-//                       <div className="flex items-center mb-2">
-//                         {[1, 2, 3, 4, 5].map((star, i) => (
-//                           <Star 
-//                             key={i}
-//                             className="h-4 w-4" 
-//                             fill={star <= 5 ? "#FFB800" : "none"}
-//                             stroke={star <= 5 ? "#FFB800" : "#D1D5DB"}
-//                           />
-//                         ))}
-//                         <span className="ml-2 text-sm">5/5</span>
-//                       </div>
-//                       <p className="text-gray-700">คอร์สดีมากๆ</p>
-//                     </div>
-//                   </div>
-//                 </div>
+                  
+//                   <button
+//                     type="submit"
+//                     disabled={isSubmitting}
+//                     className={`w-full py-2 px-4 rounded-md text-white font-medium ${
+//                       isSubmitting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+//                     }`}
+//                   >
+//                     {isSubmitting ? 'กำลังส่ง...' : 'ส่งความคิดเห็น'}
+//                   </button>
+//                 </form>
 //               </div>
 //             </div>
             
 //             {/* Right Column - Sidebar */}
 //             <div>
-//               {/* Course Categories */}
 //               {/* Additional Info Section */}
 //               {course.additional_info && (
 //                 <div className="mb-8">
@@ -395,6 +466,27 @@ export default function CourseDetail({ params }) {
       const data = await response.json();
       console.log('Review submitted:', data);
       
+      // สร้าง Object รีวิวใหม่ที่จะแสดงทันที
+      const newReview = {
+        id: data.id || Date.now(), // ใช้ ID จาก response หรือใช้ timestamp ถ้าไม่มี
+        username: username,
+        score: score,
+        comment: comment,
+        created_at: new Date().toISOString(),
+        // กำหนดสีสุ่มสำหรับ avatar
+        avatarColor: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
+      };
+      
+      // อัปเดต state ของ course โดยเพิ่มรีวิวใหม่เข้าไป
+      setCourse(prevCourse => {
+        // ถ้ายังไม่มี property review หรือเป็น null ให้สร้างเป็น array ใหม่
+        const currentReviews = prevCourse.review || [];
+        return {
+          ...prevCourse,
+          review: [newReview, ...currentReviews] // เพิ่มรีวิวใหม่ไว้บนสุด
+        };
+      });
+      
       // Reset form
       setUsername('');
       setScore(5);
@@ -444,6 +536,16 @@ export default function CourseDetail({ params }) {
     );
   }
 
+  // คำนวณคะแนนเฉลี่ยจากรีวิวทั้งหมด
+  const calculateAverageRating = () => {
+    if (!course.review || course.review.length === 0) return 0;
+    
+    const sum = course.review.reduce((total, review) => total + review.score, 0);
+    return (sum / course.review.length).toFixed(1);
+  };
+
+  const averageRating = calculateAverageRating();
+  const reviewCount = course.review ? course.review.length : 0;
   const updateDate = new Date(course.updated_at || course.created_at);
   const formattedUpdateDate = formatDate(updateDate);
 
@@ -469,11 +571,11 @@ export default function CourseDetail({ params }) {
                 <Star 
                   key={star}
                   className="h-5 w-5" 
-                  fill={star <= 4.5 ? "#FFB800" : "none"}
-                  stroke={star <= 4.5 ? "#FFB800" : "#D1D5DB"}
+                  fill={star <= averageRating ? "#FFB800" : "none"}
+                  stroke={star <= averageRating ? "#FFB800" : "#D1D5DB"}
                 />
               ))}
-              <span className="ml-2">(3 รีวิว)</span>
+              <span className="ml-2">({reviewCount} รีวิว)</span>
             </div>
             
             <div className="text-sm text-center">
@@ -504,105 +606,45 @@ export default function CourseDetail({ params }) {
               </div>
               
               {/* Reviews Section */}
-              <div className="mb-8">
-                <h2 className="text-xl font-bold mb-4">รีวิวจากผู้เรียน</h2>
-                
-                {/* Review 1 */}
-                <div className="border rounded-lg p-4 mb-4">
-                  <div className="flex items-start">
-                    <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-                      <span>j</span>
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">john_doe</span>
-                        <div className="flex items-center">
-                          <span className="text-sm text-gray-500 mr-2">7 พฤษภาคม 2568</span>
-                          <button className="text-red-500">
-                            <Trash className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-2">
-                        {[1, 2, 3, 4, 5].map((star, i) => (
-                          <Star 
-                            key={i}
-                            className="h-4 w-4" 
-                            fill={star <= 4.5 ? "#FFB800" : "none"}
-                            stroke={star <= 4.5 ? "#FFB800" : "#D1D5DB"}
-                          />
-                        ))}
-                        <span className="ml-2 text-sm">4.5/5</span>
-                      </div>
-                      <p className="text-gray-700">คอร์สดีมากๆ</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Review 2 */}
-                <div className="border rounded-lg p-4 mb-4">
-                  <div className="flex items-start">
-                    <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-                      <span>j</span>
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">john_doe</span>
-                        <div className="flex items-center">
-                          <span className="text-sm text-gray-500 mr-2">7 พฤษภาคม 2568</span>
-                          <button className="text-red-500">
-                            <Trash className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-2">
-                        {[1, 2, 3, 4, 5].map((star, i) => (
-                          <Star 
-                            key={i}
-                            className="h-4 w-4" 
-                            fill={star <= 4.5 ? "#FFB800" : "none"}
-                            stroke={star <= 4.5 ? "#FFB800" : "#D1D5DB"}
-                          />
-                        ))}
-                        <span className="ml-2 text-sm">4.5/5</span>
-                      </div>
-                      <p className="text-gray-700">คอร์สดีมากๆ</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Review 3 */}
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-start">
-                    <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
-                      <span>j</span>
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">john_doe</span>
-                        <div className="flex items-center">
-                          <span className="text-sm text-gray-500 mr-2">7 พฤษภาคม 2568</span>
-                          <button className="text-red-500">
-                            <Trash className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-2">
-                        {[1, 2, 3, 4, 5].map((star, i) => (
-                          <Star 
-                            key={i}
-                            className="h-4 w-4" 
-                            fill={star <= 5 ? "#FFB800" : "none"}
-                            stroke={star <= 5 ? "#FFB800" : "#D1D5DB"}
-                          />
-                        ))}
-                        <span className="ml-2 text-sm">5/5</span>
-                      </div>
-                      <p className="text-gray-700">คอร์สดีมากๆ</p>
-                    </div>
-                  </div>
-                </div>
+            <div className="mb-8">
+  <h2 className="text-xl font-bold mb-4">รีวิวจากผู้เรียน</h2>
+  {!course.review || course.review.length === 0 ? (
+    <div className="text-center py-6 text-gray-500">ยังไม่มีรีวิวสำหรับคอร์สนี้</div>
+  ) : (
+    course.review.map(review => (
+      <div key={review.id} className="border rounded-lg p-4 mb-4 shadow-sm hover:shadow transition-shadow">
+        <div className="flex items-start">
+          <div 
+            className="text-white rounded-full w-10 h-10 flex items-center justify-center mr-3"
+            style={{ backgroundColor: review.avatarColor || `hsl(${(review.username.charCodeAt(0) * 10) % 360}, 70%, 50%)` }}
+          >
+            <span className="text-lg font-medium">{review.username ? review.username.charAt(0).toUpperCase() : "U"}</span>
+          </div>
+          <div className="flex-grow">
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-medium">{review.username}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-500">{review.created_at ? new Date(review.created_at).toLocaleDateString('th-TH') : review.date}</span>
               </div>
+            </div>
+            <div className="flex items-center mb-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className="h-4 w-4"
+                  fill={star <= review.score ? "#FFB800" : "none"}
+                  stroke={star <= review.score ? "#FFB800" : "#D1D5DB"}
+                />
+              ))}
+              <span className="ml-2 text-sm">{review.score}/5</span>
+            </div>
+            <p className="text-gray-700">{review.comment}</p>
+          </div>
+        </div>
+      </div>
+    ))
+  )}
+</div>
               
               {/* Comment Form Section */}
               <div className="bg-white border rounded-lg p-6 shadow-sm">

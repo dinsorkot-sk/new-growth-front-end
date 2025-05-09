@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState, useRef, useEffect } from 'react';
 import Navbar from "../components/Navbar";
+import { useRouter } from 'next/navigation';
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -54,15 +55,15 @@ export default function Home() {
       });
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % backgroundImages.length
-      );
-    }, 5000); // เปลี่ยนทุก 5 วินาที
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentImageIndex(
+  //       (prevIndex) => (prevIndex + 1) % backgroundImages.length
+  //     );
+  //   }, 5000); // เปลี่ยนทุก 5 วินาที
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const dateFormatter = (p_date) => {
     const date = new Date(p_date);
@@ -91,46 +92,157 @@ export default function Home() {
   );
   const totalNewsPages = Math.ceil(newsList.length / newsPerPage);
 
+
+  const [isDragging, setIsDragging] = useState(false);
+  const sliderRef = useRef(null);
+  const startXRef = useRef(null);
+  
+  // Sample background images
+  const backgroundImages = [
+    "./img/images.jpg",
+  "./img/360_F_255226859_Rhqr5hflr2esVXHQE1sS1bWxmZxs0gWI.jpg",
+  "./img/premium_photo-1661767552224-ef72bb6b671f.jpg",
+  ];
+  
+  const goToPrevious = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? backgroundImages.length - 1 : prevIndex - 1
+    );
+  };
+  
+  const goToNext = () => {
+    setCurrentImageIndex((prevIndex) => 
+      (prevIndex + 1) % backgroundImages.length
+    );
+  };
+
+  // Start dragging (both touch and mouse)
+  const handleDragStart = (clientX) => {
+    startXRef.current = clientX;
+    setIsDragging(true);
+  };
+
+  // End dragging and calculate slide direction
+  const handleDragEnd = (clientX) => {
+    if (!isDragging || startXRef.current === null) return;
+    
+    const diffX = startXRef.current - clientX;
+    // If dragged right -> show previous image, if dragged left -> show next image
+    if (Math.abs(diffX) > 50) { // Set minimum drag distance (threshold)
+      if (diffX > 0) {
+        goToNext();
+      } else {
+        goToPrevious();
+      }
+    }
+    
+    setIsDragging(false);
+    startXRef.current = null;
+  };
+
+  // Touch Events
+  const handleTouchStart = (e) => {
+    handleDragStart(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (startXRef.current === null) return;
+    handleDragEnd(e.changedTouches[0].clientX);
+  };
+
+  // Mouse Events
+  const handleMouseDown = (e) => {
+    handleDragStart(e.clientX);
+  };
+
+  const handleMouseUp = (e) => {
+    if (startXRef.current === null) return;
+    handleDragEnd(e.clientX);
+  };
+
+  const handleMouseLeave = (e) => {
+    if (isDragging) {
+      handleDragEnd(e.clientX);
+    }
+  };
+
+  // Prevent text selection during dragging
+  useEffect(() => {
+    const preventDefault = (e) => {
+      if (isDragging) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('selectstart', preventDefault);
+    return () => {
+      document.removeEventListener('selectstart', preventDefault);
+    };
+  }, [isDragging]);
+
+  const router = useRouter();
+  const handleCoureseViewDetails = (courseId) => {
+    router.push(`/courses/${courseId}`);
+  };
+  const handleNewsViewDetails = (newId) => {
+    router.push(`/newandevent/${newId}`);
+  };
   return (
     <div>
       <div
-        className="w-full bg-cover bg-center transition-all duration-1000"
-        style={{
-          backgroundImage: `url(${backgroundImages[currentImageIndex]})`,
-        }}
-      >
-        <div className="flex min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
-          <p className="text-4xl font-bold sm:text-3xl md:text-4xl ">
-            โครงการผลิตบัณฑิตพันธุ์ใหม่
-            <br className="hidden sm:block" /> 2567
-          </p>
-          <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl ">
-            สร้างคนที่มีสมรรถนะสูงสำหรับอุตสาหกรรม New Growth Engine ตามนโยบาย
-            Thailand 4.0 <br className="hidden sm:block" />
-            และปฏิรูปการอุดมศึกษาไทย
-          </p>
+  ref={sliderRef}
+  className="w-full bg-cover bg-center transition-all duration-1000 relative select-none"
+  style={{
+    backgroundImage: `url(${backgroundImages[currentImageIndex]})`,
+    cursor: isDragging ? 'grabbing' : 'grab',
+    position: 'relative', // เพิ่ม position relative เพื่อให้ absolute element ทำงานได้ถูกต้อง
+  }}
+  onTouchStart={handleTouchStart}
+  onTouchEnd={handleTouchEnd}
+  onMouseDown={handleMouseDown}
+  onMouseUp={handleMouseUp}
+  onMouseLeave={handleMouseLeave}
+>
+  {/* เพิ่มชั้น overlay สำหรับทำให้พื้นหลังโปร่งแสง */}
+  <div 
+    className="absolute inset-0" 
+    style={{ 
+      backgroundColor: 'rgba(0, 0, 0, 0.4)', // ปรับความเข้มได้ตามต้องการ (0.4 = 40% opacity)
+    }}
+  ></div>
+  
+  {/* เนื้อหาข้อความ (จะทับชั้น overlay) */}
+  <div className="relative z-10 flex min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
+    <p className="text-4xl font-bold sm:text-3xl md:text-4xl text-white">
+      โครงการผลิตบัณฑิตพันธุ์ใหม่
+      <br className="hidden sm:block" /> 2567
+    </p>
+    <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white">
+      สร้างคนที่มีสมรรถนะสูงสำหรับอุตสาหกรรม New Growth Engine ตามนโยบาย
+      Thailand 4.0 <br className="hidden sm:block" />
+      และปฏิรูปการอุดมศึกษาไทย
+    </p>
 
-          {/* button */}
-          <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
-            <div className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-              <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
-                <div className="flex justify-evenly items-center w-full text-center text-sm">
-                  เข้าร่วมโครงการ
-                  <FontAwesomeIcon
-                    icon={faGreaterThan}
-                    style={{ color: "#ffffff", width: "13px", height: "13px" }}
-                  />
-                </div>
-              </a>
-            </div>
-            <div className="px-6 h-12 bg-[#ffffff] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-              <div className="flex justify-evenly items-center w-full text-center text-sm text-[#0A2463]">
-                ดูรายละเอียด
-              </div>
-            </div>
+    <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
+      <div className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
+        <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
+          <div className="flex justify-evenly items-center w-full text-center text-sm">
+            เข้าร่วมโครงการ
+            <FontAwesomeIcon
+              icon={faGreaterThan}
+              style={{ color: "#ffffff", width: "13px", height: "13px" }}
+            />
           </div>
+        </a>
+      </div>
+      <div className="px-6 h-12 bg-[#ffffff] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
+        <div className="flex justify-evenly items-center w-full text-center text-sm text-[#0A2463]">
+          ดูรายละเอียด
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       {/* ส่วนที่2 */}
       <div className="w-full bg-[#0A2463] md:px-6 lg:px-8">
@@ -328,7 +440,7 @@ export default function Home() {
                         </div>
                       </div>
 
-                      <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]">
+                      <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]" onClick={() => handleCoureseViewDetails(course.id)}>
                         View Details{" "}
                         <FontAwesomeIcon
                           icon={faArrowRight}
@@ -438,7 +550,7 @@ export default function Home() {
                         {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
                       </div>
 
-                      <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold">
+                      <div className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold" onClick={() => handleNewsViewDetails(news.id)}>
                         Read More
                         <FontAwesomeIcon
                           icon={faArrowRight}

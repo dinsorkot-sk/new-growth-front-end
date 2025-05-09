@@ -259,7 +259,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, ArrowRight, Calendar } from 'lucide-react';
-
+import { useRouter } from 'next/navigation';
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
@@ -427,6 +427,11 @@ export default function Home() {
     setDisplayCount(prevCount => Math.min(prevCount + 8, images.length));
   };
 
+ const router = useRouter();
+  const handleViewDetails = (newId) => {
+    router.push(`/newandevent/${newId}`);
+  };
+
   return (
     <div>
       <div className="bg-[#0A2463] h-70 text-white py-10 md:py-20 px-14 xl:px-20">
@@ -502,7 +507,7 @@ export default function Home() {
                       </div>
                       
                       <div className="px-4 pb-4">
-                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800">
+                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800"  onClick={() => handleViewDetails(news.id)}>
                           อ่านเพิ่มเติม
                           <ArrowRight className="h-4 w-4 ml-1" />
                         </button>

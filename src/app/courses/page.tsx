@@ -387,7 +387,7 @@ export default function Home() {
           <div className="mx-auto">
             {/* Search and Filter Bar */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-              <div className="relative w-full md:w-1/2">
+              <div className="relative w-full ">
                 <input
                   type="text"
                   placeholder="Search courses or instructors..."
