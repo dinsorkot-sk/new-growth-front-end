@@ -207,7 +207,7 @@ export default function Home() {
                             <div className="overflow-hidden">
                                 {faqData.length === 0 ? (
                                     <div className="text-center py-10">
-                                        <p className="text-lg">ไม่พบข้อมูลกระทู้คำถาม</p>
+                                        <p className="text-lg text-[black]">ไม่พบข้อมูลกระทู้คำถาม</p>
                                     </div>
                                 ) : (
                                     faqData.map((faq, index) => (
