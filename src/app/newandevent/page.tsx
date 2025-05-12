@@ -423,8 +423,12 @@ export default function Home() {
     }
   };
 
-  const handleLoadMore = () => {
-    setDisplayCount(prevCount => Math.min(prevCount + 8, images.length));
+  // const handleLoadMore = () => {
+  //   setDisplayCount(prevCount => Math.min(prevCount + 8, images.length));
+  // };
+
+   const handleViewAllGallery = () => {
+    router.push('/gallery');
   };
 
  const router = useRouter();
@@ -583,10 +587,10 @@ export default function Home() {
         </div>
         
       
-        {displayCount < images.length && (
+        {0 < images.length && ( //displayCount
           <div className="flex justify-center">
             <button 
-              onClick={handleLoadMore}
+              onClick={handleViewAllGallery}
               className="bg-blue-400 hover:bg-blue-500 text-white py-2 px-8 rounded-md transition-colors duration-300">
               ดูเพิ่มเติม
             </button>
