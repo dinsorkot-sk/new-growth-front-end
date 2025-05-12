@@ -601,13 +601,13 @@ export default function CourseDetail({ params }) {
             <div className="md:col-span-2">
               {/* Course Content Section */}
               <div className="mb-8">
-                <h2 className="text-xl font-bold mb-4">เนื้อหาหลักสูตร</h2>
+                <h2 className="text-xl font-bold mb-4 text-[black]">เนื้อหาหลักสูตร</h2>
                 <p className="text-gray-700">{course.description || 'ไม่มีข้อมูล'}</p>
               </div>
               
               {/* Reviews Section */}
             <div className="mb-8">
-  <h2 className="text-xl font-bold mb-4">รีวิวจากผู้เรียน</h2>
+  <h2 className="text-xl font-bold mb-4 text-[black]">รีวิวจากผู้เรียน</h2>
   {!course.review || course.review.length === 0 ? (
     <div className="text-center py-6 text-gray-500">ยังไม่มีรีวิวสำหรับคอร์สนี้</div>
   ) : (
@@ -647,8 +647,8 @@ export default function CourseDetail({ params }) {
 </div>
               
               {/* Comment Form Section */}
-              <div className="bg-white border rounded-lg p-6 shadow-sm">
-                <h3 className="text-lg font-bold mb-4">เพิ่มความคิดเห็นของคุณ</h3>
+              <div className="bg-white border rounded-lg p-6 shadow-sm ">
+                <h3 className="text-lg text-[black] font-bold mb-4">เพิ่มความคิดเห็นของคุณ</h3>
                 
                 {submitMessage && (
                   <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -732,20 +732,20 @@ export default function CourseDetail({ params }) {
               {/* Additional Info Section */}
               {course.additional_info && (
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold mb-4">ข้อมูลเพิ่มเติม</h2>
+                  <h2 className="text-xl font-bold mb-4 text-[black]">ข้อมูลเพิ่มเติม</h2>
                   <p className="text-gray-700">{course.additional_info}</p>
                 </div>
               )}
               
               {/* Course Instructor */}
               <div className="mb-6">
-                <h2 className="text-xl font-bold mb-4">ผู้สอน</h2>
+                <h2 className="text-xl font-bold mb-4 text-[black]">ผู้สอน</h2>
                 {course.instructor ? (
                   <div className="flex items-center">
-                    <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                    <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mr-3 ">
                       <span>{course.instructor.charAt(0)}</span>
                     </div>
-                    <span>{course.instructor}</span>
+                    <span className='text-[black]'>{course.instructor}</span>
                   </div>
                 ) : (
                   <div className="text-gray-500 italic">ไม่มีข้อมูลผู้สอน</div>
@@ -754,7 +754,7 @@ export default function CourseDetail({ params }) {
               
               {/* Course Publication Date */}
               <div className="mb-6">
-                <h2 className="text-xl font-bold mb-4">วันที่เผยแพร่</h2>
+                <h2 className="text-xl font-bold mb-4 text-[black]">วันที่เผยแพร่</h2>
                 <div className="text-gray-700">{formatDate(course.created_at)}</div>
               </div>
 
