@@ -372,7 +372,21 @@ export default function Home() {
     return matchesSearch && matchesFilter;
   });
 
-  const handleViewDetails = (courseId) => {
+  const handleViewDetails = (courseId,view_count) => {
+  //   fetch(`${process.env.NEXT_PUBLIC_API}/course/view/${courseId}`, {
+  //   method: 'PUT',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({ 
+  //     view_count: view_count + 1 
+  //   }),
+
+    
+  // }).catch(error => {
+  //   console.error('Error updating view count:', error);
+  //   // ในกรณีนี้ ถึงแม้จะมีข้อผิดพลาด ผู้ใช้ก็อยู่ที่หน้ารายละเอียดแล้ว
+  // });
     router.push(`/courses/${courseId}`);
   };
   return (
@@ -469,7 +483,7 @@ export default function Home() {
                       </div>
                       
                       <div className="border-t border-gray-100 p-4">
-                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800"  onClick={() => handleViewDetails(course.id)}>
+                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800"  onClick={() => handleViewDetails(course.id,course.view_count)}>
                           View Details
                           <ArrowRight className="h-4 w-4 ml-1" />
                         </button>

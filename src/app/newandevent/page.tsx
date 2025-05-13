@@ -432,7 +432,23 @@ export default function Home() {
   };
 
  const router = useRouter();
-  const handleViewDetails = (newId) => {
+  const handleViewDetails = (newId,view_count) => {
+
+  // อัพเดต view_count ในแบบ background (ไม่ใช้ await)
+  fetch(`${process.env.NEXT_PUBLIC_API}/news/view/${newId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ 
+      view_count: view_count + 1 
+    }),
+
+    
+  }).catch(error => {
+    console.error('Error updating view count:', error);
+    // ในกรณีนี้ ถึงแม้จะมีข้อผิดพลาด ผู้ใช้ก็อยู่ที่หน้ารายละเอียดแล้ว
+  });
     router.push(`/newandevent/${newId}`);
   };
 
@@ -511,7 +527,7 @@ export default function Home() {
                       </div>
                       
                       <div className="px-4 pb-4">
-                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800"  onClick={() => handleViewDetails(news.id)}>
+                        <button className="flex items-center text-blue-600 font-medium text-sm hover:text-blue-800"  onClick={() => handleViewDetails(news.id,news.view_count)}>
                           อ่านเพิ่มเติม
                           <ArrowRight className="h-4 w-4 ml-1" />
                         </button>
