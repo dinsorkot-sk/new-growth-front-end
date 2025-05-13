@@ -18,6 +18,7 @@ import {
   faCalendar,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+import { QRCodeSVG } from 'qrcode.react';
 
 const backgroundImages = [
   "./img/images.jpg",
@@ -29,6 +30,7 @@ export default function Home() {
   const [newsList, setNewsList] = useState([]);
   const [courseList, setCourseList] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [admission, setAdmission] = useState(null);
 
   useEffect(() => {
     axios
@@ -51,6 +53,19 @@ export default function Home() {
       })
       .catch((error) => {
         console.error("Error fetching news:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API}/admission`)
+      .then((res) => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setAdmission(res.data[0]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching admission:", error);
       });
   }, []);
 
@@ -211,96 +226,36 @@ export default function Home() {
           }}
         ></div>
 
-        {/* เนื้อหาข้อความ (จะทับชั้น overlay) */}
-
-        {/* <div className="relative z-10 flex min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
-          <div className="fixed top-30 right-30 w-[100px] h-[100px]">
-            <img
-              src="/img/MJU_LOGO.png"
-              className="w-full h-full object-contain"
-              alt="MJU Logo"
-            />
-          </div>
-          <p className="text-4xl font-bold sm:text-3xl md:text-4xl text-white">
-            โครงการผลิตบัณฑิตพันธุ์ใหม่
-            <br className="hidden sm:block" /> 2567
-          </p>
-          <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white">
-            สร้างคนที่มีสมรรถนะสูงสำหรับอุตสาหกรรม New Growth Engine ตามนโยบาย
-            Thailand 4.0 <br className="hidden sm:block" />
-            และปฏิรูปการอุดมศึกษาไทย
-          </p>
-
-          <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
-            <div className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-              <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
-                <div className="flex justify-evenly items-center w-full text-center text-sm">
-                  เข้าร่วมโครงการ
-                  <FontAwesomeIcon
-                    icon={faGreaterThan}
-                    style={{ color: "#ffffff", width: "13px", height: "13px" }}
-                  />
-                </div>
-              </a>
-            </div>
-            <div className="px-6 h-12 bg-[#ffffff] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-              <div className="flex justify-evenly items-center w-full text-center text-sm text-[#0A2463]">
-                ดูรายละเอียด
-              </div>
-            </div>
-          </div>
-        </div> */}
-
         <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
-          {/* Logo positioning - different for mobile/tablet vs desktop */}
           <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4">
             <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-              <img
-                src="/img/MJU_LOGO.png"
-                className="w-full h-full object-contain"
-                alt="MJU Logo"
-              />
+              <img src="/img/MJU_LOGO.png" className="w-full h-full object-contain" alt="MJU Logo" />
             </div>
             <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-              <img
-                src="/img/Thai_MHESI.png"
-                className="w-full h-full object-contain"
-                alt="MJU Logo"
-              />
+              <img src="/img/Thai_MHESI.png" className="w-full h-full object-contain" alt="MHESI Logo" />
             </div>
           </div>
-
           <div className="mt-24 md:mt-16 lg:mt-0">
-            <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white">
-              โครงการผลิตบัณฑิตพันธุ์ใหม่
-              <br className="hidden sm:block" /> 2567
+            <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
+              โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (Non-Degree) ปี 2568 รุ่นที่ 2
             </p>
-            <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white">
-              สร้างคนที่มีสมรรถนะสูงสำหรับอุตสาหกรรม New Growth Engine ตามนโยบาย
-              Thailand 4.0 <br className="hidden sm:block" />
-              และปฏิรูปการอุดมศึกษาไทย
+            <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white drop-shadow">
+              หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
             </p>
             <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
-              <div className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-                <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
-                  <div className="flex justify-evenly items-center w-full text-center text-sm">
-                    เข้าร่วมโครงการ
-                    <FontAwesomeIcon
-                      icon={faGreaterThan}
-                      style={{
-                        color: "#ffffff",
-                        width: "13px",
-                        height: "13px",
-                      }}
-                    />
-                  </div>
-                </a>
-              </div>
-              <div className="px-6 h-12 bg-[#ffffff] hover:bg-[#f0f0f0] transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md">
-                <div className="flex justify-evenly items-center w-full text-center text-sm text-[#0A2463]">
-                  ดูรายละเอียด
+              <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
+                <div className="flex justify-evenly items-center w-full text-center text-sm">
+                  สมัครเข้าร่วมโครงการ
+                  <FontAwesomeIcon icon={faGreaterThan} style={{ color: "#ffffff", width: "13px", height: "13px" }} />
                 </div>
-              </div>
+              </a>
+              <a href="#course-info" className="px-6 h-12 bg-[#ffffff] hover:bg-[#f0f0f0] transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">
+                ดูรายละเอียดหลักสูตร
+              </a>
+            </div>
+            <div className="mt-6 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+              <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">รับจำนวนจำกัด 40 ท่าน/รุ่น</span>
+              <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">เรียนฟรี! ไม่มีค่าใช้จ่าย</span>
             </div>
           </div>
         </div>
@@ -309,124 +264,46 @@ export default function Home() {
       {/* ส่วนที่2 */}
       <div className="w-full bg-[#0A2463] md:px-6 lg:px-8">
         <div className="flex flex-col justify-center items-center py-12 md:py-16 lg:h-[272px] max-w-4xl mx-auto">
-          <div className="text-2xl font-bold ">เป้าหมายของเรา</div>
-          <p className="pt-8 md:pt-8 text-center text-sm md:text-base">
-            เพื่อสร้างบุคลากรที่มีประสิทธิภาพสูงในอุตสาหกรรม New Growth Engine
-            ตามนโยบายไทยแลนด์ 4.0
-            <br className="hidden md:block" />{" "}
-            และปฏิรูปการศึกษาระดับอุดมศึกษาของไทย
-            โดยพัฒนาบัณฑิตให้มีทักษะที่ล้ำสมัย
-            <br className="hidden md:block" />
-            พร้อมที่จะขับเคลื่อนการสร้างสรรค์นวัตกรรมและการเติบโตทางเศรษฐกิจ
-          </p>
+          <div className="text-2xl font-bold text-white">วัตถุประสงค์ของหลักสูตร</div>
+          <ul className="pt-8 md:pt-8 text-left text-sm md:text-base text-white list-disc pl-6 max-w-2xl">
+            <li>ผู้เรียนสามารถปลูกผักไฮโดรโปนิกส์แบบอัจฉริยะด้วยระบบ AI เพื่อเพิ่มมูลค่า</li>
+            <li>เลือกและปรับใช้ความรู้ในการปลูกผักและผสมสารอาหารโดยใช้เทคโนโลยี AI</li>
+            <li>วิเคราะห์ข้อมูลและควบคุมการปลูกผักไฮโดรโปนิกส์ให้เหมาะสมกับสภาพแวดล้อม</li>
+            <li>ออกแบบและพัฒนาเทคโนโลยีเพื่อใช้ในการเกษตรสมัยใหม่</li>
+            <li>พัฒนาทักษะการแก้ปัญหาและนวัตกรรมในระบบการปลูกผักไฮโดรโปนิกส์</li>
+          </ul>
         </div>
       </div>
 
       {/* ส่วนที่3 */}
       <div className="w-full bg-[#F9FAFB]">
         <div className="py-12 h-full md:px-6 lg:px-8">
-          <div className="text-center md:pb-12 text-xl md:text-2xl font-bold text-[#0A2463]">
-            สิ่งที่จะได้รับจากโครงการ
-          </div>
-
-          {/* กรอบ */}
+          <div className="text-center md:pb-12 text-xl md:text-2xl font-bold text-[#0A2463]">สิ่งที่จะได้รับจากการอบรม</div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 w-full px-4 sm:px-6 py-6 md:px-10 lg:px-20 max-w-7xl mx-auto">
-            {/* การ์ดที่ 1 */}
-            <div className=" h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6">
-              <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                <FontAwesomeIcon
-                  icon={faBookOpen}
-                  style={{ color: "#0A2463", width: "22px", height: "22px" }}
-                />
-              </div>
-              <div className="pt-4 text-[#0A2463] font-bold text-base">
-                หลักสูตรที่ขับเคลื่อนโดยอุตสาหกรรม
-              </div>
-              <div className="pt-4 text-[#0A2463] text-xs">
-                หลักสูตรที่ออกแบบร่วมกับผู้นำในอุตสาหกรรมเพื่อตอบสนองความต้องการของโลกแห่งความเป็นจริงและเตรียมนักศึกษาให้พร้อมสำหรับการจ้างงานทันที
-              </div>
+            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
+              <FontAwesomeIcon icon={faBookOpen} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
+              <div className="pt-4 text-[#0A2463] font-bold text-base">เรียนฟรี! ไม่มีค่าใช้จ่าย</div>
+              <div className="pt-4 text-[#0A2463] text-xs text-center">ตลอดหลักสูตร</div>
             </div>
-
-            {/* การ์ดที่ 2 */}
-            <div className=" h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6">
-              <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                <FontAwesomeIcon
-                  icon={faUserGroup}
-                  style={{ color: "#0A2463", width: "22px", height: "22px" }}
-                />
-              </div>
-              <div className="pt-4 text-[#0A2463] font-bold text-base">
-                อบรมโดยผู้เชี่ยวชาญ
-              </div>
-              <div className="pt-4 text-[#0A2463] text-xs">
-                เเรียนรู้จากผู้เชี่ยวชาญและนักวิชาการชั้นนำที่มีประสบการณ์มากมายในภาคเทคโนโลยีที่กำลังเติบโตของประเทศไทย
-              </div>
+            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
+              <FontAwesomeIcon icon={faAward} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
+              <div className="pt-4 text-[#0A2463] font-bold text-base">ได้รับประกาศนียบัตร</div>
+              <div className="pt-4 text-[#0A2463] text-xs text-center">หลังจบการอบรม</div>
             </div>
-
-            {/* การ์ดที่ 3 */}
-            <div className=" h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6">
-              <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                <FontAwesomeIcon
-                  icon={faAward}
-                  style={{ color: "#0A2463", width: "22px", height: "22px" }}
-                />
-              </div>
-              <div className="pt-4 text-[#0A2463] font-bold text-base">
-                ได้รับ ประกาศนียบัตร
-              </div>
-              <div className="pt-4 text-[#0A2463] text-xs">
-                ได้รับการยอมรับในอุตสาหกรรมซึ่งช่วยเพิ่มโอกาสการจ้างงานของคุณในภาคส่วนที่มีนวัตกรรมมากที่สุดของประเทศไทย
-              </div>
+            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
+              <FontAwesomeIcon icon={faMicrochip} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
+              <div className="pt-4 text-[#0A2463] font-bold text-base">ทักษะ AI-Hydroponics</div>
+              <div className="pt-4 text-[#0A2463] text-xs text-center">ปลูกผักไฮโดรโปนิกส์ด้วยระบบอัจฉริยะ</div>
             </div>
-
-            {/* การ์ดที่ 4 */}
-            <div className=" h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6">
-              <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                <FontAwesomeIcon
-                  icon={faMicrochip}
-                  style={{ color: "#0A2463", width: "22px", height: "22px" }}
-                />
-              </div>
-              <div className="pt-4 text-[#0A2463] font-bold text-base">
-                เทคโนโลยีล้ำสมัย
-              </div>
-              <div className="pt-4 text-[#0A2463] text-xs">
-                ได้รับประสบการณ์จริงกับเทคโนโลยีล่าสุดที่ขับเคลื่อนการเปลี่ยนแปลงทางเศรษฐกิจของประเทศไทย
-              </div>
+            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
+              <FontAwesomeIcon icon={faUserGroup} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
+              <div className="pt-4 text-[#0A2463] font-bold text-base">อาหารกลางวัน/อาหารว่าง</div>
+              <div className="pt-4 text-[#0A2463] text-xs text-center">สำหรับผู้เข้าอบรม</div>
             </div>
-
-            {/* การ์ดที่ 5 */}
-            <div className=" h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6">
-              <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                <FontAwesomeIcon
-                  icon={faBrain}
-                  style={{ color: "#0A2463", width: "22px", height: "22px" }}
-                />
-              </div>
-              <div className="pt-4 text-[#0A2463] font-bold text-base">
-                การเรียนรู้เชิงปฏิบัติ
-              </div>
-              <div className="pt-4 text-[#0A2463] text-xs">
-                มุ่งเน้นการเรียนรู้ผ่านโครงการที่จำลองสถานการณ์จริงในที่ทำงาน
-                เพื่อพัฒนาทักษะและสร้างพอร์ตโฟลิโอให้โดดเด่น
-              </div>
-            </div>
-
-            {/* การ์ดที่ 6 */}
-            <div className=" h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6">
-              <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                <FontAwesomeIcon
-                  icon={faLightbulb}
-                  style={{ color: "#0A2463", width: "22px", height: "22px" }}
-                />
-              </div>
-              <div className="pt-4 text-[#0A2463] font-bold text-base">
-                แนวคิดเชิงนวัตกรรม
-              </div>
-              <div className="pt-4 text-[#0A2463] text-xs">
-                พัฒนาทักษะการคิดวิเคราะห์และการแก้ปัญหาซึ่งจำเป็นต่อการขับเคลื่อนการสร้างสรรค์นวัตกรรมในทุก
-                ๆ ทักษะที่จำเป็นต่อ การขับเคลื่อนการสร้างสรรค์นวัตกรรมในทุก ๆ
-              </div>
+            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
+              <FontAwesomeIcon icon={faClock} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
+              <div className="pt-4 text-[#0A2463] font-bold text-base">รับจำนวนจำกัด 40 คน/รุ่น</div>
+              <div className="pt-4 text-[#0A2463] text-xs text-center">สมัครก่อนมีสิทธิ์ก่อน</div>
             </div>
           </div>
         </div>
@@ -660,78 +537,6 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
-        {/* {newsList.map((news) => (
-            <div key={news.id} className="bg-white rounded-lg shadow-md p-4">
-              <img
-                src={
-                  news.image?.image_path
-                    ? `http://localhost:3001/${news.image.image_path}`
-                    : "/fallback.jpg"
-                }
-                alt={news.title}
-                className="w-full h-40 object-cover rounded"
-              />
-
-              <div className="mt-4 text-xs text-gray-500">
-                {new Date(news.published_date).toLocaleDateString()}
-              </div>
-              <div className="text-lg font-bold text-blue-900 mt-2">
-                {news.title}
-              </div>
-              <div
-                className="text-sm text-gray-700 mt-1"
-                dangerouslySetInnerHTML={{ __html: news.content }}
-              />
-              <div className="text-blue-600 text-xs mt-3">
-                หมวดหมู่: {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
-              </div>
-            </div>
-          ))} */}
-        {/* 
-          {newsList.map((news) => {
-            const decodedContent = news.content.replace(/\\"/g, '"');
-            const imgMatch = decodedContent.match(/<img[^>]+src="([^">]+)"/);
-            const imageFromContent = imgMatch ? imgMatch[1] : null;
-            const cleanedContent = decodedContent.replace(/<img[^>]*>/g, "");
-
-            console.log("✅ extracted image:", imageFromContent);
-            console.log("🧾 image path:", news.image?.image_path);
-
-            return (
-              <div key={news.id} className="bg-white rounded-lg shadow-md p-4">
-                <img 
-                  src={
-                    news.image?.image_path
-                      ? `http://localhost:3001/${news.image.image_path}`
-                      : "/fallback.jpg"
-                  }
-                  alt={news.title}
-                  className="w-full h-40 object-cover rounded"
-                />
-
-                <div className="mt-4 text-xs text-gray-500">
-                  {new Date(news.published_date).toLocaleDateString()}
-                </div>
-
-                <div className="text-lg font-bold text-blue-900 mt-2">
-                  {news.title}
-                </div>
-
-                <div
-                  className="text-sm text-gray-700 mt-1"
-                  dangerouslySetInnerHTML={{ __html: cleanedContent }}
-                />
-
-                <div className="text-blue-600 text-xs mt-3">
-                  หมวดหมู่: {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
-                </div>
-              </div>
-            );
-          })}
-         */}
-      </div>
-
       {/* ส่วนที่6 */}
       <div className="w-full bg-[#39A9DB]">
         <div className="px-4 py-8 md:p-12 lg:p-20 h-full">
@@ -749,6 +554,37 @@ export default function Home() {
                   เข้าร่วม
                 </div>
               </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="course-info" className="w-full bg-[#E1F2FE] py-10 px-4 md:px-20">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-2xl font-bold text-[#0A2463] mb-4">รายละเอียดหลักสูตร</div>
+          <ul className="list-disc pl-6 text-[#0A2463] text-sm md:text-base mb-4">
+            <li>ระยะเวลาอบรม 4 เดือน (285 ชั่วโมง) ทฤษฎี 60 ชั่วโมง ปฏิบัติ 225 ชั่วโมง</li>
+            <li>เริ่มอบรม กรกฎาคม - ตุลาคม 2568</li>
+            <li>คุณสมบัติ: อายุ 18 ปีขึ้นไป, จบ ม.6 หรือเทียบเท่า, เกษตรกร/เจ้าของฟาร์ม/ผู้สนใจ</li>
+            <li>สถานที่: มหาวิทยาลัยแม่โจ้</li>
+            <li>หน่วยงานร่วม: มหาวิทยาลัยแม่โจ้, บริษัท อินคูซิชั่นโพสต์, บริษัท พีพีพี ฟู้ด</li>
+          </ul>
+          <div className="flex flex-col sm:flex-row gap-4 items-center mt-4">
+            <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+              <span className="font-bold text-[#0A2463]">ติดต่อสอบถาม</span>
+              <span className="text-xs text-[#0A2463]">โทร: 084-150-0677 (ดร. พิษณุศักดิ์)</span>
+              <span className="text-xs text-[#0A2463]">โทร: 089-837-8992 (ดร. สุกเชษฐ์)</span>
+              <span className="text-xs text-[#0A2463]">E-mail: Payungsak.kae@gmail.com</span>
+              <span className="text-xs text-[#0A2463]">E-mail: sutkhet@mju.ac.th</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="font-bold text-[#0A2463] mb-2">สมัครออนไลน์</span>
+              <div className="w-28 h-28 flex items-center justify-center bg-white border-2 border-[#39A9DB] rounded-lg">
+                {admission?.link_register && (
+                  <QRCodeSVG value={admission.link_register} size={100} />
+                )}
+              </div>
+              <span className="text-xs text-[#0A2463] mt-1">สแกน QR เพื่อสมัคร</span>
             </div>
           </div>
         </div>
