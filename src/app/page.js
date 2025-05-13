@@ -263,7 +263,7 @@ export default function Home() {
             </div>
             <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
               <img
-                src="/img/MJU_LOGO.png"
+                src="/img/Thai_MHESI.png"
                 className="w-full h-full object-contain"
                 alt="MJU Logo"
               />

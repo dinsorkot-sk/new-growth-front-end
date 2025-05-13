@@ -10,6 +10,7 @@ import {
   faCircleDot,
   faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 export default function Home() {
   const steps = [
@@ -47,217 +48,181 @@ export default function Home() {
 
   // ฟังก์ชัน format วันที่เป็นภาษาไทย
 const formatThaiDate = (date) => {
-  // รายชื่อเดือนในภาษาไทย
+    if (!(date instanceof Date)) return "-";
   const thaiMonths = [
-    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-  ];
-
+      "มกราคม",
+      "กุมภาพันธ์",
+      "มีนาคม",
+      "เมษายน",
+      "พฤษภาคม",
+      "มิถุนายน",
+      "กรกฎาคม",
+      "สิงหาคม",
+      "กันยายน",
+      "ตุลาคม",
+      "พฤศจิกายน",
+      "ธันวาคม",
+    ];
   const day = date.getDate();
   const month = thaiMonths[date.getMonth()];
   const year = date.getFullYear();
-  
   return `${day} ${month} ${year}`;
 };
 
-// ฟังก์ชันสร้างช่วงเดือนในรูปแบบไทย
-const createThaiMonthRange = (startDate, endDate) => {
-  // รายชื่อเดือนในภาษาไทย
+  const createThaiMonthRange = (startDate: any, endDate: any) => {
+    if (!(startDate instanceof Date) || !(endDate instanceof Date)) return "-";
   const thaiMonths = [
-    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-  ];
-  
+      "มกราคม",
+      "กุมภาพันธ์",
+      "มีนาคม",
+      "เมษายน",
+      "พฤษภาคม",
+      "มิถุนายน",
+      "กรกฎาคม",
+      "สิงหาคม",
+      "กันยายน",
+      "ตุลาคม",
+      "พฤศจิกายน",
+      "ธันวาคม",
+    ];
   const startMonth = thaiMonths[startDate.getMonth()];
   const endMonth = thaiMonths[endDate.getMonth()];
   const startYear = startDate.getFullYear();
   const endYear = endDate.getFullYear();
-  
   if (startYear === endYear) {
     return `${startMonth} - ${endMonth} ${startYear}`;
   } else {
     return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
   }
 };
-// const batchData = {
-//     batch1: {
-//       title: "รุ่นที่ 1",
-//       application: "1 พฤศจิกายน 2023 - 15 มกราคม 2024",
-//       selection: "20 มกราคม - 10 กุมภาพันธ์ 2024",
-//       training: "กุมภาพันธ์ - มีนาคม 2024",
-//       startDate: new Date("2023-11-01"),
-//       endDate: new Date("2024-01-15"),
-//       selectionStartDate: new Date("2024-01-20"),
-//       selectionEndDate: new Date("2024-02-10"),
-//       trainingStartDate: new Date("2024-02-15")
-//     },
-//     batch2: {
-//       title: "รุ่นที่ 2",
-//       application: "1 มกราคม - 15 มีนาคม 2025",
-//       selection: "20 มีนาคม - 10 เมษายน 2025",
-//       training: "เมษายน - มิถุนายน 2025",
-//       startDate: new Date("2025-01-01"),
-//       endDate: new Date("2025-03-15"),
-//       selectionStartDate: new Date("2025-03-20"),
-//       selectionEndDate: new Date("2025-04-10"),
-//       trainingStartDate: new Date("2025-04-15")
-//     },
-//     batch3: {
-//       title: "รุ่นที่ 3",
-//       application: "1 กันยายน - 15 พฤศจิกายน 2025",
-//       selection: "20 พฤศจิกายน - 10 ธันวาคม 2025",
-//       training: "มกราคม - กุมภาพันธ์ 2026",
-//       startDate: new Date("2025-09-01"),
-//       endDate: new Date("2025-11-15"),
-//       selectionStartDate: new Date("2025-11-20"),
-//       selectionEndDate: new Date("2025-12-10"),
-//       trainingStartDate: new Date("2026-01-10")
-//     }
-  
-//   };
-// ข้อมูลรุ่นที่ปรับปรุงใหม่
-const batchData = {
-  batch1: {
-    title: "รุ่นที่ 1",
-    startDate: new Date("2023-11-01"),
-    endDate: new Date("2024-01-15"),
-    selectionStartDate: new Date("2024-01-20"),
-    selectionEndDate: new Date("2024-02-10"),
-    trainingStartDate: new Date("2024-02-15"),
-    // สร้างข้อความแบบไทยโดยอัตโนมัติจากวันที่
-    get application() { return `${formatThaiDate(this.startDate)} - ${formatThaiDate(this.endDate)}`; },
-    get selection() { return `${formatThaiDate(this.selectionStartDate)} - ${formatThaiDate(this.selectionEndDate)}`; },
-    get training() {
-      // คำนวณวันสิ้นสุดการอบรม (ประมาณ 2 เดือนหลังจากวันเริ่มอบรม)
-      const trainingEndDate = new Date(this.trainingStartDate.getFullYear(), 
-                                      this.trainingStartDate.getMonth() + 2, 
-                                      this.trainingStartDate.getDate());
-      return createThaiMonthRange(this.trainingStartDate, trainingEndDate);
-    }
-  },
-  batch2: {
-    title: "รุ่นที่ 2",
-    startDate: new Date("2025-01-01"),
-    endDate: new Date("2025-03-15"),
-    selectionStartDate: new Date("2025-03-20"),
-    selectionEndDate: new Date("2025-04-10"),
-    trainingStartDate: new Date("2025-04-15"),
-    // สร้างข้อความแบบไทยโดยอัตโนมัติจากวันที่
-    get application() { return `${formatThaiDate(this.startDate)} - ${formatThaiDate(this.endDate)}`; },
-    get selection() { return `${formatThaiDate(this.selectionStartDate)} - ${formatThaiDate(this.selectionEndDate)}`; },
-    get training() {
-      const trainingEndDate = new Date(this.trainingStartDate.getFullYear(), 
-                                      this.trainingStartDate.getMonth() + 2, 
-                                      this.trainingStartDate.getDate());
-      return createThaiMonthRange(this.trainingStartDate, trainingEndDate);
-    }
-  },
-  batch3: {
-    title: "รุ่นที่ 3",
-    startDate: new Date("2025-09-01"),
-    endDate: new Date("2025-11-15"),
-    selectionStartDate: new Date("2025-11-20"),
-    selectionEndDate: new Date("2025-12-10"),
-    trainingStartDate: new Date("2026-01-10"),
-    // สร้างข้อความแบบไทยโดยอัตโนมัติจากวันที่
-    get application() { return `${formatThaiDate(this.startDate)} - ${formatThaiDate(this.endDate)}`; },
-    get selection() { return `${formatThaiDate(this.selectionStartDate)} - ${formatThaiDate(this.selectionEndDate)}`; },
-    get training() {
-      const trainingEndDate = new Date(this.trainingStartDate.getFullYear(), 
-                                      this.trainingStartDate.getMonth() + 2, 
-                                      this.trainingStartDate.getDate());
-      return createThaiMonthRange(this.trainingStartDate, trainingEndDate);
-    }
-  }
-};
 
-  // ฟังก์ชั่นตรวจสอบรุ่นที่อยู่ในช่วงเวลาปัจจุบัน
- const getCurrentBatch = () => {
-  const currentDate = new Date(); // วันที่ปัจจุบัน (11 พฤษภาคม 2025)
-  
-  // ตรวจสอบรุ่นที่กำลังรับสมัครอยู่
-  for (const [batchKey, batchInfo] of Object.entries(batchData)) {
-    if (currentDate >= batchInfo.startDate && currentDate <= batchInfo.endDate) {
-      return batchKey;
-    }
-  }
-  
-  // ตรวจสอบรุ่นที่อยู่ในช่วงคัดเลือก
-  for (const [batchKey, batchInfo] of Object.entries(batchData)) {
-    if (currentDate > batchInfo.endDate && currentDate <= batchInfo.selectionEndDate) {
-      return batchKey;
-    }
-  }
-  
-  // ตรวจสอบรุ่นที่อยู่ในช่วงอบรม
-  for (const [batchKey, batchInfo] of Object.entries(batchData)) {
-    // คำนวณวันสิ้นสุดการอบรม (ประมาณ 2 เดือนหลังจากวันเริ่มอบรม)
-    const trainingEndDate = new Date(batchInfo.trainingStartDate.getFullYear(), 
-                                    batchInfo.trainingStartDate.getMonth() + 2, 
-                                    batchInfo.trainingStartDate.getDate());
-    
-    if (currentDate >= batchInfo.trainingStartDate && currentDate <= trainingEndDate) {
-      return batchKey;
-    }
-  }
-  
-  // ถ้าไม่มีรุ่นที่กำลังดำเนินการ ให้ตรวจสอบรุ่นที่ใกล้จะเริ่มมากที่สุด
-  const futureBatches = Object.entries(batchData)
-    .filter(([_, batchInfo]) => batchInfo.startDate > currentDate)
-    .sort((a, b) => a[1].startDate - b[1].startDate);
-  
-  if (futureBatches.length > 0) {
-    return futureBatches[0][0];
-  }
-  
-  // ถ้าไม่มีรุ่นในอนาคต ให้แสดงรุ่นล่าสุด (รุ่นที่เริ่มเร็วที่สุด)
-  const allBatches = Object.entries(batchData)
-    .sort((a, b) => b[1].startDate - a[1].startDate);
-  
-  return allBatches[0][0];
-};
+  // State for batches from API
+  const [batches, setBatches] = useState([]);
+  const [activeBatchIdx, setActiveBatchIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // กำหนดค่าเริ่มต้นให้เป็นรุ่นที่อยู่ในช่วงเวลาปัจจุบัน
-  const [activeBatch, setActiveBatch] = useState("batch1");
-  
-// อัพเดทค่า activeBatch เมื่อคอมโพเนนต์ถูกโหลด
-useEffect(() => {
-  setActiveBatch(getCurrentBatch());
-}, []);
+  // Fetch batches from API
+  useEffect(() => {
+    const fetchBatches = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API}/admission`
+        );
+        // Convert date strings to Date objects and add computed fields
+        const data = res.data.map((item: any) => {
+          const startDate = new Date(item.startDate);
+          const endDate = new Date(item.endDate);
+          const selectionStartDate = new Date(item.selectionStartDate);
+          const selectionEndDate = new Date(item.selectionEndDate);
+          const trainingStartDate = new Date(item.trainingStartDate);
+          // Compute trainingEndDate (2 months after trainingStartDate)
+          const trainingEndDate = new Date(
+            trainingStartDate.getFullYear(),
+            trainingStartDate.getMonth() + 2,
+            trainingStartDate.getDate()
+          );
+          return {
+            ...item,
+            startDate,
+            endDate,
+            selectionStartDate,
+            selectionEndDate,
+            trainingStartDate,
+            trainingEndDate,
+            application: `${formatThaiDate(startDate)} - ${formatThaiDate(
+              endDate
+            )}`,
+            selection: `${formatThaiDate(
+              selectionStartDate
+            )} - ${formatThaiDate(selectionEndDate)}`,
+            training: createThaiMonthRange(trainingStartDate, trainingEndDate),
+          };
+        });
+        setBatches(data);
+        // Set active batch to current
+        setActiveBatchIdx(getCurrentBatchIdx(data));
+      } catch (e) {
+        setBatches([]);
+      }
+      setLoading(false);
+    };
+    fetchBatches();
+  }, []);
 
-  // คำอธิบายสถานะรุ่นที่ครอบคลุมทุกสถานะ
-const getBatchStatus = (batchKey) => {
-  const currentDate = new Date(); // วันที่ปัจจุบัน (11 พฤษภาคม 2025)
-  const batch = batchData[batchKey];
-  
-  // คำนวณวันสิ้นสุดการอบรม (ประมาณ 2 เดือนหลังจากวันเริ่มอบรม)
-  const trainingEndDate = new Date(batch.trainingStartDate.getFullYear(), 
-                                  batch.trainingStartDate.getMonth() + 2, 
-                                  batch.trainingStartDate.getDate());
-  
-  // ตรวจสอบสถานะของรุ่น
+  // Find the current batch index
+  const getCurrentBatchIdx = (batchArr: any) => {
+    const currentDate = new Date();
+    // Check application period
+    for (let i = 0; i < batchArr.length; i++) {
+      if (
+        currentDate >= batchArr[i].startDate &&
+        currentDate <= batchArr[i].endDate
+      ) {
+        return i;
+      }
+    }
+    // Check selection period
+    for (let i = 0; i < batchArr.length; i++) {
+      if (
+        currentDate > batchArr[i].endDate &&
+        currentDate <= batchArr[i].selectionEndDate
+      ) {
+        return i;
+      }
+    }
+    // Check training period
+    for (let i = 0; i < batchArr.length; i++) {
+      if (
+        currentDate >= batchArr[i].trainingStartDate &&
+        currentDate <= batchArr[i].trainingEndDate
+      ) {
+        return i;
+      }
+    }
+    // Next future batch
+    const future = batchArr.filter((b: any) => b.startDate > currentDate);
+    if (future.length > 0) {
+      return batchArr.indexOf(
+        future.sort((a: any, b: any) => a.startDate - b.startDate)[0]
+      );
+    }
+    // Latest batch
+    return 0;
+  };
+
+  const getBatchStatus = (batch: any) => {
+    const currentDate = new Date();
+    if (!batch) return "-";
   if (currentDate < batch.startDate) {
     return "กำลังจะเปิดรับสมัครเร็วๆ นี้";
   } else if (currentDate >= batch.startDate && currentDate <= batch.endDate) {
     return "เปิดรับสมัครอยู่";
-  } else if (currentDate > batch.endDate && currentDate <= batch.selectionEndDate) {
+    } else if (
+      currentDate > batch.endDate &&
+      currentDate <= batch.selectionEndDate
+    ) {
     return "อยู่ในช่วงคัดเลือก";
-  } else if (currentDate > batch.selectionEndDate && currentDate < batch.trainingStartDate) {
+    } else if (
+      currentDate > batch.selectionEndDate &&
+      currentDate < batch.trainingStartDate
+    ) {
     return "กำลังจะเริ่มอบรม";
-  } else if (currentDate >= batch.trainingStartDate && currentDate <= trainingEndDate) {
+    } else if (
+      currentDate >= batch.trainingStartDate &&
+      currentDate <= batch.trainingEndDate
+    ) {
     return "อยู่ในช่วงการอบรม";
-  } else if (currentDate > trainingEndDate) {
+    } else if (currentDate > batch.trainingEndDate) {
     return "สิ้นสุดแล้ว";
   } else {
-    return "ไม่ระบุ"; // กรณีพิเศษ
-  }
-};
+      return "ไม่ระบุ";
+    }
+  };
 
- // สีสถานะที่แตกต่างกันตามสถานะ
-const getStatusColor = (batchKey) => {
-  const status = getBatchStatus(batchKey);
-  
-  switch(status) {
+  const getStatusColor = (batch: any) => {
+    const status = getBatchStatus(batch);
+    switch (status) {
     case "เปิดรับสมัครอยู่":
       return "text-green-600";
     case "อยู่ในช่วงคัดเลือก":
@@ -272,41 +237,43 @@ const getStatusColor = (batchKey) => {
       return "text-gray-600";
   }
 };
-  // ตรวจสอบว่ารุ่นนี้กำลังดำเนินการอยู่หรือไม่
-const isBatchActive = (batchKey) => {
-  const currentDate = new Date(); // วันที่ปัจจุบัน (11 พฤษภาคม 2025)
-  const batch = batchData[batchKey];
-  
-  // คำนวณวันสิ้นสุดการอบรม
-  const trainingEndDate = new Date(batch.trainingStartDate.getFullYear(), 
-                                  batch.trainingStartDate.getMonth() + 2, 
-                                  batch.trainingStartDate.getDate());
-  
-  // ตรวจสอบว่ารุ่นนี้อยู่ในช่วงรับสมัคร, คัดเลือก, หรืออบรม
-  return (currentDate >= batch.startDate && currentDate <= trainingEndDate);
-};
 
-  // คำนวณจำนวนวันที่เหลือในการรับสมัคร
-const getDaysRemaining = (batchKey) => {
-  const currentDate = new Date(); // วันที่ปัจจุบัน (11 พฤษภาคม 2025)
-  const batch = batchData[batchKey];
-  
+  const isBatchActive = (batch: any) => {
+    const currentDate = new Date();
+    if (!batch) return false;
+    return (
+      currentDate >= batch.startDate && currentDate <= batch.trainingEndDate
+    );
+  };
+
+  const getDaysRemaining = (batch: any) => {
+    const currentDate = new Date();
+    if (!batch) return "";
   if (currentDate < batch.startDate) {
-    const daysUntilStart = Math.ceil((batch.startDate - currentDate) / (1000 * 60 * 60 * 24));
+      const daysUntilStart = Math.ceil(
+        (batch.startDate.getTime() - currentDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
     return `เหลืออีก ${daysUntilStart} วันจะเปิดรับสมัคร`;
   } else if (currentDate >= batch.startDate && currentDate <= batch.endDate) {
-    const daysUntilEnd = Math.ceil((batch.endDate - currentDate) / (1000 * 60 * 60 * 24));
+      const daysUntilEnd = Math.ceil(
+        (batch.endDate.getTime() - currentDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
     return `เหลือเวลาสมัครอีก ${daysUntilEnd} วัน`;
   } else {
     return "";
   }
 };
+
   return (
     <div>
       {/* ส่วนเเรก */}
       <div className="w-full bg-[#0A2463]">
         <div className="h-full px-4 py-10 sm:px-6 md:px-20 md:py-20">
-          <div className="text-2xl sm:text-3xl font-bold text-white">การรับสมัคร</div>
+          <div className="text-2xl sm:text-3xl font-bold text-white">
+            การรับสมัคร
+          </div>
           <div className="pt-4 sm:pt-6 text-base sm:text-lg text-white">
             เข้าร่วมโครงการฝึกอบรมชั้นนำของประเทศไทยสำหรับอุตสาหกรรม New Growth
             Engine ขณะนี้เปิดรับสมัครสำหรับกลุ่มปี 2024 แล้ว
@@ -395,36 +362,45 @@ const getDaysRemaining = (batchKey) => {
         <div className="text-xl sm:text-2xl text-center text-[#0A2463] font-bold">
           กำหนดเวลาการสมัคร
         </div>
+          {loading ? (
+            <div className="text-center text-gray-500 py-8">
+              กำลังโหลดข้อมูล...
+            </div>
+          ) : batches.length === 0 ? (
+            <div className="text-center text-red-500 py-8">
+              ไม่พบข้อมูลรุ่นการรับสมัคร
+            </div>
+          ) : (
+            <>
         <div className="text-sm text-center text-gray-600 mt-2">
-          สถานะปัจจุบัน: <span className={`font-medium ${getStatusColor(activeBatch)}`}>
-            {getBatchStatus(activeBatch)}
+                สถานะปัจจุบัน:{" "}
+                <span
+                  className={`font-medium ${getStatusColor(
+                    batches[activeBatchIdx]
+                  )}`}
+                >
+                  {getBatchStatus(batches[activeBatchIdx])}
           </span>
         </div>
-        
-        {/* แสดงจำนวนวันที่เหลือ (ถ้ามี) */}
-        {getDaysRemaining(activeBatch) && (
+              {getDaysRemaining(batches[activeBatchIdx]) && (
           <div className="text-sm text-center text-gray-600 mt-1">
-            {getDaysRemaining(activeBatch)}
+                  {getDaysRemaining(batches[activeBatchIdx])}
           </div>
         )}
-
-        {/* ปุ่มเลือกรุ่น */}
         <div className="flex justify-center mt-4 mb-6 gap-2 sm:gap-4 flex-wrap">
-          {Object.keys(batchData).map((batchKey) => {
-            // ตรวจสอบว่ารุ่นนี้กำลังดำเนินการอยู่หรือไม่
-            const isActive = isBatchActive(batchKey);
-            
+                {batches.map((batch, idx) => {
+                  const isActive = isBatchActive(batch);
             return (
               <button
-                key={batchKey}
-                onClick={() => setActiveBatch(batchKey)}
+                      key={batch.id}
+                      onClick={() => setActiveBatchIdx(idx)}
                 className={`px-3 py-2 sm:px-6 sm:py-2 rounded-md text-sm sm:text-base transition-all duration-200 ${
-                  activeBatch === batchKey
+                        activeBatchIdx === idx
                     ? "bg-[#0A2463] text-white"
                     : "bg-gray-100 text-[#0A2463] hover:bg-gray-200"
                 } ${isActive ? "ring-2 ring-[#39A9DB]" : ""}`}
               >
-                {batchData[batchKey].title}
+                      {batch.title}
                 {isActive && (
                   <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     ปัจจุบัน
@@ -434,7 +410,6 @@ const getDaysRemaining = (batchKey) => {
             );
           })}
         </div>
-
         <div className="pt-2">
           <div className="grid grid-cols-1 pt-6 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {/* กล่องระยะเวลาการรับสมัคร */}
@@ -453,16 +428,15 @@ const getDaysRemaining = (batchKey) => {
                 ระยะเวลาการรับสมัคร
               </div>
               <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                {batchData[activeBatch].application}
+                      {batches[activeBatchIdx].application}
               </div>
-              {/* สถานะการรับสมัคร */}
-              {getBatchStatus(activeBatch) === "เปิดรับสมัครอยู่" && (
+                    {getBatchStatus(batches[activeBatchIdx]) ===
+                      "เปิดรับสมัครอยู่" && (
                 <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   เปิดรับสมัครอยู่
                 </div>
               )}
             </div>
-
             {/* กล่องคัดเลือก */}
             <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
               <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
@@ -479,16 +453,15 @@ const getDaysRemaining = (batchKey) => {
                 คัดเลือก
               </div>
               <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                {batchData[activeBatch].selection}
+                      {batches[activeBatchIdx].selection}
               </div>
-              {/* สถานะการคัดเลือก */}
-              {getBatchStatus(activeBatch) === "อยู่ในช่วงคัดเลือก" && (
+                    {getBatchStatus(batches[activeBatchIdx]) ===
+                      "อยู่ในช่วงคัดเลือก" && (
                 <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                   กำลังคัดเลือก
                 </div>
               )}
             </div>
-
             {/* กล่องเริ่มอบรม */}
             <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
               <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
@@ -505,17 +478,19 @@ const getDaysRemaining = (batchKey) => {
                 เริ่มอบรม
               </div>
               <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                {batchData[activeBatch].training}
+                      {batches[activeBatchIdx].training}
               </div>
-              {/* สถานะการอบรม */}
-              {(getBatchStatus(activeBatch) === "อยู่ในช่วงการอบรม") && (
+                    {getBatchStatus(batches[activeBatchIdx]) ===
+                      "อยู่ในช่วงการอบรม" && (
                 <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                   กำลังอบรม
                 </div>
               )}
             </div>
           </div>
-        </div>
+              </div>
+            </>
+          )}
       </div>
     </div>
 
@@ -528,7 +503,7 @@ const getDaysRemaining = (batchKey) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-0 mt-6">
             <div className="text-base md:text-lg text-[#0A2463] font-bold pt-6">
-              คุณสมบัติทั่วไป
+              คุณสมบัติผู้สมัคร
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
                   icon={faCircleCheck}
@@ -538,8 +513,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">ปริญญาตรี:</div>
-                สำเร็จการศึกษาในระดับปริญญาตรีหรือสูงกว่าในสาขาที่เกี่ยวข้อง(ข้อกำหนดเฉพาะแตกต่างกันไปในแต่ละหลักสูตร)
+                <div className="font-bold text-sm">อายุไม่ต่ำกว่า 18 ปี</div>
               </div>
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -550,10 +524,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">
-                  สำเร็จการศึกษาเมื่อไม่นานนี้:
-                </div>
-                สำเร็จการศึกษาภายใน 3 ปีที่ผ่านมาหรืออยู่ในปีสุดท้ายของการศึกษา
+                <div className="font-bold text-sm">จบการศึกษาขั้นต่ำ ระดับมัธยมศึกษาตอนปลาย หรือเทียบเท่า</div>
               </div>
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -564,9 +535,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">ความสามารถทางภาษา:</div>
-                แสดงความสามารถทางภาษาไทย และ/หรือ ภาษาอังกฤษ
-                (ขึ้นอยู่กับหลักสูตร)
+                <div className="font-bold text-sm">ผู้ประกอบการ/วิสาหกิจด้านการปลูกผัก ขนาดย่อม หรือ ขนาดกลาง</div>
               </div>
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -577,24 +546,18 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">ความมุ่งมั่น:</div>
-                สามารถมุ่งมั่นกับโปรแกรมได้เต็มเวลาตลอดระยะเวลาที่ดำเนินไป
+                <div className="font-bold text-sm">เจ้าของฟาร์มไฮโดรโปนิกส์</div>
               </div>
-              <div className="pt-4 w-full ">
-                <div className="flex items-center border-l-4 border-[#FACC15] bg-[#FEFCE8] h-auto w-auto p-4 gap-2 md:max-w-[600px]">
-                  <FontAwesomeIcon
-                    icon={faCircleDot}
-                    style={{
-                      color: "#CA8A04",
-                      width: "16px",
-                      height: "16px",
-                    }}
-                  />
-                  <div className="text-xs text-[#A16207]">
-                    หลักสูตรบางหลักสูตรอาจมีข้อกำหนดเฉพาะเพิ่มเติม
-                    โปรดดูรายละเอียดในหน้าหลักสูตร แต่ละหลักสูตร
-                  </div>
-                </div>
+              <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
+                <FontAwesomeIcon
+                  icon={faCircleCheck}
+                  style={{
+                    color: "#63E6BE",
+                    width: "18px",
+                    height: "18px",
+                  }}
+                />
+                <div className="font-bold text-sm">เกษตรกรผู้ปลูกผัก</div>
               </div>
             </div>
 
@@ -610,10 +573,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">
-                  แบบฟอร์มใบสมัครที่สมบูรณ์:
-                </div>
-                กรอกแบบฟอร์มใบสมัครออนไลน์ให้ครบถ้วน
+                <div className="font-bold text-sm">ใบสมัครที่กรอกข้อมูลครบถ้วน</div>
               </div>
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -624,9 +584,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">CV/Resume:</div>
-                ประวัติย่อล่าสุดที่เน้นย้ำถึงการศึกษา ทักษะ
-                และประสบการณ์ที่เกี่ยวข้องของคุณ
+                <div className="font-bold text-sm">สำเนาบัตรประชาชน</div>
               </div>
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -637,10 +595,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">
-                  สำเนาผลการเรียนทางวิชาการ:{" "}
-                </div>
-                สำเนาผลการเรียนอย่างเป็นทางการจากมหาวิทยาลัยของคุณ
+                <div className="font-bold text-sm">สำเนาวุฒิการศึกษา</div>
               </div>
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -651,36 +606,7 @@ const getDaysRemaining = (batchKey) => {
                     height: "18px",
                   }}
                 />
-                <div className="font-bold text-sm">
-                  สำเนาบัตรประชาชน/หนังสือเดินทาง:
-                </div>
-                เอกสารยืนยันตัวตนที่ยังไม่หมดอายุ
-              </div>
-              <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
-                <FontAwesomeIcon
-                  icon={faFileLines}
-                  style={{
-                    color: "#39A9DE",
-                    width: "18px",
-                    height: "18px",
-                  }}
-                />
-                <div className="font-bold text-sm">คำชี้แจงส่วนตัว:</div>
-                คำชี้แจงที่อธิบายถึงความสนใจของคุณในโปรแกรมและว่าโปรแกรมนี้
-                <br />
-                สอดคล้องกับเป้าหมายอาชีพของคุณอย่างไร (500-800 คำ)
-              </div>
-              <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
-                <FontAwesomeIcon
-                  icon={faFileLines}
-                  style={{
-                    color: "#39A9DE",
-                    width: "18px",
-                    height: "18px",
-                  }}
-                />
-                <div className="font-bold text-sm">จดหมายอ้างอิง:</div>
-                จดหมายรับรองอย่างน้อยหนึ่งฉบับจากผู้อ้างอิงทางวิชาการหรือวิชาชีพ
+                <div className="font-bold text-sm">รูปถ่ายหน้าตรง 1 นิ้ว 1 รูป</div>
               </div>
             </div>
           </div>
@@ -699,55 +625,47 @@ const getDaysRemaining = (batchKey) => {
                 {/* Vertical line */}
                 <div className=" hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-blue-200"></div>
 
-                {steps.map((step, index) => (
-                  <div
-                    key={step.number}
-                    className={`relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]`}
-                  >
-                    {/* Left side content */}
-                    <div
-                      className={`w-full md:w-1/2 text-center ${
-                        index % 2 === 0 ? "pr-12 " : "opacity-0"
-                      }`}
-                    >
-                      {index % 2 === 0 && (
-                        <>
-                          <h3 className="font-bold text-lg mb-2">
-                            {step.title}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {step.description}
-                          </p>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Circle in center */}
-                    <div className="hidden md:block z-10 mb-4 md:mb-0 md:absolute md:left-1/2 transform md:-translate-x-1/2">
-                      <div className="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">
-                        {step.number}
-                      </div>
-                    </div>
-
-                    {/* Right side content */}
-                    <div
-                      className={`w-full md:w-1/2 text-center ${
-                        index % 2 === 1 ? "pl-12" : "opacity-0"
-                      }`}
-                    >
-                      {index % 2 === 1 && (
-                        <>
-                          <h3 className="font-bold text-lg mb-2">
-                            {step.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 text-[#4B5563]">
-                            {step.description}
-                          </p>
-                        </>
-                      )}
-                    </div>
+                {/* ขั้นตอนใหม่จากรูป */}
+                <div className="relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]">
+                  <div className="w-full md:w-1/2 text-center pr-12 ">
+                    <h3 className="font-bold text-lg mb-2">1. กรอกใบสมัครออนไลน์</h3>
+                    <p className="text-sm text-gray-600">สมัครผ่านแบบฟอร์มออนไลน์ พร้อมแนบเอกสารที่เกี่ยวข้อง</p>
                   </div>
-                ))}
+                  <div className="hidden md:block z-10 mb-4 md:mb-0 md:absolute md:left-1/2 transform md:-translate-x-1/2">
+                    <div className="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">1</div>
+                  </div>
+                  <div className="w-full md:w-1/2 text-center opacity-0"></div>
+                </div>
+                <div className="relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]">
+                  <div className="w-full md:w-1/2 text-center opacity-0"></div>
+                  <div className="hidden md:block z-10 mb-4 md:mb-0 md:absolute md:left-1/2 transform md:-translate-x-1/2">
+                    <div className="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">2</div>
+                  </div>
+                  <div className="w-full md:w-1/2 text-center pl-12">
+                    <h3 className="font-bold text-lg mb-2">2. ตรวจสอบคุณสมบัติ</h3>
+                    <p className="text-sm text-gray-600">เจ้าหน้าที่ตรวจสอบคุณสมบัติและเอกสารของผู้สมัคร</p>
+                  </div>
+                </div>
+                <div className="relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]">
+                  <div className="w-full md:w-1/2 text-center pr-12 ">
+                    <h3 className="font-bold text-lg mb-2">3. ประกาศรายชื่อผู้มีสิทธิ์เข้าร่วม</h3>
+                    <p className="text-sm text-gray-600">ประกาศรายชื่อผู้ผ่านการคัดเลือกทางเว็บไซต์หรือช่องทางที่กำหนด</p>
+                  </div>
+                  <div className="hidden md:block z-10 mb-4 md:mb-0 md:absolute md:left-1/2 transform md:-translate-x-1/2">
+                    <div className="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">3</div>
+                  </div>
+                  <div className="w-full md:w-1/2 text-center opacity-0"></div>
+                </div>
+                <div className="relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]">
+                  <div className="w-full md:w-1/2 text-center opacity-0"></div>
+                  <div className="hidden md:block z-10 mb-4 md:mb-0 md:absolute md:left-1/2 transform md:-translate-x-1/2">
+                    <div className="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md">4</div>
+                  </div>
+                  <div className="w-full md:w-1/2 text-center pl-12">
+                    <h3 className="font-bold text-lg mb-2">4. ยืนยันสิทธิ์และเข้าร่วมอบรม</h3>
+                    <p className="text-sm text-gray-600">ยืนยันสิทธิ์และเข้าร่วมอบรมตามวันเวลาที่กำหนด</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -757,7 +675,9 @@ const getDaysRemaining = (batchKey) => {
       {/* ส่วนที่ 5 */}
       <div className="h-full bg-[#39A9DB]">
         <div className="px-6 py-16 sm:px-10 md:px-20 text-center">
-          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">พร้อมสมัครหรือยัง</div>
+          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+            พร้อมสมัครหรือยัง
+          </div>
 
           <div className="pt-4 sm:pt-6 text-base sm:text-lg md:text-xl text-white">
             ก้าวแรกสู่อาชีพในอุตสาหกรรม New Growth Engine ของประเทศไทย
@@ -769,7 +689,6 @@ const getDaysRemaining = (batchKey) => {
               เริ่มต้นการสมัครของคุณ
             </div>
           </div>
-
         </div>
       </div>
     </div>
