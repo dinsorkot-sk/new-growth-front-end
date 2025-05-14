@@ -28,7 +28,7 @@ export default function Navbar() {
         {/* Logo */}
         <a href="/">  
           <div className="text-lg md:text-xl font-bold text-white">
-            โครงการผลิตบัณฑิตพันธ์ใหม่
+            โครงการผลิตบัณฑิตพันธ์ใหม่ (แม่โจ้)
           </div>
         </a>
 

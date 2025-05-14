@@ -67,16 +67,6 @@ export default function Home() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentImageIndex(
-  //       (prevIndex) => (prevIndex + 1) % backgroundImages.length
-  //     );
-  //   }, 5000); // เปลี่ยนทุก 5 วินาที
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const dateFormatter = (p_date) => {
     const date = new Date(p_date);
     const formatter = new Intl.DateTimeFormat("en-GB", {
@@ -195,42 +185,42 @@ export default function Home() {
     router.push(`/newandevent/${newId}`);
   };
 
- // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
-const [backgroundImages, setBackgroundImages] = useState([
+  // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
+  const [backgroundImages, setBackgroundImages] = useState([
 
-]);
+  ]);
 
-// ในส่วนของ useEffect ให้เรียกใช้ fetchMedia เมื่อ component mount
+  // ในส่วนของ useEffect ให้เรียกใช้ fetchMedia เมื่อ component mount
 
 
-// ปรับปรุงฟังก์ชัน fetchMedia เพื่อเพิ่มประสิทธิภาพการโหลดรูปภาพ
-const fetchMedia = async () => {
-  try {
-    
-    console.log('กำลังดึงข้อมูลรูปภาพ...');
-    
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
-    console.log(response.data);
-    // Update the backgroundImages state with the retrieved images
-    if (response.data) {
-      const imageUrls = response.data.images.map(item => 
-        `${process.env.NEXT_PUBLIC_IMG}/${item.image_path}`
-      );
-      console.log(imageUrls);
-      setBackgroundImages(imageUrls);
-      console.log(backgroundImages);
+  // ปรับปรุงฟังก์ชัน fetchMedia เพื่อเพิ่มประสิทธิภาพการโหลดรูปภาพ
+  const fetchMedia = async () => {
+    try {
+
+      console.log('กำลังดึงข้อมูลรูปภาพ...');
+
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
+      console.log(response.data);
+      // Update the backgroundImages state with the retrieved images
+      if (response.data) {
+        const imageUrls = response.data.images.map(item =>
+          `${process.env.NEXT_PUBLIC_IMG}/${item.image_path}`
+        );
+        console.log(imageUrls);
+        setBackgroundImages(imageUrls);
+        console.log(backgroundImages);
+      }
+
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:', error);
+      // Keep using default images in case of error
+    } finally {
+      setIsLoading(false);
     }
-    
-  } catch (error) {
-    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:', error);
-    // Keep using default images in case of error
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
-// เพิ่ม state สำหรับแสดง loading
-const [isLoading, setIsLoading] = useState(true);
+  // เพิ่ม state สำหรับแสดง loading
+  const [isLoading, setIsLoading] = useState(true);
   return (
     <div>
       <div
@@ -247,11 +237,11 @@ const [isLoading, setIsLoading] = useState(true);
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
-         {isLoading && (
-    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
-    </div>
-  )}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
+          </div>
+        )}
         {/* เพิ่มชั้น overlay สำหรับทำให้พื้นหลังโปร่งแสง */}
         <div
           className="absolute inset-0"
@@ -271,7 +261,7 @@ const [isLoading, setIsLoading] = useState(true);
           </div>
           <div className="mt-24 md:mt-16 lg:mt-0">
             <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
-              โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (Non-Degree) ปี 2568 รุ่นที่ 2
+              โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (แม่โจ้) ปี 2568 {admission?.title}
             </p>
             <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white drop-shadow">
               หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
@@ -574,7 +564,7 @@ const [isLoading, setIsLoading] = useState(true);
       {/* ส่วนที่6 */}
       <div className="w-full bg-[#39A9DB]">
         <div className="px-4 py-8 md:p-12 lg:p-20 h-full">
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center text-white">
             <div className="font-bold text-xl sm:text-2xl">
               พร้อมที่จะสร้างอนาคตประเทศไทยหรือยัง?
             </div>
@@ -611,15 +601,17 @@ const [isLoading, setIsLoading] = useState(true);
               <span className="text-xs text-[#0A2463]">E-mail: Payungsak.kae@gmail.com</span>
               <span className="text-xs text-[#0A2463]">E-mail: sutkhet@mju.ac.th</span>
             </div>
-            <div className="flex flex-col items-center">
-              <span className="font-bold text-[#0A2463] mb-2">สมัครออนไลน์</span>
-              <div className="w-28 h-28 flex items-center justify-center bg-white border-2 border-[#39A9DB] rounded-lg">
-                {admission?.link_register && (
-                  <QRCodeSVG value={admission.link_register} size={100} />
-                )}
+            {admission?.link_register && (
+              <div className="flex flex-col items-center">
+                <span className="font-bold text-[#0A2463] mb-2">สมัครออนไลน์</span>
+                <div className="w-28 h-28 flex items-center justify-center bg-white border-2 border-[#39A9DB] rounded-lg">
+                  {admission?.link_register && (
+                    <QRCodeSVG value={admission.link_register} size={100} />
+                  )}
+                </div>
+                <span className="text-xs text-[#0A2463] mt-1">สแกน QR เพื่อสมัคร</span>
               </div>
-              <span className="text-xs text-[#0A2463] mt-1">สแกน QR เพื่อสมัคร</span>
-            </div>
+            )}
           </div>
         </div>
       </div>
