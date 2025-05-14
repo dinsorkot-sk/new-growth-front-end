@@ -243,7 +243,7 @@ export default function AllPhotos() {
           <div className="relative w-full max-w-4xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
             <button 
               onClick={closeModal}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors bg-red-500 rounded-full p-2"
             >
               <X size={24} />
             </button>

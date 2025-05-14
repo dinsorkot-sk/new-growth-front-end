@@ -20,18 +20,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { QRCodeSVG } from 'qrcode.react';
 
-const backgroundImages = [
-  "./img/images.jpg",
-  "./img/360_F_255226859_Rhqr5hflr2esVXHQE1sS1bWxmZxs0gWI.jpg",
-  "./img/premium_photo-1661767552224-ef72bb6b671f.jpg",
-];
-
 export default function Home() {
   const [newsList, setNewsList] = useState([]);
   const [courseList, setCourseList] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [admission, setAdmission] = useState(null);
 
+  useEffect(() => {
+    setIsLoading(true);
+    fetchMedia();
+  }, []);
   useEffect(() => {
     axios
       .get(`${process.env.NEXT_PUBLIC_API}/news`)
@@ -110,12 +108,7 @@ export default function Home() {
   const sliderRef = useRef(null);
   const startXRef = useRef(null);
 
-  // Sample background images
-  const backgroundImages = [
-    "./img/images.jpg",
-    "./img/360_F_255226859_Rhqr5hflr2esVXHQE1sS1bWxmZxs0gWI.jpg",
-    "./img/premium_photo-1661767552224-ef72bb6b671f.jpg",
-  ];
+
 
   const goToPrevious = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -202,13 +195,49 @@ export default function Home() {
     router.push(`/newandevent/${newId}`);
   };
 
+ // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
+const [backgroundImages, setBackgroundImages] = useState([
+
+]);
+
+// ในส่วนของ useEffect ให้เรียกใช้ fetchMedia เมื่อ component mount
+
+
+// ปรับปรุงฟังก์ชัน fetchMedia เพื่อเพิ่มประสิทธิภาพการโหลดรูปภาพ
+const fetchMedia = async () => {
+  try {
+    
+    console.log('กำลังดึงข้อมูลรูปภาพ...');
+    
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
+    console.log(response.data);
+    // Update the backgroundImages state with the retrieved images
+    if (response.data) {
+      const imageUrls = response.data.images.map(item => 
+        `${process.env.NEXT_PUBLIC_IMG}/${item.image_path}`
+      );
+      console.log(imageUrls);
+      setBackgroundImages(imageUrls);
+      console.log(backgroundImages);
+    }
+    
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:', error);
+    // Keep using default images in case of error
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+// เพิ่ม state สำหรับแสดง loading
+const [isLoading, setIsLoading] = useState(true);
   return (
     <div>
       <div
         ref={sliderRef}
         className="w-full bg-cover bg-center transition-all duration-1000 relative select-none"
         style={{
-          backgroundImage: `url(${backgroundImages[currentImageIndex]})`,
+          backgroundImage: `url(${backgroundImages[currentImageIndex % backgroundImages.length]})`,
           cursor: isDragging ? "grabbing" : "grab",
           position: "relative", // เพิ่ม position relative เพื่อให้ absolute element ทำงานได้ถูกต้อง
         }}
@@ -218,6 +247,11 @@ export default function Home() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
+         {isLoading && (
+    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
+    </div>
+  )}
         {/* เพิ่มชั้น overlay สำหรับทำให้พื้นหลังโปร่งแสง */}
         <div
           className="absolute inset-0"

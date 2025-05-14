@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Search, ArrowRight, Calendar } from 'lucide-react';
+import { Search, ArrowRight, Calendar, X, Play} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -31,6 +31,35 @@ interface Pagination {
   next: string | null;
 }
 
+interface VideoFile {
+  id: number;
+  file_path: string;
+  file_type: string;
+  is_downloadable: boolean;
+}
+
+interface Video {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  duration: string | null;
+  author: string;
+  published_date: string;
+  files: VideoFile[];
+}
+
+interface Image {
+  id: number;
+  ref_id: number | null;
+  ref_type: string;
+  image_path: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  description: string | null;
+}
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
@@ -44,7 +73,18 @@ export default function Home() {
     prev: null,
     next: null
   });
-  const [images, setVibeImages] = useState<string[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+const [selectedMedia, setSelectedMedia] = useState(null);
+const [combinedMedia, setCombinedMedia] = useState([]);
+
+const closeModal = () => {
+  setShowModal(false);
+  setSelectedMedia(null);
+};
 
   const router = useRouter();
 
@@ -57,9 +97,12 @@ export default function Home() {
         const data = response.data;
         setNewsItems(data.data);
         setPagination(data.pagination);
-        // Fetch images
-        const images = await fetchVibeImages();
-        setVibeImages(images);
+        // Fetch images and videos
+        // const media = await fetchMedia();
+        // setImages(media. || []);
+        // setVideos(media.videos || []);
+
+        await fetchMedia();
         setLoading(false);
       } catch (err: any) {
         setError(err.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูล');
@@ -153,19 +196,44 @@ export default function Home() {
     }
   ];
 
-  const [displayCount, setDisplayCount] = useState(8);
+  const [displayCount, setDisplayCount] = useState(12);
 
-  const fetchVibeImages = async (): Promise<string[]> => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/news?offset=0&limit=10`);
-      const data = response.data;
-      const vibeImages = data.images
-        .map((image: any) => image.image_path);
-      return vibeImages;
-    } catch (error) {
-      return [];
+const fetchMedia = async () => {
+  try {
+    console.log('กำลังดึงข้อมูลมีเดีย...');
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
+    
+    // แสดงข้อมูลที่ได้จาก API เพื่อการตรวจสอบ
+    console.log('Media API response:', response.data);
+    
+    // ตรวจสอบว่า response มีรูปแบบตามที่คาดหวังหรือไม่
+    if (response.data && typeof response.data === 'object') {
+      // ตรวจสอบและกำหนดค่าอย่างชัดเจน - อย่าใช้ || [] เพราะอาจเป็น array ว่าง
+      const responseImages = Array.isArray(response.data.images) ? response.data.images : [];
+      const responseVideos = Array.isArray(response.data.videos) ? response.data.videos : [];
+      
+      console.log(`พบรูปภาพ ${responseImages.length} รายการ และวิดีโอ ${responseVideos.length} รายการ`);
+      
+      // ตรวจสอบโครงสร้างข้อมูลวิดีโอ
+      if (responseVideos.length > 0) {
+        console.log('ตัวอย่างข้อมูลวิดีโอแรก:', responseVideos[0]);
+        console.log('มีไฟล์วิดีโอหรือไม่:', responseVideos[0].files && responseVideos[0].files.length > 0);
+      }
+      
+      setImages(responseImages);
+      setVideos(responseVideos);
+    } else {
+      console.error('รูปแบบข้อมูลจาก API ไม่ถูกต้อง:', response.data);
+      setImages([]);
+      setVideos([]);
     }
-  };
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลมีเดีย:', error);
+    setImages([]);
+    setVideos([]);
+  }
+};
+
 
   const handleViewAllGallery = () => {
     router.push('/gallery');
@@ -179,6 +247,46 @@ export default function Home() {
     }).catch(() => {});
     router.push(`/newandevent/${newId}`);
   };
+
+  const getVideoType = (path) => {
+    if (!path) return 'mp4';
+    const extension = path.split('.').pop().toLowerCase();
+    return extension || 'mp4';
+  };
+
+  const combineAndSortMedia = (images, videos) => {
+    // แปลงรูปภาพให้อยู่ในรูปแบบเดียวกับที่จะใช้แสดงผล
+    const formattedImages = images.map(img => ({
+      id: `img-${img.id}`,
+      type: 'image',
+      path: img.image_path,
+      description: img.description,
+      date: new Date(img.created_at),
+      originalData: img
+    }));
+
+    // แปลงวิดีโอให้อยู่ในรูปแบบเดียวกับที่จะใช้แสดงผล
+    const formattedVideos = videos.map(vid => ({
+      id: `vid-${vid.id}`,
+      type: 'video',
+      path: vid.files && vid.files.length > 0 ? vid.files[0].file_path : null,
+      title: vid.title,
+      date: new Date(vid.published_date),
+      originalData: vid
+    })).filter(vid => vid.path !== null); // กรองวิดีโอที่ไม่มีไฟล์ออก
+
+    // รวมข้อมูลและเรียงตามวันที่ล่าสุด
+    const combined = [...formattedImages, ...formattedVideos];
+    combined.sort((a, b) => b.date - a.date);
+    // จำกัดจำนวนที่จะแสดง
+    return combined.slice(0, displayCount);
+  };
+ 
+  useEffect(() => {
+    // เรียกฟังก์ชั่นเพื่อรวมและเรียงข้อมูล
+    const sortedMedia = combineAndSortMedia(images, videos);
+    setCombinedMedia(sortedMedia);
+  }, [images, videos, displayCount]);
 
   return (
     <div className="bg-gradient-to-b from-[#0A2463] via-[#F9FAFB] to-white min-h-screen">
@@ -278,28 +386,96 @@ export default function Home() {
 
       {/* Gallery Section */}
       <div className="mx-auto py-14 px-6 md:px-14 xl:px-32 bg-[#F9FAFB]">
-        <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight">บรรยากาศโครงการ</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {images.slice(0, displayCount).map((image, index) => (
-            <div key={index} className="rounded-xl overflow-hidden h-52 shadow bg-white hover:shadow-lg transition-shadow">
-              <img
-                src={`${process.env.NEXT_PUBLIC_IMG}/${image}`}
-                alt={`Program atmosphere ${index + 1}`}
-                className="w-full h-full object-cover object-center"
-              />
+      <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight">บรรยากาศโครงการ</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {combinedMedia.length > 0 ? (
+          combinedMedia.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-xl overflow-hidden h-52 shadow bg-white hover:shadow-lg transition-shadow cursor-pointer relative"
+              onClick={() => {
+                setSelectedMedia({
+                  type: item.type,
+                  path: item.path
+                });
+                setShowModal(true);
+              }}
+            >
+              {item.type === 'video' ? (
+                <>
+                  <div className="relative w-full h-full">
+                    <video
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                      muted
+                      playsInline
+                      preload="metadata"
+                    >
+                      <source src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`} type={`video/${getVideoType(item.path)}`} />
+                      Your browser does not support the video tag.
+                    </video>
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#00000080] pointer-events-none">
+                      <Play className="text-white" size={48} />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <img
+                  src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`}
+                  alt={item.description || ""}
+                  className="w-full h-full object-cover object-center"
+                />
+              )}
+              
             </div>
-          ))}
-        </div>
-        {images.length > 0 && (
-          <div className="flex justify-center">
-            <button
-              onClick={handleViewAllGallery}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold text-lg transition-colors shadow-lg">
-              ดูเพิ่มเติม
-            </button>
+          ))
+        ) : (
+          <div className="col-span-1 md:col-span-2 lg:col-span-4 text-center py-6 text-gray-500">
+            ไม่พบข้อมูลมีเดีย
           </div>
         )}
       </div>
+      
+      {showModal && selectedMedia && (
+        <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center p-4" onClick={closeModal}>
+          <div className="relative w-full max-w-4xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={closeModal}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors bg-red-500 rounded-full p-2"
+            >
+              <X size={24} />
+            </button>
+            
+            {selectedMedia.type === 'video' ? (
+              <video 
+                className="w-full h-auto max-h-[80vh] rounded-lg" 
+                controls 
+                autoPlay
+              >
+                <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
+              </video>
+            ) : (
+              <img 
+                src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
+                alt="Selected media"
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg" 
+              />
+            )}
+          </div>
+        </div>
+      )}
+      
+      {(images.length > 0 || videos.length > 0)  && ( //&& combinedMedia.length >= displayCount
+        <div className="flex justify-center">
+          <button
+            onClick={handleViewAllGallery}
+            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold text-lg transition-colors shadow-lg">
+            ดูเพิ่มเติม
+          </button>
+        </div>
+      )}
+    </div>
+
     </div>
   );
 }
