@@ -7,11 +7,11 @@ export default function Footer() {
       <footer className="bg-blue-900 text-white py-8 px-6">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Column 1 - Thailand 4.0 */}
+            {/* Column 1 - โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Thailand 4.0</h3>
+              <h3 className="text-lg font-semibold mb-4">โครงการบัณฑิตผลิตพันธุ์รู้ใหม่</h3>
               <p className="text-sm mb-4">
-                Training project to produce new graduates for the New Growth Engine industry according to the Thailand 4.0 policy.
+                หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
               </p>
               <div className="flex space-x-4 mt-4">
                 <a href="#" aria-label="Facebook">
@@ -37,44 +37,43 @@ export default function Footer() {
               </div>
             </div>
   
-            {/* Column 2 - Quick Links */}
+            {/* Column 2 - เมนูด่วน */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <h3 className="text-lg font-semibold mb-4">เมนูด่วน</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="/about" className="hover:text-blue-300">About Us</a></li>
-                <li><a href="/courses" className="hover:text-blue-300">Our Courses</a></li>
-                <li><a href="/admissions" className="hover:text-blue-300">Admissions</a></li>
-                <li><a href="/newandevent" className="hover:text-blue-300">News & Events</a></li>
-                <li><a href="/contact" className="hover:text-blue-300">Contact Us</a></li>
+                <li><a href="/about" className="hover:text-blue-300">เกี่ยวกับโครงการ</a></li>
+                <li><a href="/courses" className="hover:text-blue-300">หลักสูตรอบรม</a></li>
+                <li><a href="/admissions" className="hover:text-blue-300">สมัครอบรม</a></li>
+                <li><a href="/newandevent" className="hover:text-blue-300">ข่าวสารและกิจกรรม</a></li>
+                <li><a href="/contact" className="hover:text-blue-300">ติดต่อเรา</a></li>
               </ul>
             </div>
   
-            {/* Column 3 - Resources */}
+            {/* Column 3 - แหล่งข้อมูล */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Resources</h3>
+              <h3 className="text-lg font-semibold mb-4">แหล่งข้อมูล</h3>
               <ul className="space-y-2 text-sm">
-                <li><a href="/elearning" className="hover:text-blue-300">E-learning Materials</a></li>
-                <li><a href="/qanda" className="hover:text-blue-300">Q and A</a></li>
-                <li><a href={process.env.NEXT_PUBLIC_REGISTER} className="hover:text-blue-300">Apply Now</a></li>
-                
+                <li><a href="/elearning" className="hover:text-blue-300">สื่อการเรียนรู้ออนไลน์</a></li>
+                <li><a href="/qanda" className="hover:text-blue-300">ถาม-ตอบ</a></li>
+                <li><a href={process.env.NEXT_PUBLIC_REGISTER} className="hover:text-blue-300">สมัครเข้าร่วมโครงการ</a></li>
               </ul>
             </div>
   
-            {/* Column 4 - Contact Info */}
+            {/* Column 4 - ข้อมูลติดต่อ */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
+              <h3 className="text-lg font-semibold mb-4">ข้อมูลติดต่อ</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
                 <FontAwesomeIcon icon={faLocationDot} style={{ color: "#74C0FC", width: "20px", height: "20px" }} />
-                  <span>123 Education Building, Bangkok University, Bangkok, Thailand 10110</span>
+                  <span>มหาวิทยาลัยแม่โจ้ 63 หมู่ 4 ต.หนองหาร อ.สันทราย จ.เชียงใหม่ 50290</span>
                 </li>
                 <li className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faPhone} style={{ color: "#74C0FC", width: "18px", height: "18px" }} />
-                  <span>+66 2 123 4567</span>
+                  <span>084-150-0677 (ดร.พยุงศักดิ์) <br/> 089-837-8992 (ดร.สุดเขต)</span>
                 </li>
                 <li className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faEnvelope} style={{ color: "#74C0FC", width: "20px", height: "20px" }} />
-                  <span>info@thailand40edu.th</span>
+                  <span>Payungsak.kae@gmail.com <br/> sutkhet@mju.ac.th</span>
                 </li>
               </ul>
             </div>
@@ -82,7 +81,7 @@ export default function Footer() {
           
           {/* Copyright section */}
           <div className="border-t border-blue-800 mt-8 pt-4 text-xs text-center">
-            <p>© 2025 โครงการผลิตบัณฑิตพันธ์ใหม่. All rights reserved.</p>
+            <p>© 2025 โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ มหาวิทยาลัยแม่โจ้. สงวนลิขสิทธิ์</p>
           </div>
         </div>
       </footer>
