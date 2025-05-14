@@ -427,12 +427,12 @@ export default function Home() {
       {/* ส่วนที่ 3 */}
       <div className="w-full bg-[#F9FAFB]">
         <div className="h-full md:p-20">
-          <div className="text-xl md:text-2xl font-bold text-[#0A2463]">
+          <div className="text-xl md:text-2xl font-bold text-[#0A2463] text-center">
             คุณสมบัติผู้เข้าร่วม
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-8 md:gap-0 mt-6">
-            <div className="text-base md:text-lg text-[#0A2463] font-bold pt-6">
+            <div className="text-base md:text-lg text-[#0A2463] font-bold pt-6 px-3">
               คุณสมบัติผู้สมัคร
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -498,7 +498,7 @@ export default function Home() {
             </div>
 
             {/* ส่วนย่อยที่ 2  */}
-            <div className=" text-lg  text-[#0A2463] font-bold pt-6 ">
+            <div className=" text-lg  text-[#0A2463] font-bold pt-6 px-3 ">
               เอกสารที่ต้องการ
               <div className="flex items-center gap-2 pt-4 text-xs text-[#000000]">
                 <FontAwesomeIcon
@@ -567,7 +567,7 @@ export default function Home() {
 
                 {/* ขั้นตอนใหม่จากรูป */}
                 <div className="relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]">
-                  <div className="w-full md:w-1/2 text-center pr-12 ">
+                  <div className="w-full md:w-1/2 text-center md:pr-12 ">
                     <h3 className="font-bold text-lg mb-2">
                       1. กรอกใบสมัครออนไลน์
                     </h3>
@@ -589,7 +589,7 @@ export default function Home() {
                       2
                     </div>
                   </div>
-                  <div className="w-full md:w-1/2 text-center pl-12">
+                  <div className="w-full md:w-1/2 text-center md:pl-12">
                     <h3 className="font-bold text-lg mb-2">
                       2. ตรวจสอบคุณสมบัติ
                     </h3>
@@ -599,7 +599,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="relative mb-16 flex flex-col md:flex-row items-center md:items-start text-[#0A2463]">
-                  <div className="w-full md:w-1/2 text-center pr-12 ">
+                  <div className="w-full md:w-1/2 text-center md:pr-12 ">
                     <h3 className="font-bold text-lg mb-2">
                       3. ประกาศรายชื่อผู้มีสิทธิ์เข้าร่วม
                     </h3>
@@ -621,7 +621,7 @@ export default function Home() {
                       4
                     </div>
                   </div>
-                  <div className="w-full md:w-1/2 text-center pl-12">
+                  <div className="w-full md:w-1/2 text-center md:pl-12">
                     <h3 className="font-bold text-lg mb-2">
                       4. ยืนยันสิทธิ์และเข้าร่วมอบรม
                     </h3>

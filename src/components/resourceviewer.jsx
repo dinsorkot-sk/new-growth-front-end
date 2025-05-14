@@ -77,11 +77,6 @@ const ResourceViewer = ({ resource, onBack }) => {
             
             <div className="space-y-2">
               <h3 className="text-xl font-bold">{resource.title}</h3>
-              {resource.author && (
-                <p className="text-sm text-gray-600">
-                  ผู้สร้าง: {resource.author}
-                </p>
-              )}
               {resource.date && (
                 <p className="text-sm text-gray-600">
                   เผยแพร่เมื่อ: {resource.date}

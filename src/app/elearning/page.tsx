@@ -214,7 +214,7 @@ export default function ResourcesPage() {
       >
         <span className="mr-2">{resource.icon === "video" ? "▶️" : "📄"}</span>
         <span>
-          {resource.icon === "video" ? "Watch Video" : "View Document"}
+          {resource.icon === "video" ? "ดูวิดีโอ" : "ดูเอกสาร"}
         </span>
       </button>
     );
@@ -369,27 +369,23 @@ export default function ResourcesPage() {
 
                           <div className="flex flex-wrap gap-x-8 gap-y-2 mt-3 text-xs text-[#6B7280]">
                             <div>
-                              <span className="font-semibold">Type:</span>{" "}
+                              <span className="font-semibold">ประเภท:</span>{" "}
                               {resource.type}
                             </div>
                             {resource.duration && (
                               <div>
-                                <span className="font-semibold">Duration:</span>{" "}
+                                <span className="font-semibold">ความยาว:</span>{" "}
                                 {resource.duration}
                               </div>
                             )}
                             {resource.pages && (
                               <div>
-                                <span className="font-semibold">Pages:</span>{" "}
+                                <span className="font-semibold">หน้า:</span>{" "}
                                 {resource.pages}
                               </div>
                             )}
                             <div>
-                              <span className="font-semibold">Author:</span>{" "}
-                              {resource.author}
-                            </div>
-                            <div>
-                              <span className="font-semibold">Date:</span>{" "}
+                              <span className="font-semibold">วันที่:</span>{" "}
                               {resource.date}
                             </div>
                           </div>
@@ -413,8 +409,8 @@ export default function ResourcesPage() {
                             </span>
                             <span className="text-[#374151]">
                               {downloadingId === resource.id
-                                ? "Downloading..."
-                                : "Download"}
+                                ? "กำลังดาวน์โหลด..."
+                                : "ดาวน์โหลด"}
                             </span>
                           </button>
                         )}
@@ -425,7 +421,7 @@ export default function ResourcesPage() {
               </div>
             )}
 
-            <div className="flex items-center justify-between mt-6">
+            <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
               <div className="text-sm text-gray-600">
                 {showType === "Video" ? (
                   <>
