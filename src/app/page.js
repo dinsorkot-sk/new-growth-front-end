@@ -274,7 +274,7 @@ export default function Home() {
                 </div>
               </a>
               <a href="#course-info" className="px-6 h-12 bg-[#ffffff] hover:bg-[#f0f0f0] transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">
-                ดูรายละเอียดหลักสูตร
+                ดูรายละเอียดเนื้อหา
               </a>
             </div>
             <div className="mt-6 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
@@ -337,8 +337,8 @@ export default function Home() {
       <div className="w-full bg-[#ffffff]">
         <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
           <div className="flex justify-between text-[#0A2463] text-xl sm:text-xl md:text-2xl font-bold">
-            หลักสูตรเเนะนำ
-            <div className="text-[#39A9DB] text-xs">ดูหลักสูตร ทั้งหมด</div>
+            เนื้อหาแนะนำ
+            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline">ดูเนื้อหาทั้งหมด</div>
           </div>
           {/* การ์ด */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
@@ -399,22 +399,18 @@ export default function Home() {
                               height: "12px",
                             }}
                           />
-                          120 student
+                          120 ผู้เข้าอบรม
                         </div>
                       </div>
 
                       <div
-                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463]"
+                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
                         onClick={() => handleCoureseViewDetails(course.id)}
                       >
-                        View Details{" "}
+                        ดูรายละเอียด
                         <FontAwesomeIcon
                           icon={faArrowRight}
-                          style={{
-                            color: "#0A2463",
-                            width: "12px",
-                            height: "12px",
-                          }}
+                          style={{ color: "#0A2463", width: "12px", height: "12px" }}
                         />
                       </div>
                     </div>
@@ -452,8 +448,8 @@ export default function Home() {
       <div className="w-full bg-[#F9FAFB]">
         <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
           <div className="flex justify-between text-[#0A2463] text-2xl font-bold">
-            ข่าวเเละกิจกรรม
-            <div className="text-[#39A9DB] text-xs">ดูข่าว ทั้งหมด</div>
+            ข่าวและกิจกรรม
+            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline">ดูข่าวทั้งหมด</div>
           </div>
 
           {/* ใช้ grid นอก loop */}
@@ -517,17 +513,13 @@ export default function Home() {
                       </div>
 
                       <div
-                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold"
+                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
                         onClick={() => handleNewsViewDetails(news.id)}
                       >
-                        Read More
+                        อ่านเพิ่มเติม
                         <FontAwesomeIcon
                           icon={faArrowRight}
-                          style={{
-                            color: "#0A2463",
-                            width: "12px",
-                            height: "12px",
-                          }}
+                          style={{ color: "#0A2463", width: "12px", height: "12px" }}
                         />
                       </div>
                     </div>

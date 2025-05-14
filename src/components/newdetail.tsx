@@ -5,12 +5,12 @@ import { ArrowLeft, Calendar, Eye, Tag as TagIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-export default function Newandeventdetail({ params }) {
+export default function Newandeventdetail({ params }: { params: string }) {
     console.log('params', params);
   const router = useRouter();
-  const [newsData, setNewsData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [newsData, setNewsData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
@@ -36,8 +36,8 @@ export default function Newandeventdetail({ params }) {
     }
   }, [params]);
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('th-TH', options);
   };
 
@@ -61,7 +61,7 @@ export default function Newandeventdetail({ params }) {
           <p className="text-gray-700">{error}</p>
           <button 
             onClick={handleGoBack}
-            className="mt-4 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            className="mt-4 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition cursor-pointer"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             กลับไปหน้าข่าว
@@ -78,7 +78,7 @@ export default function Newandeventdetail({ params }) {
           <h2 className="text-xl font-bold text-yellow-600 mb-2">ไม่พบข้อมูลข่าว</h2>
           <button 
             onClick={handleGoBack}
-            className="mt-4 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            className="mt-4 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition cursor-pointer"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             กลับไปหน้าข่าว
@@ -94,7 +94,7 @@ export default function Newandeventdetail({ params }) {
       <div className="mb-6">
         <button 
           onClick={handleGoBack}
-          className="flex items-center text-blue-600 hover:text-blue-800 transition"
+          className="flex items-center text-blue-600 hover:text-blue-800 transition cursor-pointer"
         >
           <ArrowLeft className="mr-2 h-5 w-5" />
           <span className="font-medium">กลับไปหน้าข่าว</span>

@@ -1,12 +1,4 @@
-// 'use client'
 
-// import React from 'react';
-// import NewandeventdetailComponent from '../../../components/newdetail';
-
-// export default function Newandeventdetail({ params }: { params: { id: string } }) {
-//     const resolvedParams = React.use(params);
-//   return <NewandeventdetailComponent params={params.id} />;
-// }
 'use client'
 
 import React from 'react';

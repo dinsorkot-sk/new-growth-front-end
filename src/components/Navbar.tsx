@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -8,11 +8,14 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const menuItems = [
     { name: "หน้าแรก", path: "/" },
     { name: "เกี่ยวกับโครงการ", path: "/about" },
-    { name: "หลักสูตร", path: "/courses" },
+    { name: "เนื้อหา", path: "/courses" },
     { name: "การรับสมัคร", path: "/admissions" },
     { name: "ข่าวสารและกิจกรรม", path: "/newandevent" },
     { name: "อีเลิร์นนิง", path: "/elearning" },
@@ -21,6 +24,8 @@ export default function Navbar() {
   ];
 
   const isActive = (path) => pathname === path;
+
+  if (!mounted) return null;
 
   return (
     <nav className="bg-[#0A2463] py-4 px-4 md:px-10" aria-label="เมนูหลัก" role="navigation">

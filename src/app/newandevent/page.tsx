@@ -97,10 +97,6 @@ const closeModal = () => {
         const data = response.data;
         setNewsItems(data.data);
         setPagination(data.pagination);
-        // Fetch images and videos
-        // const media = await fetchMedia();
-        // setImages(media. || []);
-        // setVideos(media.videos || []);
 
         await fetchMedia();
         setLoading(false);
@@ -301,7 +297,7 @@ const fetchMedia = async () => {
         <div className="mx-auto max-w-7xl">
           {/* Search & Filter */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-            <div className="relative w-full md:w-1/2">
+            <div className="relative w-full">
               <input
                 type="text"
                 placeholder="ค้นหาข่าว..."
@@ -336,7 +332,7 @@ const fetchMedia = async () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredNews.map(news => (
-                  <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-2xl duration-200">
+                  <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-2xl duration-200 cursor-pointer"  onClick={() => handleViewDetails(news.id, news.view_count)}>
                     <div className="relative">
                       <img
                         src={`${process.env.NEXT_PUBLIC_IMG}/${news.image?.image_path}`}
@@ -358,7 +354,7 @@ const fetchMedia = async () => {
                       <h3 className="text-lg font-bold text-blue-900 mb-2 line-clamp-2">{news.title}</h3>
                       <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">{news.short_description}</p>
                       <div className="mt-2">
-                        <button className="flex items-center text-blue-600 font-semibold text-sm hover:text-blue-800 transition-colors" onClick={() => handleViewDetails(news.id, news.view_count)}>
+                        <button className="flex items-center text-blue-600 font-semibold text-sm hover:text-blue-800 transition-colors cursor-pointer" onClick={() => handleViewDetails(news.id, news.view_count)}>
                           อ่านเพิ่มเติม
                           <ArrowRight className="h-4 w-4 ml-1" />
                         </button>
@@ -385,7 +381,7 @@ const fetchMedia = async () => {
       </div>
 
       {/* Gallery Section */}
-      <div className="mx-auto py-14 px-6 md:px-14 xl:px-32 bg-[#F9FAFB]">
+      <div className="bg-[#F9FAFB]  p-4 md:p-10">
       <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight">บรรยากาศโครงการ</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">

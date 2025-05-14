@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Column 1 - โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">โครงการบัณฑิตผลิตพันธุ์รู้ใหม่</h3>
+              <h3 className="text-lg font-semibold mb-4">โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (แม่โจ้)</h3>
               <p className="text-sm mb-4">
                 หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
               </p>
@@ -42,7 +42,7 @@ export default function Footer() {
               <h3 className="text-lg font-semibold mb-4">เมนูด่วน</h3>
               <ul className="space-y-2 text-sm">
                 <li><a href="/about" className="hover:text-blue-300">เกี่ยวกับโครงการ</a></li>
-                <li><a href="/courses" className="hover:text-blue-300">หลักสูตรอบรม</a></li>
+                <li><a href="/courses" className="hover:text-blue-300">เนื้อหาอบรม</a></li>
                 <li><a href="/admissions" className="hover:text-blue-300">สมัครอบรม</a></li>
                 <li><a href="/newandevent" className="hover:text-blue-300">ข่าวสารและกิจกรรม</a></li>
                 <li><a href="/contact" className="hover:text-blue-300">ติดต่อเรา</a></li>
