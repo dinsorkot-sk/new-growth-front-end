@@ -242,52 +242,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="pt-10 text-base">ติดต่อกับเรา</div>
-              <div className="flex gap-4 pt-6">
-                <div className="flex justify-center items-center w-[44px] h-[44px] bg-[#0A2463] rounded-full">
-                  <FontAwesomeIcon
-                    icon={faFacebook}
-                    style={{
-                      color: "#ffffff",
-                      width: "18px",
-                      height: "18px",
-                    }}
-                  />
-                </div>
-
-                <div className="flex justify-center items-center w-[44px] h-[44px] bg-[#0A2463] rounded-full">
-                  <FontAwesomeIcon
-                    icon={faTwitter}
-                    style={{
-                      color: "#ffffff",
-                      width: "18px",
-                      height: "18px",
-                    }}
-                  />
-                </div>
-
-                <div className="flex justify-center items-center w-[44px] h-[44px] bg-[#0A2463] rounded-full">
-                  <FontAwesomeIcon
-                    icon={faInstagram}
-                    style={{
-                      color: "#ffffff",
-                      width: "18px",
-                      height: "18px",
-                    }}
-                  />
-                </div>
-
-                <div className="flex justify-center items-center w-[44px] h-[44px] bg-[#0A2463] rounded-full">
-                  <FontAwesomeIcon
-                    icon={faLinkedin}
-                    style={{
-                      color: "#ffffff",
-                      width: "18px",
-                      height: "18px",
-                    }}
-                  />
-                </div>
-              </div>
             </div>
             <div className="w-full ">
               <div className="h-full px-4 py-5 sm:px-6 lg:px-20 lg:py-10">

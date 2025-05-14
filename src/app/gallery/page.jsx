@@ -125,7 +125,7 @@ export default function AllPhotos() {
         <h1 className="text-2xl font-bold text-blue-900">ภาพบรรยากาศทั้งหมด</h1>
         <button 
           onClick={() => router.back()}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition-colors duration-300 flex items-center">
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition-colors duration-300 flex items-center cursor-pointer">
           <span className="mr-1">←</span> ย้อนกลับ
         </button>
       </div>

@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook } from '@fortawesome/free-solid-svg-icons';
-import ResourceViewer from '../../components/resourceviewer';
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBook } from "@fortawesome/free-solid-svg-icons";
+import ResourceViewer from "../../components/resourceviewer";
 
 export default function ResourcesPage() {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showType, setShowType] = useState('Video');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showType, setShowType] = useState("Video");
   const [paginationVideo, setPaginationVideo] = useState({
     total: 0,
     offset: 0,
-    limit: 10
+    limit: 10,
   });
   const [paginationDocument, setPaginationDocument] = useState({
     total: 0,
     offset: 0,
-    limit: 10
+    limit: 10,
   });
 
   const [selectedResource, setSelectedResource] = useState(null);
@@ -28,53 +28,64 @@ export default function ResourcesPage() {
     const fetchResources = async () => {
       try {
         setLoading(true);
-        
-        const pagination = showType === 'Video' ? paginationVideo : paginationDocument;
-        
+
+        const pagination =
+          showType === "Video" ? paginationVideo : paginationDocument;
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API}/document/getallDocumentAndResouceVideo?offset=${pagination.offset}&limit=${pagination.limit}&type=${showType}`
         );
-        
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
-        
+
         const data = await response.json();
         setResources(data.data);
-        
-        if (showType === 'Video') {
+
+        if (showType === "Video") {
           setPaginationVideo({
             ...paginationVideo,
-            total: data.pagination.total
+            total: data.pagination.total,
           });
         } else {
           setPaginationDocument({
             ...paginationDocument,
-            total: data.pagination.total
+            total: data.pagination.total,
           });
         }
-        
+
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching resources:', error);
-        setError('Failed to load resources. Please try again later.');
+        console.error("Error fetching resources:", error);
+        setError("Failed to load resources. Please try again later.");
         setLoading(false);
       }
     };
 
     fetchResources();
-  }, [showType, paginationVideo.offset, paginationVideo.limit, paginationDocument.offset, paginationDocument.limit]);
+  }, [
+    showType,
+    paginationVideo.offset,
+    paginationVideo.limit,
+    paginationDocument.offset,
+    paginationDocument.limit,
+  ]);
 
-  const processedResources = resources.map(item => {
-    const icon = item.type.toLowerCase().includes('video') ? 'video' : 'document';
-    
+  const processedResources = resources.map((item) => {
+    const icon = item.type.toLowerCase().includes("video")
+      ? "video"
+      : "document";
+
     const file = item.files && item.files.length > 0 ? item.files[0] : null;
-    const fileUrl = file ? `${process.env.NEXT_PUBLIC_IMG}/${file.file_path.replace(/\\/g, '/')}` : '';
-    
-    const date = new Date(item.published_date).toLocaleDateString('th-TH', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    const fileUrl = file
+      ? `${process.env.NEXT_PUBLIC_IMG}/${file.file_path.replace(/\\/g, "/")}`
+      : "";
+
+    const date = new Date(item.published_date).toLocaleDateString("th-TH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
 
     return {
@@ -84,25 +95,26 @@ export default function ResourcesPage() {
       type: item.type.charAt(0).toUpperCase() + item.type.slice(1),
       duration: item.duration ? `${item.duration} minutes` : null,
       pages: item.pages,
-      author: item.author || 'Unknown',
+      author: item.author || "Unknown",
       date: date,
       icon: icon,
       url: fileUrl,
-      isDownloadable: file ? file.is_downloadable : false
+      isDownloadable: file ? file.is_downloadable : false,
     };
   });
 
-  const filteredResources = processedResources.filter(resource => {
-    const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         resource.description.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredResources = processedResources.filter((resource) => {
+    const matchesSearch =
+      resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resource.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
   const renderIcon = (iconType) => {
-    switch(iconType) {
-      case 'video':
+    switch (iconType) {
+      case "video":
         return <span className="text-blue-500">🎬</span>;
-      case 'document':
+      case "document":
       default:
         return <span className="text-blue-500">📄</span>;
     }
@@ -112,72 +124,73 @@ export default function ResourcesPage() {
   const handleDownload = async (url, defaultFileName) => {
     try {
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`ดาวน์โหลดล้มเหลว: ${response.status}`);
       }
-      
+
       const blob = await response.blob();
-      
-      const contentType = response.headers.get('content-type');
+
+      const contentType = response.headers.get("content-type");
       let fileName = defaultFileName;
-      
+
       if (!fileName) {
-        const urlParts = url.split('/');
-        const urlFileName = urlParts[urlParts.length - 1].split('?')[0];
-        
-        if (urlFileName && urlFileName.includes('.')) {
+        const urlParts = url.split("/");
+        const urlFileName = urlParts[urlParts.length - 1].split("?")[0];
+
+        if (urlFileName && urlFileName.includes(".")) {
           fileName = urlFileName;
         } else {
           if (contentType) {
-            if (contentType.includes('video')) {
-              fileName = 'video.mp4';
-            } else if (contentType.includes('pdf')) {
-              fileName = 'document.pdf';
-            } else if (contentType.includes('image')) {
-              fileName = 'image.jpg';
-            } else if (contentType.includes('audio')) {
-              fileName = 'audio.mp3';
+            if (contentType.includes("video")) {
+              fileName = "video.mp4";
+            } else if (contentType.includes("pdf")) {
+              fileName = "document.pdf";
+            } else if (contentType.includes("image")) {
+              fileName = "image.jpg";
+            } else if (contentType.includes("audio")) {
+              fileName = "audio.mp3";
             } else {
-              fileName = 'downloaded_file';
+              fileName = "downloaded_file";
             }
           } else {
-            fileName = 'downloaded_file';
+            fileName = "downloaded_file";
           }
         }
       }
-      
+
       const blobUrl = window.URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
+
+      const link = document.createElement("a");
       link.href = blobUrl;
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       window.URL.revokeObjectURL(blobUrl);
-      
+
       return { success: true, fileName, contentType };
     } catch (error) {
-      console.error('ดาวน์โหลดล้มเหลว:', error);
+      console.error("ดาวน์โหลดล้มเหลว:", error);
       return { success: false, error: error.message };
     }
   };
 
   const downloadResource = async (resource) => {
     setDownloadingId(resource.id);
-    
+
     try {
-      const downloadUrl = resource.type === 'Video' 
-        ? `${process.env.NEXT_PUBLIC_API}/video/downloadVideo/${resource.id}`
-        : `${process.env.NEXT_PUBLIC_API}/document/downloadDocument/${resource.id}`;
-      
+      const downloadUrl =
+        resource.type === "Video"
+          ? `${process.env.NEXT_PUBLIC_API}/video/downloadVideo/${resource.id}`
+          : `${process.env.NEXT_PUBLIC_API}/document/downloadDocument/${resource.id}`;
+
       const result = await handleDownload(
         downloadUrl,
-        `${resource.title}.${resource.type === 'Video' ? 'mp4' : 'pdf'}`
+        `${resource.title}.${resource.type === "Video" ? "mp4" : "pdf"}`
       );
-      
+
       if (result.success) {
         console.log(`ดาวน์โหลด ${resource.title} สำเร็จ`);
       }
@@ -192,17 +205,17 @@ export default function ResourcesPage() {
     const handleClick = () => {
       setSelectedResource(resource);
     };
-    
+
     return (
       <button
         onClick={handleClick}
         className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center hover:bg-blue-600 transition-colors"
         disabled={!resource.url}
       >
-        <span className="mr-2">
-          {resource.icon === 'video' ? '▶️' : '📄'}
+        <span className="mr-2">{resource.icon === "video" ? "▶️" : "📄"}</span>
+        <span>
+          {resource.icon === "video" ? "Watch Video" : "View Document"}
         </span>
-        <span>{resource.icon === 'video' ? 'Watch Video' : 'View Document'}</span>
       </button>
     );
   };
@@ -210,57 +223,64 @@ export default function ResourcesPage() {
   const handleCloseViewer = () => {
     setSelectedResource(null);
   };
-  
+
   if (selectedResource) {
-    return <ResourceViewer resource={selectedResource} onBack={handleCloseViewer} />;
+    return (
+      <ResourceViewer resource={selectedResource} onBack={handleCloseViewer} />
+    );
   }
 
   const handleNextPage = () => {
-    if (showType === 'Video') {
-      if (paginationVideo.offset + paginationVideo.limit < paginationVideo.total) {
+    if (showType === "Video") {
+      if (
+        paginationVideo.offset + paginationVideo.limit <
+        paginationVideo.total
+      ) {
         setPaginationVideo({
           ...paginationVideo,
-          offset: paginationVideo.offset + paginationVideo.limit
+          offset: paginationVideo.offset + paginationVideo.limit,
         });
       }
     } else {
-      if (paginationDocument.offset + paginationDocument.limit < paginationDocument.total) {
+      if (
+        paginationDocument.offset + paginationDocument.limit <
+        paginationDocument.total
+      ) {
         setPaginationDocument({
           ...paginationDocument,
-          offset: paginationDocument.offset + paginationDocument.limit
+          offset: paginationDocument.offset + paginationDocument.limit,
         });
       }
     }
   };
 
   const handlePrevPage = () => {
-    if (showType === 'Video') {
+    if (showType === "Video") {
       if (paginationVideo.offset - paginationVideo.limit >= 0) {
         setPaginationVideo({
           ...paginationVideo,
-          offset: paginationVideo.offset - paginationVideo.limit
+          offset: paginationVideo.offset - paginationVideo.limit,
         });
       }
     } else {
       if (paginationDocument.offset - paginationDocument.limit >= 0) {
         setPaginationDocument({
           ...paginationDocument,
-          offset: paginationDocument.offset - paginationDocument.limit
+          offset: paginationDocument.offset - paginationDocument.limit,
         });
       }
     }
-  };
-  
-  const toggleResourceType = () => {
-    setShowType(showType === 'Video' ? 'Document' : 'Video');
   };
 
   return (
     <div className="mx-auto">
       <div className="bg-[#0A2463] md:h-50 text-white py-10 px-10">
-        <div className="text-3xl font-bold text-white">แหล่งข้อมูลการเรียนรู้แบบออนไลน์</div>
+        <div className="text-3xl font-bold text-white">
+          แหล่งข้อมูลการเรียนรู้แบบออนไลน์
+        </div>
         <div className="text-wrap max-w-2xl text-base mt-5 text-white">
-          เข้าถึงวิดีโอการฝึกอบรม เอกสารประกอบ แบบฝึกหัด และสื่อการเรียนรู้เพื่อสนับสนุนการศึกษาของคุณ
+          เข้าถึงวิดีโอการฝึกอบรม เอกสารประกอบ แบบฝึกหัด
+          และสื่อการเรียนรู้เพื่อสนับสนุนการศึกษาของคุณ
         </div>
       </div>
 
@@ -268,39 +288,59 @@ export default function ResourcesPage() {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <input
             type="text"
-            placeholder="Search resources..."
-            className="w-full md:w-4/6 lg:w-5/6 border rounded-md py-2 px-4"
+            placeholder="ค้นหาข้อมูล..."
+            className="w-full border border-gray-300 rounded-md py-2 px-4"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button 
-            onClick={toggleResourceType}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md transition-colors w-full md:w-auto"
-          >
-            {showType === 'Video' ? 'แสดงเอกสาร' : 'แสดงวิดีโอ'}
-          </button>
+          <div className="flex gap-2 mb-2 md:mb-0">
+            <button
+              onClick={() => setShowType("Video")}
+              className={`flex items-center px-4 py-2 rounded-md border transition-colors text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                ${
+                  showType === "Video"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
+                }`}
+            >
+              <span className="mr-2">🎬</span>
+              วิดีโอ
+            </button>
+            <button
+              onClick={() => setShowType("Document")}
+              className={`flex items-center px-4 py-2 rounded-md border transition-colors text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                ${
+                  showType === "Document"
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-blue-500 border-blue-500 hover:bg-blue-50"
+                }`}
+            >
+              <span className="mr-2">📄</span>
+              เอกสาร
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="pt-6 pb-10 bg-[#F9FAFB] px-10">
         <h1 className="text-xl font-bold text-[#0A2463] mb-6">
-          {showType === 'Video' ? 'วิดีโอทั้งหมด' : 'เอกสารทั้งหมด'}
+          {showType === "Video" ? "วิดีโอทั้งหมด" : "เอกสารทั้งหมด"}
         </h1>
-        
+
         {loading && (
           <div className="text-center py-10">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             <p className="mt-2 text-gray-600">กำลังโหลดข้อมูล...</p>
           </div>
         )}
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
             <strong className="font-bold">Error! </strong>
             <span className="block sm:inline">{error}</span>
           </div>
         )}
-        
+
         {!loading && !error && (
           <>
             {filteredResources.length === 0 ? (
@@ -309,46 +349,72 @@ export default function ResourcesPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredResources.map(resource => (
-                  <div key={resource.id} className="bg-white rounded-lg shadow-md p-6">
+                {filteredResources.map((resource) => (
+                  <div
+                    key={resource.id}
+                    className="bg-white rounded-lg shadow-md p-6"
+                  >
                     <div className="md:flex justify-between">
                       <div className="md:flex items-start space-x-4">
                         <div className="mt-1 text-lg text-center my-3 md:my-0">
                           {renderIcon(resource.icon)}
                         </div>
                         <div>
-                          <h3 className="font-bold text-[#0A2463]">{resource.title}</h3>
-                          <p className="text-[#4B5563] text-sm mt-1">{resource.description}</p>
-                          
+                          <h3 className="font-bold text-[#0A2463]">
+                            {resource.title}
+                          </h3>
+                          <p className="text-[#4B5563] text-sm mt-1">
+                            {resource.description}
+                          </p>
+
                           <div className="flex flex-wrap gap-x-8 gap-y-2 mt-3 text-xs text-[#6B7280]">
-                            <div><span className="font-semibold">Type:</span> {resource.type}</div>
+                            <div>
+                              <span className="font-semibold">Type:</span>{" "}
+                              {resource.type}
+                            </div>
                             {resource.duration && (
-                              <div><span className="font-semibold">Duration:</span> {resource.duration}</div>
+                              <div>
+                                <span className="font-semibold">Duration:</span>{" "}
+                                {resource.duration}
+                              </div>
                             )}
                             {resource.pages && (
-                              <div><span className="font-semibold">Pages:</span> {resource.pages}</div>
+                              <div>
+                                <span className="font-semibold">Pages:</span>{" "}
+                                {resource.pages}
+                              </div>
                             )}
-                            <div><span className="font-semibold">Author:</span> {resource.author}</div>
-                            <div><span className="font-semibold">Date:</span> {resource.date}</div>
+                            <div>
+                              <span className="font-semibold">Author:</span>{" "}
+                              {resource.author}
+                            </div>
+                            <div>
+                              <span className="font-semibold">Date:</span>{" "}
+                              {resource.date}
+                            </div>
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col items-center space-y-3 mt-3 md:mt-0">
                         {renderActionButton(resource)}
                         {resource.isDownloadable && resource.url && (
-                          <button 
-                            onClick={() => downloadResource(resource)} 
-                            disabled={downloadingId === resource.id} 
+                          <button
+                            onClick={() => downloadResource(resource)}
+                            disabled={downloadingId === resource.id}
                             className={`flex items-center transition-colors text-sm ${
-                              downloadingId === resource.id ? 'opacity-50 cursor-not-allowed' : 'hover:text-blue-500'
+                              downloadingId === resource.id
+                                ? "opacity-50 cursor-not-allowed"
+                                : "hover:text-blue-500"
                             }`}
                           >
                             <span className="mr-2">
-                              {downloadingId === resource.id ? '⏳' : '⬇️'}
+                              {downloadingId === resource.id ? "⏳" : "⬇️"}
                             </span>
                             <span className="text-[#374151]">
-                              {downloadingId === resource.id ? 'Downloading...' : 'Download'}
+                              {downloadingId === resource.id
+                                ? "Downloading..."
+                                : "Download"}
                             </span>
                           </button>
                         )}
@@ -358,43 +424,69 @@ export default function ResourcesPage() {
                 ))}
               </div>
             )}
-            
+
             <div className="flex items-center justify-between mt-6">
               <div className="text-sm text-gray-600">
-                {showType === 'Video' ? (
+                {showType === "Video" ? (
                   <>
-                    แสดง {paginationVideo.offset + 1}-{Math.min(paginationVideo.offset + filteredResources.length, paginationVideo.total)} จากทั้งหมด {paginationVideo.total} รายการ
+                    แสดง {paginationVideo.offset + 1}-
+                    {Math.min(
+                      paginationVideo.offset + filteredResources.length,
+                      paginationVideo.total
+                    )}{" "}
+                    จากทั้งหมด {paginationVideo.total} รายการ
                   </>
                 ) : (
                   <>
-                    แสดง {paginationDocument.offset + 1}-{Math.min(paginationDocument.offset + filteredResources.length, paginationDocument.total)} จากทั้งหมด {paginationDocument.total} รายการ
+                    แสดง {paginationDocument.offset + 1}-
+                    {Math.min(
+                      paginationDocument.offset + filteredResources.length,
+                      paginationDocument.total
+                    )}{" "}
+                    จากทั้งหมด {paginationDocument.total} รายการ
                   </>
                 )}
               </div>
               <div className="flex space-x-2">
-                <button 
+                <button
                   onClick={handlePrevPage}
-                  disabled={showType === 'Video' ? paginationVideo.offset === 0 : paginationDocument.offset === 0}
+                  disabled={
+                    showType === "Video"
+                      ? paginationVideo.offset === 0
+                      : paginationDocument.offset === 0
+                  }
                   className={`px-4 py-2 border rounded ${
-                    (showType === 'Video' ? paginationVideo.offset === 0 : paginationDocument.offset === 0) 
-                      ? 'bg-gray-100 text-gray-400' 
-                      : 'bg-white text-blue-500 hover:bg-blue-50'
+                    (
+                      showType === "Video"
+                        ? paginationVideo.offset === 0
+                        : paginationDocument.offset === 0
+                    )
+                      ? "bg-gray-100 text-gray-400"
+                      : "bg-white text-blue-500 hover:bg-blue-50"
                   }`}
                 >
                   ก่อนหน้า
                 </button>
-                <button 
+                <button
                   onClick={handleNextPage}
-                  disabled={showType === 'Video' 
-                    ? paginationVideo.offset + paginationVideo.limit >= paginationVideo.total 
-                    : paginationDocument.offset + paginationDocument.limit >= paginationDocument.total
+                  disabled={
+                    showType === "Video"
+                      ? paginationVideo.offset + paginationVideo.limit >=
+                        paginationVideo.total
+                      : paginationDocument.offset + paginationDocument.limit >=
+                        paginationDocument.total
                   }
                   className={`px-4 py-2 border rounded ${
-                    (showType === 'Video' 
-                      ? paginationVideo.offset + paginationVideo.limit >= paginationVideo.total 
-                      : paginationDocument.offset + paginationDocument.limit >= paginationDocument.total) 
-                      ? 'bg-gray-100 text-gray-400' 
-                      : 'bg-white text-blue-500 hover:bg-blue-50'
+                    (
+                      showType === "Video"
+                        ? paginationVideo.offset + paginationVideo.limit >=
+                          paginationVideo.total
+                        : paginationDocument.offset +
+                            paginationDocument.limit >=
+                          paginationDocument.total
+                    )
+                      ? "bg-gray-100 text-gray-400"
+                      : "bg-white text-blue-500 hover:bg-blue-50"
                   }`}
                 >
                   ถัดไป

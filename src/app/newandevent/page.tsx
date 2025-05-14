@@ -287,9 +287,11 @@ const fetchMedia = async () => {
   return (
     <div className="bg-gradient-to-b from-[#0A2463] via-[#F9FAFB] to-white min-h-screen">
       {/* Header */}
-      <div className="bg-[#0A2463] text-white py-12 md:py-20 px-6 md:px-14 xl:px-32 rounded-b-3xl shadow-lg">
-        <div className="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-lg">ข่าวสารและกิจกรรม</div>
-        <div className="max-w-2xl text-lg md:text-xl mt-6 font-light opacity-90">ติดตามข่าวสาร กิจกรรม และความสำเร็จล่าสุดจากโครงการฝึกอบรมบัณฑิตไทยแลนด์ 4.0</div>
+      <div className="bg-[#0A2463] md:h-50 text-white py-10 px-10">
+        <div className="text-3xl font-bold text-white">ข่าวสารและกิจกรรม</div>
+        <div className="text-wrap max-w-2xl text-base mt-5 text-white">
+        ติดตามข่าวสาร กิจกรรม และความสำเร็จล่าสุดจากโครงการฝึกอบรมบัณฑิตไทยแลนด์ 4.0
+        </div>
       </div>
 
       {/* News Section */}
@@ -465,7 +467,7 @@ const fetchMedia = async () => {
         <div className="flex justify-center">
           <button
             onClick={handleViewAllGallery}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold text-lg transition-colors shadow-lg">
+            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold text-lg transition-colors shadow-lg cursor-pointer">
             ดูเพิ่มเติม
           </button>
         </div>
