@@ -157,7 +157,7 @@ export default function Newandeventdetail({ params }: { params: string }) {
           {/* Main Content */}
           <div className="prose max-w-none">
             {/* ในกรณีที่ content อาจเป็น HTML สามารถใช้ dangerouslySetInnerHTML */}
-            <div dangerouslySetInnerHTML={{ __html: newsData.content }} />
+            <div className='ql-editor' dangerouslySetInnerHTML={{ __html: newsData.content }} />
           </div>
         </div>
       </div>

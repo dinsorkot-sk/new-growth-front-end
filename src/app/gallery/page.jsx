@@ -152,7 +152,7 @@ export default function AllPhotos() {
                     <div className="relative pt-[75%]">
                       {media.type === 'image' ? (
                         <img 
-                          src={`${process.env.NEXT_PUBLIC_IMG}/${media.path}`}
+                          src={`${process.env.NEXT_PUBLIC_IMG}${media.path.startsWith("/") ? "" : "/"}${media.path}`}
                           alt={media.description || `Program atmosphere ${(currentPage - 1) * imagesPerPage + index + 1}`}
                           className="absolute top-0 left-0 w-full h-full object-cover"
                         />

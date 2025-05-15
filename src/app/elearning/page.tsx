@@ -201,7 +201,7 @@ export default function ResourcesPage() {
     }
   };
 
-  const renderActionButton = (resource) => {
+  const renderActionButton = (resource: any) => {
     const handleClick = () => {
       setSelectedResource(resource);
     };
@@ -209,10 +209,11 @@ export default function ResourcesPage() {
     return (
       <button
         onClick={handleClick}
-        className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center hover:bg-blue-600 transition-colors"
-        disabled={!resource.url}
+        className="bg-blue-500 text-white rounded-md px-4 py-2 flex items-center hover:bg-blue-600 transition-colors cursor-pointer"
       >
-        <span className="mr-2">{resource.icon === "video" ? "▶️" : "📄"}</span>
+        <span className="mr-2">
+          {resource.icon === "video" ? "▶️" : "📄"}
+        </span>
         <span>
           {resource.icon === "video" ? "ดูวิดีโอ" : "ดูเอกสาร"}
         </span>
@@ -393,7 +394,7 @@ export default function ResourcesPage() {
                       </div>
 
                       <div className="flex flex-col items-center space-y-3 mt-3 md:mt-0">
-                        {renderActionButton(resource)}
+                        {resource.url && renderActionButton(resource)}
                         {resource.isDownloadable && resource.url && (
                           <button
                             onClick={() => downloadResource(resource)}

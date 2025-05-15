@@ -351,7 +351,9 @@ export default function Home() {
                       <img
                         src={
                           course.image?.image_path
-                            ? `${process.env.NEXT_PUBLIC_IMG}/${course.image.image_path}`
+                            ? `${process.env.NEXT_PUBLIC_IMG}${
+                                course.image.image_path.startsWith("/") ? "" : "/"
+                              }${course.image.image_path}`
                             : "/fallback.jpg"
                         }
                         alt={course.title}
@@ -454,7 +456,7 @@ export default function Home() {
 
           {/* ใช้ grid นอก loop */}
           <div className="pt-4 sm:pt-6 md:pt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2  gap-6 sm:gap-8 md:gap-12 lg:gap-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
               {paginatedNews.map((news) => {
                 const decodedContent = news.content.replace(/\\"/g, '"');
                 const imgMatch = decodedContent.match(
@@ -469,7 +471,7 @@ export default function Home() {
                 return (
                   <div
                     key={news.id}
-                    className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg"
+                    className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg flex flex-col"
                   >
                     {/* รูปภาพ */}
                     <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
@@ -485,7 +487,7 @@ export default function Home() {
                     </div>
 
                     {/* เนื้อหา */}
-                    <div className="h-[50%] p-4">
+                    <div className="h-full p-4 flex flex-col">
                       <div className="flex items-center gap-1 text-xs text-[#6B7280]">
                         <FontAwesomeIcon
                           icon={faCalendar}
@@ -503,9 +505,8 @@ export default function Home() {
                       </div>
 
                       <div
-                        className="text-[#4B5563] text-xs pt-2 sm:pt-4"
-                        dangerouslySetInnerHTML={{ __html: cleanedContent }}
-                      />
+                        className="text-[#4B5563] text-xs pt-2 sm:pt-4 flex-grow"
+                      >{news.short_description}</div>
 
                       <div className="text-blue-600 text-xs mt-3">
                         หมวดหมู่:{" "}
