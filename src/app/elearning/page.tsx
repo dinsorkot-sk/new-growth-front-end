@@ -92,7 +92,7 @@ export default function ResourcesPage() {
       id: item.id,
       title: item.title,
       description: item.description,
-      type: item.type.charAt(0).toUpperCase() + item.type.slice(1),
+      type: file ? file.file_type : item.type,
       duration: item.duration ? `${item.duration} minutes` : null,
       pages: item.pages,
       author: item.author || "Unknown",
@@ -100,6 +100,7 @@ export default function ResourcesPage() {
       icon: icon,
       url: fileUrl,
       isDownloadable: file ? file.is_downloadable : false,
+      fileType: file ? file.file_type : null,
     };
   });
 

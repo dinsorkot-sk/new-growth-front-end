@@ -1,121 +1,164 @@
 'use client'
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, PlayCircle, FileText } from "lucide-react";
 
 // ResourceViewer Component - แสดงรายละเอียดทรัพยากรเมื่อคลิก
 const ResourceViewer = ({ resource, onBack }) => {
-    console.log({resource})
+  const [documentData, setDocumentData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDocument = async () => {
+      if (!resource || resource.icon === "video") return;
+      
+      try {
+        setLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/document/getDocumentById/${resource.id}`);
+        if (!response.ok) throw new Error('Failed to fetch document');
+        const data = await response.json();
+        setDocumentData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDocument();
+  }, [resource]);
+
   if (!resource) return null;
   
-  const isPDF = resource.url?.toLowerCase().endsWith('.pdf') || resource.type === 'Document';
-  const isVideo = resource.type === 'Video' || resource.url?.toLowerCase().endsWith('.mp4');
+  const isVideo = resource.icon === "video";
+  const isPDF = resource.fileType === "pdf" || resource.url?.toLowerCase().endsWith('.pdf');
+  const isImage = resource.fileType === "image" || 
+    resource.url?.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/);
+  const isDocument = !isVideo && !isPDF && !isImage;
+
   const formatResourceUrl = (url) => {
     if (!url) return '';
     
-    // จัดการกับรูปแบบ URL ที่มี localhost:3001 ด้านหน้า
-    if (url.includes('localhost:3001/')) {
-      // ใช้ regex เพื่อตัดส่วนระหว่าง 3001/ จนถึง video/
-      return url.replace(/localhost:3001\/.*?(?=video\/)/i, 'localhost:3001/');
+    // ถ้าเป็น URL ที่ขึ้นต้นด้วย http หรือ https ให้ใช้ตามนั้นเลย
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
     }
-    
-    // ใช้ Regular Expression เพื่อจับรูปแบบต่างๆ ของพาธในเครื่อง
-    // จับทั้งรูปแบบ /D:/ และ /C:/ หรือไดร์ฟอื่นๆ
-    const drivePathRegex = /\/[A-Z]:(\/|\\).+(\\|\/)new-growth-api(\\|\/)/i;
-    
-    if (drivePathRegex.test(url)) {
-      // ตัดส่วนของพาธในเครื่องจนถึง new-growth-api ออก และเปลี่ยนเป็น /
-      return url.replace(drivePathRegex, '/');
+
+    // ถ้าเป็น URL ที่ขึ้นต้นด้วย / ให้ต่อกับ base URL
+    if (url.startsWith('/')) {
+      return `${process.env.NEXT_PUBLIC_IMG}${url}`;
     }
-    
-    // รองรับรูปแบบเฉพาะเจาะจงเพิ่มเติม
-    if (url.includes('/D:/Project_Profile/growth/new-growth-api/')) {
-      return url.replace('/D:/Project_Profile/growth/new-growth-api/', '/');
-    }
-    
-    if (url.includes('/C:/Work/Project_Payung/API/new-growth-api/')) {
-      return url.replace('/C:/Work/Project_Payung/API/new-growth-api/', '/');
-    }
-    
-    return url;
+
+    // กรณีอื่นๆ ให้ต่อกับ base URL
+    return `${process.env.NEXT_PUBLIC_IMG}/${url}`;
   };
   
   const formattedUrl = formatResourceUrl(resource.url);
-  console.log(formattedUrl)
+
   return (
-    <div className="w-full max-w-7xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="p-4 border-b border-gray-200 flex items-center">
-        <button 
-          onClick={onBack}
-          className="mr-4 text-blue-600 hover:text-blue-800 flex items-center"
-        >
-          <ArrowLeft size={20} className="mr-1" />
-          <span>ย้อนกลับ</span>
-        </button>
-        <h2 className="text-xl font-semibold flex-1">{resource.title || "ทรัพยากร"}</h2>
-        
-      </div>
-      
-      <div className="p-4">
-        {isVideo ? (
-          <div className="space-y-4">
-            <div className="aspect-video bg-black rounded-lg overflow-hidden">
-                
-              <video 
-                controls 
-                className="w-full h-full"
-                // poster="/api/placeholder/640/360"
+    <div className="fixed inset-0 bg-white z-50 overflow-auto">
+      <div className="container mx-auto px-4 py-4 max-w-6xl">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={onBack}
+            className="flex items-center text-blue-600 hover:text-blue-800"
+          >
+            <span className="mr-2">←</span>
+            กลับ
+          </button>
+          <h2 className="text-xl font-semibold">{resource.title}</h2>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg">
+          {isVideo ? (
+            <div className="space-y-4">
+              <div className="aspect-w-16 aspect-h-9">
+                <video
+                  src={formattedUrl}
+                  controls
+                  className="w-full h-full rounded-lg"
+                  title={resource.title}
+                />
+              </div>
+              <div className="p-4 space-y-2">
+                {resource.date && (
+                  <p className="text-sm text-gray-600">
+                    เผยแพร่เมื่อ: {resource.date}
+                  </p>
+                )}
+                {resource.duration && (
+                  <p className="text-sm text-gray-600">
+                    ความยาว: {resource.duration}
+                  </p>
+                )}
+                {resource.description && (
+                  <div className="mt-4">
+                    <h4 className="text-md font-semibold mb-1">รายละเอียด</h4>
+                    <p className="text-gray-700">{resource.description}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : loading ? (
+            <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8">
+              <p className="text-red-500 mb-4">เกิดข้อผิดพลาดในการโหลดเอกสาร</p>
+              <button
+                onClick={() => window.open(formattedUrl, '_blank')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
-                Your browser does not support video playback.
-                <source
-                          src={formattedUrl}
-                          type="video/mp4"
-                        />
-              </video>
-              
+                เปิดในแท็บใหม่
+              </button>
             </div>
-            
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">{resource.title}</h3>
-              {resource.date && (
-                <p className="text-sm text-gray-600">
-                  เผยแพร่เมื่อ: {resource.date}
-                </p>
-              )}
-              {resource.duration && (
-                <p className="text-sm text-gray-600">
-                  ความยาว: {resource.duration}
-                </p>
-              )}
-              {resource.description && (
-                <div className="mt-4">
-                  <h4 className="text-md font-semibold mb-1">รายละเอียด</h4>
+          ) : isPDF ? (
+            <div className="h-[calc(100vh-200px)]">
+              <iframe 
+                src={`${process.env.NEXT_PUBLIC_IMG}/${documentData?.data?.files[0]?.file_path}`}
+                className="w-full h-full border-0 rounded-lg" 
+                title={resource.title || "PDF Document"}
+              />
+            </div>
+          ) : isImage ? (
+            <div className="max-w-4xl mx-auto">
+              <img 
+                src={formattedUrl} 
+                alt={resource.title}
+                className="w-full h-auto rounded-lg"
+              />
+              <div className="p-4 space-y-2">
+                {resource.description && (
                   <p className="text-gray-700">{resource.description}</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        ) : isPDF ? (
-          <div className="h-screen max-h-[70vh]">
-            <iframe 
-              src={resource.url} 
-              className="w-full h-full border-0 rounded-lg" 
-              title={resource.title || "PDF Document"}
-            />
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <p>ไม่สามารถแสดงผลประเภทไฟล์นี้ได้ภายในหน้าเว็บ</p>
-            <a 
-              href={resource.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              เปิดในแท็บใหม่
-            </a>
-          </div>
-        )}
+          ) : (
+            <div className="p-8 text-center">
+              <p className="mb-4">ไม่สามารถแสดงผลประเภทไฟล์นี้ได้ภายในหน้าเว็บ</p>
+              <div className="space-y-4">
+                <a 
+                  href={formattedUrl}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  เปิดในแท็บใหม่
+                </a>
+                <div>
+                  <a 
+                    href={`${process.env.NEXT_PUBLIC_API}/document/downloadDocument/${resource.id}`}
+                    className="inline-block px-4 py-2 text-blue-600 hover:text-blue-800"
+                  >
+                    ดาวน์โหลดไฟล์
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

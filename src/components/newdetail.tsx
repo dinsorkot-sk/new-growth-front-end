@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, Eye, Tag as TagIcon } from 'lucide-react';
+import { ArrowLeft, Calendar, Eye, Tag as TagIcon, Play, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -11,11 +11,12 @@ export default function Newandeventdetail({ params }: { params: string }) {
   const [newsData, setNewsData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<any>(null);
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/news/${params}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/admin/news/${params}`);
         console.log('response', response);
         if (!response.ok) {
           throw new Error('Failed to fetch news details');
@@ -106,7 +107,7 @@ export default function Newandeventdetail({ params }: { params: string }) {
         {/* Featured Image */}
         <div className="relative w-full ">
           <img
-            src={`http://localhost:3001/${newsData.image.image_path}`}
+            src={`${process.env.NEXT_PUBLIC_IMG}/${newsData.image.image_path}`}
             alt={newsData.title}
             className="object-cover"
           />
@@ -159,6 +160,83 @@ export default function Newandeventdetail({ params }: { params: string }) {
             {/* ในกรณีที่ content อาจเป็น HTML สามารถใช้ dangerouslySetInnerHTML */}
             <div className='ql-editor' dangerouslySetInnerHTML={{ __html: newsData.content }} />
           </div>
+
+          {/* Video Resources Section */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">วิดีโอที่เกี่ยวข้อง</h2>
+            {newsData.resources && newsData.resources.filter(r => r.type === 'video').length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {newsData.resources.map((resource) => (
+                  resource.type === 'video' && resource.files && resource.files.length > 0 && (
+                    <div 
+                      key={resource.id} 
+                      className="bg-gray-50 p-4 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+                      onClick={() => setSelectedVideo(resource)}
+                    >
+                      <div className="relative aspect-video mb-3">
+                        <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center">
+                          <Play className="w-12 h-12 text-white" />
+                        </div>
+                        <video
+                          className="w-full h-full object-cover rounded-lg"
+                          preload="metadata"
+                          muted
+                          playsInline
+                        >
+                          <source
+                            src={`${process.env.NEXT_PUBLIC_IMG}/${resource.files[0].file_path}`}
+                            type="video/mp4"
+                          />
+                        </video>
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2 line-clamp-2">{resource.title}</h3>
+                      {resource.description && (
+                        <p className="text-gray-600 text-sm line-clamp-2">{resource.description}</p>
+                      )}
+                    </div>
+                  )
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">ไม่มีวิดีโอที่เกี่ยวข้อง</p>
+              </div>
+            )}
+          </div>
+
+          {/* Video Modal */}
+          {selectedVideo && (
+            <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg w-full max-w-4xl">
+                <div className="p-4 border-b flex justify-between items-center">
+                  <h3 className="text-xl font-semibold">{selectedVideo.title}</h3>
+                  <button 
+                    onClick={() => setSelectedVideo(null)}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <video 
+                    className="w-full h-full object-cover"
+                    controls
+                    preload="metadata"
+                    playsInline
+                  >
+                    <source
+                      src={`${process.env.NEXT_PUBLIC_IMG}/${selectedVideo.files[0].file_path}`}
+                      type="video/mp4"
+                    />
+                    ขอโทษค่ะ เบราว์เซอร์ของคุณไม่รองรับแท็กวิดีโอ
+                  </video>
+                  {selectedVideo.description && (
+                    <p className="mt-4 text-gray-600">{selectedVideo.description}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
