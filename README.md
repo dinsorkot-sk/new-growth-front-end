@@ -11,7 +11,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ```bash
 # Clone this repo
-git clone [https://github.com/your-org/new-growth-front-end.git](https://github.com/dinsorkot-sk/new-growth-front-end.git)
+git clone https://github.com/dinsorkot-sk/new-growth-front-end.git
 cd new-growth-front-end
 
 # Install dependencies
