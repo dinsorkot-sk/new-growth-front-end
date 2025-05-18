@@ -62,7 +62,7 @@ export default function ResourcesPage() {
     };
 
     fetchResources();
-  }, [showType, paginationVideo.offset, paginationDocument.offset]);
+  }, [showType, paginationVideo, paginationDocument]);
 
   const processedResources = resources.map((item) => {
     const icon = item.type.toLowerCase().includes("video")
