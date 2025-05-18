@@ -250,10 +250,10 @@ export default function Home() {
         <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
           <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4">
             <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-              <img src="/img/MJU_LOGO.png" className="w-full h-full object-contain" alt="MJU Logo" />
+              <Image src="/img/MJU_LOGO.png" fill={false} width={100} height={100} className="w-full h-full object-contain" alt="MJU Logo - A logo representing MJU" />
             </div>
             <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-              <img src="/img/Thai_MHESI.png" className="w-full h-full object-contain" alt="MHESI Logo" />
+              <Image src="/img/Thai_MHESI.png" fill={false} width={100} height={100} className="w-full h-full object-contain" alt="MHESI Logo - A logo representing the Ministry of Higher Education, Science, Research and Innovation" />
             </div>
           </div>
           <div className="mt-24 md:mt-16 lg:mt-0">
@@ -345,14 +345,16 @@ export default function Home() {
                   <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden">
                     {/* ส่วนรูปภาพ 40% */}
                     <div className="relative h-[45%] w-full">
-                      <img
+                      <Image
                         src={
                           course.image?.image_path
                             ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path.startsWith("/") ? "" : "/"
                             }${course.image.image_path}`
                             : "/fallback.jpg"
                         }
-                        alt={course.title}
+                        alt={course.name}
+                        width={400}
+                        height={160}
                         className="w-full h-40 object-cover rounded"
                       />
                     </div>
@@ -471,13 +473,15 @@ export default function Home() {
                   >
                     {/* รูปภาพ */}
                     <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
-                      <img
+                      <Image
                         src={
                           news.image?.image_path
                             ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
                             : "/fallback.jpg"
                         }
                         alt={news.title}
+                        width={400}
+                        height={160}
                         className="w-full h-40 object-cover rounded"
                       />
                     </div>

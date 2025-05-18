@@ -2,6 +2,8 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPhone,faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
+import Link from "next/link";
+
 export default function Footer() {
     return (
       <footer className="bg-blue-900 text-white py-8 px-6">
@@ -42,9 +44,13 @@ export default function Footer() {
               <h3 className="text-lg font-semibold mb-4">เมนูด่วน</h3>
               <ul className="space-y-2 text-sm">
                 <li><a href="/about" className="hover:text-blue-300">เกี่ยวกับโครงการ</a></li>
-                <li><a href="/courses" className="hover:text-blue-300">เนื้อหาอบรม</a></li>
+                <li>
+                  <Link href="/courses" className="hover:text-blue-300">เนื้อหาอบรม</Link>
+                </li>
                 <li><a href="/admissions" className="hover:text-blue-300">สมัครอบรม</a></li>
-                <li><a href="/newandevent" className="hover:text-blue-300">ข่าวสารและกิจกรรม</a></li>
+                <li>
+                  <Link href="/newandevent" className="hover:text-blue-300">ข่าวสารและกิจกรรม</Link>
+                </li>
                 <li><a href="/contact" className="hover:text-blue-300">ติดต่อเรา</a></li>
               </ul>
             </div>

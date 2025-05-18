@@ -106,10 +106,14 @@ export default function Newandeventdetail({ params }: { params: string }) {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Featured Image */}
         <div className="relative w-full ">
-          <img
+          <Image
             src={`${process.env.NEXT_PUBLIC_IMG}/${newsData.image.image_path}`}
             alt={newsData.title}
             className="object-cover"
+            width={1200}
+            height={600}
+            layout="responsive"
+            priority
           />
         </div>
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,11 +32,11 @@ export default function Navbar() {
     <nav className="bg-[#0A2463] py-4 px-4 md:px-10" aria-label="เมนูหลัก" role="navigation">
       <div className="flex justify-between items-center">
         {/* Logo */}
-        <a href="/">  
+        <Link href="/">  
           <div className="text-lg md:text-xl font-bold text-white">
             โครงการผลิตบัณฑิตพันธ์ใหม่ (แม่โจ้)
           </div>
-        </a>
+        </Link>
 
         {/* Mobile Menu Button */}
         <div className="xl:hidden">
@@ -54,7 +55,7 @@ export default function Navbar() {
         <div className="hidden xl:flex space-x-6 text-white">
           {menuItems.map((item) => (
             <div key={item.path}>
-              <a 
+              <Link 
                 href={item.path}
                 className={`hover:text-blue-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded ${
                   isActive(item.path) ? "text-blue-400" : ""
@@ -62,7 +63,7 @@ export default function Navbar() {
                 aria-current={isActive(item.path) ? "page" : undefined}
               >
                 {item.name}
-              </a>
+              </Link>
             </div>
           ))}
         </div>
@@ -81,7 +82,7 @@ export default function Navbar() {
       {isMenuOpen && (
         <div id="mobile-menu" className="xl:hidden mt-4 flex flex-col space-y-3 text-white" role="menu">
           {menuItems.map((item) => (
-            <a 
+            <Link 
               key={item.path}
               href={item.path}
               className={`py-2 px-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
@@ -95,7 +96,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
-            </a>
+            </Link>
           ))}
           <a href={registerUrl} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">

@@ -18,14 +18,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="icon" href="./favicon.png" sizes="32x32" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600;700&family=Prompt:wght@100;300;400;600;700&display=swap"
-          rel="stylesheet"
-        />
-        
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
-        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-
+        <Script
+          src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"
+          strategy="beforeInteractive"
+        />
         {/* Google Consent Mode v2 */}
         <Script id="google-consent-mode" strategy="beforeInteractive">
           {`

@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, ArrowRight, Calendar, X, Play} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Image from 'next/image';
 
 interface TagAssignment {
   tag: {
@@ -250,7 +251,8 @@ const fetchMedia = async () => {
     return extension || 'mp4';
   };
 
-  const combineAndSortMedia = (images : Image[], videos : Video[]) => {
+  // ใช้ useCallback เพื่อไม่ให้ combineAndSortMedia เปลี่ยน reference ทุก render
+  const combineAndSortMedia = useCallback((images : Image[], videos : Video[]) => {
     // แปลงรูปภาพให้อยู่ในรูปแบบเดียวกับที่จะใช้แสดงผล
     const formattedImages = images.map(img => ({
       id: `img-${img.id}`,
@@ -276,13 +278,13 @@ const fetchMedia = async () => {
     combined.sort((a, b) => b.date.getTime() - a.date.getTime());
     // จำกัดจำนวนที่จะแสดง
     return combined.slice(0, displayCount);
-  };
- 
+  }, [displayCount]);
+
   useEffect(() => {
     // เรียกฟังก์ชั่นเพื่อรวมและเรียงข้อมูล
     const sortedMedia = combineAndSortMedia(images, videos);
     setCombinedMedia(sortedMedia);
-  }, [images, videos, displayCount]);
+  }, [images, videos, displayCount, combineAndSortMedia]);
 
   return (
     <div className="bg-gradient-to-b from-[#0A2463] via-[#F9FAFB] to-white min-h-screen">
@@ -336,10 +338,13 @@ const fetchMedia = async () => {
                 {filteredNews.map(news => (
                   <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-2xl duration-200 cursor-pointer"  onClick={() => handleViewDetails(news.id, news.view_count)}>
                     <div className="relative">
-                      <img
+                      <Image
                         src={`${process.env.NEXT_PUBLIC_IMG}/${news.image?.image_path}`}
                         alt={news.title}
                         className="w-full h-56 object-cover object-center bg-gray-100"
+                        width={600}
+                        height={224}
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
                       />
                       {news.tagAssignments && news.tagAssignments.length > 0 && (
                         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
@@ -418,11 +423,16 @@ const fetchMedia = async () => {
                   </div>
                 </>
               ) : (
-                <img
-                  src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`}
-                  alt={item.description || ""}
-                  className="w-full h-full object-cover object-center"
-                />
+                <div className="relative w-full h-full">
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`}
+                    alt={item.description || ""}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    className="object-cover object-center"
+                  />
+                </div>
               )}
               
             </div>
@@ -453,11 +463,16 @@ const fetchMedia = async () => {
                 <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
               </video>
             ) : (
-              <img 
-                src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
-                alt="Selected media"
-                className="w-full h-auto max-h-[80vh] object-contain rounded-lg" 
-              />
+              <div className="relative w-full h-auto max-h-[80vh]">
+                <Image 
+                  src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
+                  alt="Selected media"
+                  width={1200}
+                  height={800}
+                  style={{ objectFit: 'contain' }}
+                  className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+                />
+              </div>
             )}
           </div>
         </div>

@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook } from "@fortawesome/free-solid-svg-icons";
 import ResourceViewer from "../../components/resourceviewer";
 
 export default function ResourcesPage() {
@@ -64,13 +62,7 @@ export default function ResourcesPage() {
     };
 
     fetchResources();
-  }, [
-    showType,
-    paginationVideo.offset,
-    paginationVideo.limit,
-    paginationDocument.offset,
-    paginationDocument.limit,
-  ]);
+  }, [showType, paginationVideo.offset, paginationDocument.offset]);
 
   const processedResources = resources.map((item) => {
     const icon = item.type.toLowerCase().includes("video")
@@ -122,7 +114,7 @@ export default function ResourcesPage() {
   };
 
   const [downloadingId, setDownloadingId] = useState(null);
-  const handleDownload = async (url, defaultFileName) => {
+  const handleDownload = async (url: string, defaultFileName: string) => {
     try {
       const response = await fetch(url);
 
@@ -298,7 +290,7 @@ export default function ResourcesPage() {
           <div className="flex gap-2 mb-2 md:mb-0">
             <button
               onClick={() => setShowType("Video")}
-              className={`flex items-center px-4 py-2 rounded-md border transition-colors text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              className={`flex items-center px-4 py-2 rounded-md border transition-colors text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer
                 ${
                   showType === "Video"
                     ? "bg-blue-500 text-white border-blue-500"
@@ -310,7 +302,7 @@ export default function ResourcesPage() {
             </button>
             <button
               onClick={() => setShowType("Document")}
-              className={`flex items-center px-4 py-2 rounded-md border transition-colors text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              className={`flex items-center px-4 py-2 rounded-md border transition-colors text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer
                 ${
                   showType === "Document"
                     ? "bg-blue-500 text-white border-blue-500"

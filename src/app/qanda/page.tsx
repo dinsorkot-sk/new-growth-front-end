@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -25,11 +25,7 @@ export default function Home() {
         next: null
     });
 
-    useEffect(() => {
-        fetchFAQData();
-    }, [offset]);
-
-    const fetchFAQData = async () => {
+    const fetchFAQData = useCallback(async () => {
         try {
             // เรียก API โดยใช้ค่าจาก environment variable หรือค่าเริ่มต้น
             const apiUrl = `${process.env.NEXT_PUBLIC_API}/topic?order=asc`;
@@ -96,8 +92,11 @@ export default function Home() {
             }
             setIsLoading(false);
         }
-    };
+    }, [offset, limit]);
 
+    useEffect(() => {
+        fetchFAQData();
+    }, [fetchFAQData]);
 
     // ฟังก์ชันส่งคำตอบไปยัง API
     const submitReply = async (topicId) => {
@@ -229,7 +228,7 @@ export default function Home() {
                                                     </svg>
                                                 </button>
                                                 <div
-                                                    className={`px-8 py-6 ${openIndex === index ? 'block' : 'hidden'
+                                                    className={`px-8 py-6 transition-all duration-300 ease-in-out  ${openIndex === index ? 'block' : 'hidden'
                                                         }`}
                                                 >
                                                     <div className="border-b border-gray-200 pb-4 mb-4">
@@ -265,58 +264,6 @@ export default function Home() {
                                                             </div>
                                                         ))}
                                                     </div>
-
-                                                    {/* ช่องตอบกระทู้ */}
-                                                    {/* <div className="mt-8 border-t border-gray-200 pt-6">
-                                                    <h4 className="text-lg font-medium text-[#0A2463] mb-4">ตอบคำถามนี้</h4>
-                                                    
-                                                    {replySuccess && (
-                                                        <div className="bg-green-50 border border-green-200 text-green-700 p-3 rounded-lg mb-4 flex items-center">
-                                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                                            </svg>
-                                                            ส่งคำตอบเรียบร้อยแล้ว
-                                                        </div>
-                                                    )}
-                                                    
-                                                    {replyError && (
-                                                        <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-4">
-                                                            {replyError}
-                                                        </div>
-                                                    )}
-                                                    
-                                                    <div className="flex flex-col">
-                                                        <textarea
-                                                            value={replyText}
-                                                            onChange={(e) => setReplyText(e.target.value)}
-                                                            placeholder="เขียนคำตอบของคุณที่นี่..."
-                                                            className="w-full border border-gray-300 rounded-lg p-4 min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                            disabled={isSubmitting}
-                                                        ></textarea>
-                                                        
-                                                        <div className="flex justify-end mt-4">
-                                                            <button
-                                                                onClick={() => submitReply(faq.id)}
-                                                                disabled={isSubmitting}
-                                                                className={`px-6 py-3 rounded-lg text-white font-medium ${
-                                                                    isSubmitting
-                                                                        ? 'bg-gray-400 cursor-not-allowed'
-                                                                        : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
-                                                                }`}
-                                                            >
-                                                                {isSubmitting ? (
-                                                                    <span className="flex items-center">
-                                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                                        </svg>
-                                                                        กำลังส่ง...
-                                                                    </span>
-                                                                ) : 'ส่งคำตอบ'}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div> */}
 
                                                     <div className="mt-8 border-t border-gray-200 pt-6">
                                                         <h4 className="text-lg font-medium text-[#0A2463] mb-4">ตอบคำถามนี้</h4>
@@ -363,7 +310,7 @@ export default function Home() {
                                                                 <button
                                                                     onClick={() => submitReply(faq.id)}
                                                                     disabled={isSubmitting}
-                                                                    className={`px-6 py-3 rounded-lg text-white font-medium ${isSubmitting
+                                                                    className={`px-6 py-3 rounded-lg text-white font-medium cursor-pointer ${isSubmitting
                                                                             ? 'bg-gray-400 cursor-not-allowed'
                                                                             : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
                                                                         }`}
