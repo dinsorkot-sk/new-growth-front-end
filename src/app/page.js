@@ -186,9 +186,7 @@ export default function Home() {
   };
 
   // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
-  const [backgroundImages, setBackgroundImages] = useState([
-
-  ]);
+  const [backgroundImages, setBackgroundImages] = useState([]);
 
   // ในส่วนของ useEffect ให้เรียกใช้ fetchMedia เมื่อ component mount
 
@@ -203,12 +201,11 @@ export default function Home() {
       console.log(response.data);
       // Update the backgroundImages state with the retrieved images
       if (response.data) {
-        const imageUrls = response.data.images.map(item =>
-          `${process.env.NEXT_PUBLIC_IMG}/${item.image_path}`
-        );
+        const imageUrls = response.data.images.map(item => {
+          return `${process.env.NEXT_PUBLIC_IMG}/${item.image_path.replace(/\\/g, "/")}`
+        });
         console.log(imageUrls);
         setBackgroundImages(imageUrls);
-        console.log(backgroundImages);
       }
 
     } catch (error) {
@@ -351,9 +348,8 @@ export default function Home() {
                       <img
                         src={
                           course.image?.image_path
-                            ? `${process.env.NEXT_PUBLIC_IMG}${
-                                course.image.image_path.startsWith("/") ? "" : "/"
-                              }${course.image.image_path}`
+                            ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path.startsWith("/") ? "" : "/"
+                            }${course.image.image_path}`
                             : "/fallback.jpg"
                         }
                         alt={course.title}

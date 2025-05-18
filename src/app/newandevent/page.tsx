@@ -244,13 +244,13 @@ const fetchMedia = async () => {
     router.push(`/newandevent/${newId}`);
   };
 
-  const getVideoType = (path) => {
+  const getVideoType = (path: string) => {
     if (!path) return 'mp4';
     const extension = path.split('.').pop().toLowerCase();
     return extension || 'mp4';
   };
 
-  const combineAndSortMedia = (images, videos) => {
+  const combineAndSortMedia = (images : Image[], videos : Video[]) => {
     // แปลงรูปภาพให้อยู่ในรูปแบบเดียวกับที่จะใช้แสดงผล
     const formattedImages = images.map(img => ({
       id: `img-${img.id}`,
@@ -273,7 +273,7 @@ const fetchMedia = async () => {
 
     // รวมข้อมูลและเรียงตามวันที่ล่าสุด
     const combined = [...formattedImages, ...formattedVideos];
-    combined.sort((a, b) => b.date - a.date);
+    combined.sort((a, b) => b.date.getTime() - a.date.getTime());
     // จำกัดจำนวนที่จะแสดง
     return combined.slice(0, displayCount);
   };
