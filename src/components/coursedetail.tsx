@@ -180,7 +180,7 @@ export default function CourseDetail({ params }) {
       {/* Header Section */}
       <div className="bg-[#0A2463] text-white w-full overflow-hidden bg-center bg-cover"
         style={{
-          backgroundImage: course?.image?.image_path ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${process.env.NEXT_PUBLIC_IMG}${course.image.image_path})`
+          backgroundImage: course?.image?.image_path ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${process.env.NEXT_PUBLIC_IMG}/${course.image.image_path})`
             : undefined,
         }}>
         <div className="max-w-7xl mx-auto py-10 px-6 md:px-14 xl:px-20">
@@ -216,16 +216,15 @@ export default function CourseDetail({ params }) {
             {/* Video Display Section with Black Background */}
             <div className="md:w-1/2 flex justify-center">
               <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-md bg-gray-100 flex items-center justify-center">
-                {course.video_url ? (
+                {course?.resources?.files[0]?.file_path ? (
                   <video
                     className="absolute inset-0 w-full h-full object-cover"
                     controls
                     autoPlay
                     preload="auto"
-                    poster={`${process.env.NEXT_PUBLIC_IMG}${course.resources.poster_path || "/default-poster.jpg"}`}
                   >
                     <source
-                      src={`${process.env.NEXT_PUBLIC_IMG}${course.resources.files[0].file_path}`}
+                      src={`${process.env.NEXT_PUBLIC_IMG}/${course?.resources?.files[0]?.file_path}`}
                       type="video/mp4"
                     />
                     ขอโทษค่ะ เบราว์เซอร์ของคุณไม่รองรับแท็กวิดีโอ

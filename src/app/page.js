@@ -179,11 +179,29 @@ export default function Home() {
 
   const router = useRouter();
   const handleCoureseViewDetails = (courseId) => {
+    const course = courseList.find(c => c.id === courseId);
+    if (course) {
+      axios.put(`${process.env.NEXT_PUBLIC_API}/course/view/${courseId}`, {
+        view_count: (course.view_count || 0) + 1
+      }, {
+        headers: { 'Content-Type': 'application/json' }
+      }).catch(() => {});
+    }
     router.push(`/courses/${courseId}`);
   };
   const handleNewsViewDetails = (newId) => {
+    const news = newsList.find(n => n.id === newId);
+    if (news) {
+      axios.put(`${process.env.NEXT_PUBLIC_API}/news/view/${newId}`, {
+        view_count: (news.view_count || 0) + 1
+      }, {
+        headers: { 'Content-Type': 'application/json' }
+      }).catch(() => {});
+    }
     router.push(`/newandevent/${newId}`);
   };
+
+
 
   // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
   const [backgroundImages, setBackgroundImages] = useState([]);
