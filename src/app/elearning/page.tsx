@@ -61,8 +61,13 @@ export default function ResourcesPage() {
       }
     };
 
-    fetchResources();
-  }, [showType, paginationVideo, paginationDocument]);
+    // Add debounce to prevent multiple API calls
+    const timeoutId = setTimeout(() => {
+      fetchResources();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [showType, paginationVideo.offset, paginationVideo.limit, paginationDocument.offset, paginationDocument.limit]);
 
   const processedResources = resources.map((item) => {
     const icon = item.type.toLowerCase().includes("video")
@@ -181,7 +186,7 @@ export default function ResourcesPage() {
 
       const result = await handleDownload(
         downloadUrl,
-        `${resource.title}.${resource.type === "Video" ? "mp4" : "pdf"}`
+        `${resource.title}.${resource.fileType || (resource.type === "Video" ? "mp4" : "pdf")}`
       );
 
       if (result.success) {
@@ -198,6 +203,14 @@ export default function ResourcesPage() {
     const handleClick = () => {
       setSelectedResource(resource);
     };
+
+    // Check if the file type is a video format or PDF
+    const videoFormats = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v', 'mpeg', 'mpg', '3gp'];
+    const isViewable = videoFormats.includes(resource.fileType?.toLowerCase()) || resource.fileType?.toLowerCase() === 'pdf';
+
+    if (!isViewable) {
+      return null;
+    }
 
     return (
       <button
@@ -386,13 +399,13 @@ export default function ResourcesPage() {
                         </div>
                       </div>
 
-                      <div className="flex flex-col items-center space-y-3 mt-3 md:mt-0">
+                      <div className="flex flex-col items-center justify-center space-y-3 mt-3 md:mt-0">
                         {resource.url && renderActionButton(resource)}
                         {resource.isDownloadable && resource.url && (
                           <button
                             onClick={() => downloadResource(resource)}
                             disabled={downloadingId === resource.id}
-                            className={`flex items-center transition-colors text-sm ${
+                            className={`flex items-center justify-center transition-colors text-sm ${
                               downloadingId === resource.id
                                 ? "opacity-50 cursor-not-allowed"
                                 : "hover:text-blue-500"

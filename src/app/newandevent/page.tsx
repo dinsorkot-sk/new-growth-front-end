@@ -389,7 +389,8 @@ const fetchMedia = async () => {
 
       {/* Gallery Section */}
       <div className="bg-[#F9FAFB]  p-4 md:p-10">
-      <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight">บรรยากาศโครงการ</h1>
+        <div className='mx-auto max-w-7xl'>
+      <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight ">บรรยากาศโครงการ</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {combinedMedia.length > 0 ? (
@@ -443,7 +444,7 @@ const fetchMedia = async () => {
           </div>
         )}
       </div>
-      
+      </div>
       {showModal && selectedMedia && (
         <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center p-4" onClick={closeModal}>
           <div className="relative w-full max-w-4xl max-h-[90vh]" onClick={e => e.stopPropagation()}>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, ArrowRight, Clock, Calendar, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import axios from 'axios';
 
 export default function Home() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function Home() {
             ? course.industries[0].name
             : 'General',
           industries: course.industries || [],
+          view_count: course.view_count || 0,
           image: course.image
             ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path.startsWith("/") ? "" : "/"
             }${course.image.image_path}`
@@ -69,6 +71,7 @@ export default function Home() {
         }));
 
         setCourses(transformedCourses);
+        console.log(transformedCourses);
         setPagination(data.pagination);
         setLoading(false);
       } catch (err) {
@@ -88,7 +91,12 @@ export default function Home() {
     return matchesSearch && matchesFilter;
   });
 
-  const handleViewDetails = (courseId: any, view_count: any) => {
+  const handleViewDetails = (courseId: any, view_count: number) => {
+    axios.put(`${process.env.NEXT_PUBLIC_API}/course/view/${courseId}`, {
+      view_count: view_count + 1
+    }, {
+      headers: { 'Content-Type': 'application/json' }
+    }).catch(() => {});
     router.push(`/courses/${courseId}`);
   };
   return (
@@ -188,7 +196,7 @@ export default function Home() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Users className="h-4 w-4" />
-                            <span>{course.students} คน</span>
+                            <span>{course.view_count} คน</span>
                           </div>
                         </div>
                       </div>
