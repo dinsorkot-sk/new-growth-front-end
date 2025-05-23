@@ -417,7 +417,7 @@ export default function Home() {
                               height: "12px",
                             }}
                           />
-                          120 ผู้เข้าอบรม
+                           {course.view_count} ผู้เข้าชม
                         </div>
                       </div>
 
