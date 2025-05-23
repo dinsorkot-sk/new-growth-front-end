@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import ResourceViewer from "../../components/resourceviewer";
 
 export default function ResourcesPage() {
@@ -9,6 +9,20 @@ export default function ResourcesPage() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showType, setShowType] = useState("Video");
+  
+  const paginationRef = useRef({
+    video: {
+      total: 0,
+      offset: 0,
+      limit: 10,
+    },
+    document: {
+      total: 0,
+      offset: 0,
+      limit: 10,
+    }
+  });
+
   const [paginationVideo, setPaginationVideo] = useState({
     total: 0,
     offset: 0,
@@ -22,52 +36,50 @@ export default function ResourcesPage() {
 
   const [selectedResource, setSelectedResource] = useState(null);
 
-  useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        setLoading(true);
+  const fetchResources = useCallback(async () => {
+    try {
+      setLoading(true);
+      const currentPagination = showType === "Video" 
+        ? paginationRef.current.video 
+        : paginationRef.current.document;
 
-        const pagination =
-          showType === "Video" ? paginationVideo : paginationDocument;
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API}/document/getallDocumentAndResouceVideo?offset=${currentPagination.offset}&limit=${currentPagination.limit}&type=${showType}`
+      );
 
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/document/getallDocumentAndResouceVideo?offset=${pagination.offset}&limit=${pagination.limit}&type=${showType}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        setResources(data.data);
-
-        if (showType === "Video") {
-          setPaginationVideo({
-            ...paginationVideo,
-            total: data.pagination.total,
-          });
-        } else {
-          setPaginationDocument({
-            ...paginationDocument,
-            total: data.pagination.total,
-          });
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching resources:", error);
-        setError("Failed to load resources. Please try again later.");
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    };
 
-    // Add debounce to prevent multiple API calls
-    const timeoutId = setTimeout(() => {
-      fetchResources();
-    }, 300);
+      const data = await response.json();
+      setResources(data.data);
 
+      if (showType === "Video") {
+        paginationRef.current.video.total = data.pagination.total;
+        setPaginationVideo(prev => ({
+          ...prev,
+          total: data.pagination.total,
+        }));
+      } else {
+        paginationRef.current.document.total = data.pagination.total;
+        setPaginationDocument(prev => ({
+          ...prev,
+          total: data.pagination.total,
+        }));
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching resources:", error);
+      setError("Failed to load resources. Please try again later.");
+      setLoading(false);
+    }
+  }, [showType]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(fetchResources, 300);
     return () => clearTimeout(timeoutId);
-  }, [showType, paginationVideo.offset, paginationVideo.limit, paginationDocument.offset, paginationDocument.limit]);
+  }, [fetchResources]);
 
   const processedResources = resources.map((item) => {
     const icon = item.type.toLowerCase().includes("video")
@@ -239,42 +251,40 @@ export default function ResourcesPage() {
 
   const handleNextPage = () => {
     if (showType === "Video") {
-      if (
-        paginationVideo.offset + paginationVideo.limit <
-        paginationVideo.total
-      ) {
-        setPaginationVideo({
-          ...paginationVideo,
-          offset: paginationVideo.offset + paginationVideo.limit,
-        });
+      if (paginationRef.current.video.offset + paginationRef.current.video.limit < paginationRef.current.video.total) {
+        paginationRef.current.video.offset += paginationRef.current.video.limit;
+        setPaginationVideo(prev => ({
+          ...prev,
+          offset: paginationRef.current.video.offset,
+        }));
       }
     } else {
-      if (
-        paginationDocument.offset + paginationDocument.limit <
-        paginationDocument.total
-      ) {
-        setPaginationDocument({
-          ...paginationDocument,
-          offset: paginationDocument.offset + paginationDocument.limit,
-        });
+      if (paginationRef.current.document.offset + paginationRef.current.document.limit < paginationRef.current.document.total) {
+        paginationRef.current.document.offset += paginationRef.current.document.limit;
+        setPaginationDocument(prev => ({
+          ...prev,
+          offset: paginationRef.current.document.offset,
+        }));
       }
     }
   };
 
   const handlePrevPage = () => {
     if (showType === "Video") {
-      if (paginationVideo.offset - paginationVideo.limit >= 0) {
-        setPaginationVideo({
-          ...paginationVideo,
-          offset: paginationVideo.offset - paginationVideo.limit,
-        });
+      if (paginationRef.current.video.offset - paginationRef.current.video.limit >= 0) {
+        paginationRef.current.video.offset -= paginationRef.current.video.limit;
+        setPaginationVideo(prev => ({
+          ...prev,
+          offset: paginationRef.current.video.offset,
+        }));
       }
     } else {
-      if (paginationDocument.offset - paginationDocument.limit >= 0) {
-        setPaginationDocument({
-          ...paginationDocument,
-          offset: paginationDocument.offset - paginationDocument.limit,
-        });
+      if (paginationRef.current.document.offset - paginationRef.current.document.limit >= 0) {
+        paginationRef.current.document.offset -= paginationRef.current.document.limit;
+        setPaginationDocument(prev => ({
+          ...prev,
+          offset: paginationRef.current.document.offset,
+        }));
       }
     }
   };
