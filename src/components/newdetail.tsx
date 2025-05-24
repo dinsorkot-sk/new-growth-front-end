@@ -16,7 +16,7 @@ export default function Newandeventdetail({ params }: { params: string }) {
   useEffect(() => {
     const fetchNewsDetail = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/admin/news/${params}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/news/${params}`);
         console.log('response', response);
         if (!response.ok) {
           throw new Error('Failed to fetch news details');
@@ -105,16 +105,22 @@ export default function Newandeventdetail({ params }: { params: string }) {
       {/* News Content */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Featured Image */}
-        <div className="relative w-full ">
-          <Image
-            src={`${process.env.NEXT_PUBLIC_IMG}/${newsData.image.image_path}`}
-            alt={newsData.title}
-            className="object-cover"
-            width={1200}
-            height={600}
-            layout="responsive"
-            priority
-          />
+        <div className="relative w-full">
+          {newsData.image ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_IMG}/${newsData.image.image_path}`}
+              alt={newsData.title}
+              className="object-cover"
+              width={1200}
+              height={600}
+              layout="responsive"
+              priority
+            />
+          ) : (
+            <div className="w-full h-[400px] bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-500">ไม่มีรูปภาพ</span>
+            </div>
+          )}
         </div>
 
         {/* Content Container */}
