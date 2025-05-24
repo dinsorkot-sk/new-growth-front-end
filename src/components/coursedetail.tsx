@@ -215,8 +215,8 @@ export default function CourseDetail({ params }) {
 
             {/* Video Display Section with Black Background */}
             <div className="md:w-1/2 flex justify-center">
-              <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-md bg-gray-100 flex items-center justify-center">
-                {course?.resources?.files[0]?.file_path ? (
+              {course?.resources?.files[0]?.file_path ? (
+                <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-md bg-gray-100 flex items-center justify-center">
                   <video
                     className="absolute inset-0 w-full h-full object-cover"
                     controls
@@ -229,12 +229,8 @@ export default function CourseDetail({ params }) {
                     />
                     ขอโทษค่ะ เบราว์เซอร์ของคุณไม่รองรับแท็กวิดีโอ
                   </video>
-                ) : (
-                  <span className="text-gray-500 text-lg font-medium">
-                    ไม่มีคลิปวิดีโอสำหรับคอร์สนี้
-                  </span>
-                )}
-              </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
