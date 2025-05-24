@@ -415,7 +415,7 @@ export default function ResourcesPage() {
                           <button
                             onClick={() => downloadResource(resource)}
                             disabled={downloadingId === resource.id}
-                            className={`flex items-center justify-center transition-colors text-sm ${
+                            className={`flex items-center justify-center transition-colors text-sm cursor-pointer ${
                               downloadingId === resource.id
                                 ? "opacity-50 cursor-not-allowed"
                                 : "hover:text-blue-500"
