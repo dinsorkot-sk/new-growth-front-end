@@ -50,18 +50,30 @@ const CustomPrevArrow = (props) => {
 };
 
 const Carousel = ({ backgroundImages = [] }) => {
+    const hasImages = backgroundImages && backgroundImages.length > 0;
+    
     const settings = {
         dots: false,
-        infinite: true,
+        infinite: hasImages,
         speed: 1000,
         slidesToShow: 1,
         slidesToScroll: 1,
-        arrows: true,
-        autoplay: true,
+        arrows: hasImages,
+        autoplay: hasImages,
         autoplaySpeed: 5000,
         nextArrow: <CustomNextArrow />,
         prevArrow: <CustomPrevArrow />,
     };
+
+    // Default content when no images are provided
+    const defaultContent = (
+        <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20 bg-gradient-to-b from-[#0A2463] to-[#1E5499]">
+            <div className="text-center">
+                <h2 className="text-3xl font-bold text-white mb-4">ไม่พบรูปภาพ</h2>
+                <p className="text-white text-lg">กรุณาเพิ่มรูปภาพเพื่อแสดงผลในแกลเลอรี่</p>
+            </div>
+        </div>
+    );
 
     return (
         <Slider {...settings}>
@@ -123,17 +135,21 @@ const Carousel = ({ backgroundImages = [] }) => {
                     </div>
                 </div>
             </div>
-            {backgroundImages.map((image, index) => (
-                <div key={index} className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
-                    <Image
-                        src={image}
-                        alt={`Slide ${index + 2}`}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                    />
-                </div>
-            ))}
+            {hasImages ? (
+                backgroundImages.map((image, index) => (
+                    <div key={index} className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+                        <Image
+                            src={image}
+                            alt={`Slide ${index + 2}`}
+                            fill
+                            className="object-cover"
+                            priority={index === 0}
+                        />
+                    </div>
+                ))
+            ) : (
+                <div>{defaultContent}</div>
+            )}
         </Slider>
     );
 };
