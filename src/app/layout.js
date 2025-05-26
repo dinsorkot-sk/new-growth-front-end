@@ -4,6 +4,8 @@ import Footer from '../components/Footer';
 import VisitorTracker from "../components/VisitorTracker";
 import CookieConsent from "../components/CookieConsent";
 import Script from 'next/script';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 import 'quill/dist/quill.snow.css'
 import './globals.css'   
@@ -19,12 +21,10 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="./favicon.png" sizes="32x32" />
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
         <Script
           src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"
           strategy="beforeInteractive"
         />
-        <Script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js" strategy="beforeInteractive" />
         {/* Google Consent Mode v2 */}
         <Script id="google-consent-mode" strategy="beforeInteractive">
           {`

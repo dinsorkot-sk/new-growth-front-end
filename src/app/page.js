@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import 'animate.css';
 import { QRCodeSVG } from 'qrcode.react';
+import Carousel from '../components/carousel';
 
 export default function Home() {
   const [newsList, setNewsList] = useState([]);
@@ -335,113 +336,7 @@ export default function Home() {
             backgroundColor: "rgba(0, 0, 0, 0.4)", // ปรับความเข้มได้ตามต้องการ (0.4 = 40% opacity)
           }}
         ></div>
-        <div id="default-carousel" className="relative w-full flex justify-center" data-carousel="slide">
-          {/* Carousel wrapper */}
-          <div className="relative min-h-[600px] md:min-h-[500px] lg:min-h-[600px] overflow-hidden max-w-7xl w-full">
-            {/* Hero Slide 1 */}
-            <div className="hidden duration-700 ease-in-out px-5 lg:px-20 " data-carousel-item>
-              <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
-                {/* Logos Section */}
-                <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4">
-                  <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-                    <Image
-                      src="/img/MJU_LOGO.png"
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-contain"
-                      alt="MJU Logo"
-                    />
-                  </div>
-                  <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-                    <Image
-                      src="/img/Thai_MHESI.png"
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-contain"
-                      alt="MHESI Logo"
-                    />
-                  </div>
-                </div>
-
-                {/* Content Section */}
-                <div className="mt-24 md:mt-16 lg:mt-0">
-                  <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
-                    โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (แม่โจ้) ปี 2567-2568
-                  </p>
-                  <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white drop-shadow">
-                    หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
-                  </p>
-
-                  {/* Buttons Section */}
-                  <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
-                    <a href="#" className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-                      <div className="flex justify-evenly items-center w-full text-center text-sm">
-                        สมัครเข้าร่วมโครงการ
-                        <FontAwesomeIcon icon={faGreaterThan} className="text-white w-[13px] h-[13px]" />
-                      </div>
-                    </a>
-                    <a href="#course-info" className="px-6 h-12 bg-white hover:bg-gray-100 transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">
-                      ดูรายละเอียดเนื้อหา
-                    </a>
-                  </div>
-
-                  {/* Badges Section */}
-                  <div className="mt-6 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-                    <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">
-                      รับจำนวนจำกัด 40 ท่าน/รุ่น
-                    </span>
-                    <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">
-                      เรียนฟรี! ไม่มีค่าใช้จ่าย
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Add more slides as needed */}
-            <div className="hidden duration-700 ease-in-out" data-carousel-item>
-              <img
-                src="https://cdn.pixabay.com/photo/2024/07/23/13/03/moon-8915307_640.png"
-                className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                alt="..."
-              />
-            </div>
-
-            {backgroundImages.map((imageUrl, index) => (
-              <div key={index} className="hidden duration-700 ease-in-out" data-carousel-item>
-                <img
-                  src={imageUrl}
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt={`Slide ${index + 1}`}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Carousel Controls */}
-          <button type="button" className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none hidden lg:block" data-carousel-prev>
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
-              <svg className="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 1 1 5l4 4" />
-              </svg>
-              <span className="sr-only">Previous</span>
-            </span>
-          </button>
-          <button type="button" className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none hidden lg:block" data-carousel-next>
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
-              <svg className="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
-              </svg>
-              <span className="sr-only">Next</span>
-            </span>
-          </button>
-
-          {/* Carousel Indicators */}
-          <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-            <button type="button" className="w-3 h-3 rounded-full bg-white/50 hover:bg-white" aria-current="true" aria-label="Slide 1" data-carousel-slide-to="0"></button>
-            {/* Add more indicators for additional slides */}
-          </div>
-        </div>
+        <Carousel />
       </div>
 
       {/* ส่วนที่5 */}
