@@ -332,11 +332,8 @@ export default function Home() {
         {/* เพิ่มชั้น overlay สำหรับทำให้พื้นหลังโปร่งแสง */}
         <div
           className="absolute inset-0"
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.4)", // ปรับความเข้มได้ตามต้องการ (0.4 = 40% opacity)
-          }}
         ></div>
-        <Carousel />
+        <Carousel backgroundImages={backgroundImages} />
       </div>
 
       {/* ส่วนที่5 */}

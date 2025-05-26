@@ -24,19 +24,11 @@ const CustomNextArrow = (props) => {
             className={`${className} custom-arrow right-4 z-10`}
             style={{
                 ...style,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#fff",
-                borderRadius: "50%",
-                width: 40,
-                height: 40,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                right: 20,
+                right: 30,
             }}
             onClick={onClick}
         >
-            <FontAwesomeIcon icon={faArrowRight} color="#0A2463" size="lg" />
+           
         </div>
     );
 };
@@ -48,33 +40,25 @@ const CustomPrevArrow = (props) => {
             className={`${className} custom-arrow left-4 z-10`}
             style={{
                 ...style,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#fff",
-                borderRadius: "50%",
-                width: 40,
-                height: 40,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                left: 20,
+                left: 30,
             }}
             onClick={onClick}
         >
-            <FontAwesomeIcon icon={faArrowLeft} color="#0A2463" size="lg" />
+           
         </div>
     );
 };
 
-const Carousel = () => {
+const Carousel = ({ backgroundImages = [] }) => {
     const settings = {
         dots: false,
         infinite: true,
-        speed: 500,
+        speed: 1000,
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: true,
         autoplay: true,
-        autoplaySpeed: 1000,
+        autoplaySpeed: 5000,
         nextArrow: <CustomNextArrow />,
         prevArrow: <CustomPrevArrow />,
     };
@@ -82,9 +66,9 @@ const Carousel = () => {
     return (
         <Slider {...settings}>
             <div>
-                <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
+                <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20 bg-gradient-to-b from-[#0A2463] to-[#1E5499]">
                     {/* Logos Section */}
-                    <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4">
+                    <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4 ">
                         <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
                             <Image
                                 src="/img/MJU_LOGO.png"
@@ -139,13 +123,17 @@ const Carousel = () => {
                     </div>
                 </div>
             </div>
-            <div>
-                <Image src="/img/image2.jpg" alt="Slide 2" width={100} height={100} />
-            </div>
-            <div>
-                <Image src="/img/image3.jpg" alt="Slide 3" width={100} height={100} />
-            </div>
-            {/* Add more slides as needed */}
+            {backgroundImages.map((image, index) => (
+                <div key={index} className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+                    <Image
+                        src={image}
+                        alt={`Slide ${index + 2}`}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                    />
+                </div>
+            ))}
         </Slider>
     );
 };
