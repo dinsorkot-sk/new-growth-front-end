@@ -153,7 +153,7 @@ const Carousel = ({ backgroundImages = [] }) => {
                     {/* Content Section */}
                     <div className="mt-24 md:mt-16 lg:mt-0">
                         <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
-                            โครงการบัณฑิตผลิตพันธุ์ใหม่ (แม่โจ้) ปี 2567-2568
+                            โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (แม่โจ้) ปี 2567-2568
                         </p>
                         <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white drop-shadow">
                             หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
@@ -184,14 +184,12 @@ const Carousel = ({ backgroundImages = [] }) => {
                     </div>
                 </div>
             </div>
-            {hasImages ? (
+            {hasImages && (
                 backgroundImages.map((media, index) => (
                     <div key={index} className="relative w-full">
                         {renderMedia(media, index)}
                     </div>
                 ))
-            ) : (
-                <div>{defaultContent}</div>
             )}
         </Slider>
     );
