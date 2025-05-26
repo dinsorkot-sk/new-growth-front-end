@@ -18,6 +18,7 @@ import {
   faCalendar,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+import 'animate.css';
 import { QRCodeSVG } from 'qrcode.react';
 
 export default function Home() {
@@ -98,7 +99,9 @@ export default function Home() {
   const sliderRef = useRef(null);
   const startXRef = useRef(null);
 
-
+  // สำหรับ fade up animation
+  const cardRefs = useRef([]);
+  const [cardVisible, setCardVisible] = useState([false, false, false, false, false]);
 
   const goToPrevious = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -185,7 +188,7 @@ export default function Home() {
         view_count: (course.view_count || 0) + 1
       }, {
         headers: { 'Content-Type': 'application/json' }
-      }).catch(() => {});
+      }).catch(() => { });
     }
     router.push(`/courses/${courseId}`);
   };
@@ -196,23 +199,17 @@ export default function Home() {
         view_count: (news.view_count || 0) + 1
       }, {
         headers: { 'Content-Type': 'application/json' }
-      }).catch(() => {});
+      }).catch(() => { });
     }
     router.push(`/newandevent/${newId}`);
   };
-
-
 
   // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
   const [backgroundImages, setBackgroundImages] = useState([]);
 
   // ในส่วนของ useEffect ให้เรียกใช้ fetchMedia เมื่อ component mount
-
-
-  // ปรับปรุงฟังก์ชัน fetchMedia เพื่อเพิ่มประสิทธิภาพการโหลดรูปภาพ
   const fetchMedia = async () => {
     try {
-
       console.log('กำลังดึงข้อมูลรูปภาพ...');
 
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
@@ -236,21 +233,41 @@ export default function Home() {
 
   // เพิ่ม state สำหรับแสดง loading
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const observers = [];
+    cardRefs.current.forEach((ref, idx) => {
+      if (!ref) return;
+      const observer = new window.IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setCardVisible((prev) => {
+                if (prev[idx]) return prev;
+                const updated = [...prev];
+                updated[idx] = true;
+                return updated;
+              });
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+      observer.observe(ref);
+      observers.push(observer);
+    });
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, []);
+
   return (
     <div>
       <div
         ref={sliderRef}
         className="w-full bg-cover bg-center transition-all duration-1000 relative select-none"
-        style={{
-          backgroundImage: `url(${backgroundImages[currentImageIndex % backgroundImages.length]})`,
-          cursor: isDragging ? "grabbing" : "grab",
-          position: "relative", // เพิ่ม position relative เพื่อให้ absolute element ทำงานได้ถูกต้อง
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
       >
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
@@ -264,53 +281,102 @@ export default function Home() {
             backgroundColor: "rgba(0, 0, 0, 0.4)", // ปรับความเข้มได้ตามต้องการ (0.4 = 40% opacity)
           }}
         ></div>
-
-        <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
-          <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4">
-            <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-              <Image src="/img/MJU_LOGO.png" fill={false} width={100} height={100} className="w-full h-full object-contain" alt="MJU Logo - A logo representing MJU" />
-            </div>
-            <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
-              <Image src="/img/Thai_MHESI.png" fill={false} width={100} height={100} className="w-full h-full object-contain" alt="MHESI Logo - A logo representing the Ministry of Higher Education, Science, Research and Innovation" />
-            </div>
-          </div>
-          <div className="mt-24 md:mt-16 lg:mt-0">
-            <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
-              โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (แม่โจ้) ปี 2568
-            </p>
-            <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white drop-shadow">
-              หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
-            </p>
-            <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
-              <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
-                <div className="flex justify-evenly items-center w-full text-center text-sm">
-                  สมัครเข้าร่วมโครงการ
-                  <FontAwesomeIcon icon={faGreaterThan} style={{ color: "#ffffff", width: "13px", height: "13px" }} />
+        <div id="default-carousel" className="relative w-full" data-carousel="slide">
+          {/* Carousel wrapper */}
+          <div className="relative min-h-[600px] md:min-h-[500px] lg:min-h-[600px] overflow-hidden">
+            {/* Hero Slide 1 */}
+            <div className="hidden duration-700 ease-in-out px-5 lg:px-20 " data-carousel-item>
+              <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
+                {/* Logos Section */}
+                <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4">
+                  <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
+                    <Image
+                      src="/img/MJU_LOGO.png"
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-contain"
+                      alt="MJU Logo"
+                    />
+                  </div>
+                  <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
+                    <Image
+                      src="/img/Thai_MHESI.png"
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-contain"
+                      alt="MHESI Logo"
+                    />
+                  </div>
                 </div>
-              </a>
-              <a href="#course-info" className="px-6 h-12 bg-[#ffffff] hover:bg-[#f0f0f0] transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">
-                ดูรายละเอียดเนื้อหา
-              </a>
+
+                {/* Content Section */}
+                <div className="mt-24 md:mt-16 lg:mt-0">
+                  <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
+                    โครงการบัณฑิตผลิตพันธุ์รู้ใหม่ (แม่โจ้) ปี 2567-2568
+                  </p>
+                  <p className="pt-4 sm:pt-4 text-base sm:text-lg md:text-xl opacity-90 max-w-2xl text-white drop-shadow">
+                    หลักสูตรการส่งเสริมและพัฒนาการปลูกผักไฮโดรโปนิกส์ด้วยระบบ AI (AI-Hydroponics) อัจฉริยะเพื่อเพิ่มมูลค่าผลผลิต
+                  </p>
+
+                  {/* Buttons Section */}
+                  <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
+                    <a href="#" className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
+                      <div className="flex justify-evenly items-center w-full text-center text-sm">
+                        สมัครเข้าร่วมโครงการ
+                        <FontAwesomeIcon icon={faGreaterThan} className="text-white w-[13px] h-[13px]" />
+                      </div>
+                    </a>
+                    <a href="#course-info" className="px-6 h-12 bg-white hover:bg-gray-100 transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">
+                      ดูรายละเอียดเนื้อหา
+                    </a>
+                  </div>
+
+                  {/* Badges Section */}
+                  <div className="mt-6 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                    <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">
+                      รับจำนวนจำกัด 40 ท่าน/รุ่น
+                    </span>
+                    <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">
+                      เรียนฟรี! ไม่มีค่าใช้จ่าย
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="mt-6 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-              <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">รับจำนวนจำกัด 40 ท่าน/รุ่น</span>
-              <span className="bg-[#F9FAFB] text-[#0A2463] rounded px-3 py-1 text-xs font-bold shadow">เรียนฟรี! ไม่มีค่าใช้จ่าย</span>
+
+            {/* Add more slides as needed */}
+            <div className="hidden duration-700 ease-in-out" data-carousel-item>
+              <img
+                src="/docs/images/carousel/carousel-1.svg"
+                className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                alt="..."
+              />
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* ส่วนที่2 */}
-      <div className="w-full bg-[#0A2463] md:px-6 lg:px-8">
-        <div className="flex flex-col justify-center items-center py-12 md:py-16 lg:h-[272px] max-w-4xl mx-auto">
-          <div className="text-2xl font-bold text-white">วัตถุประสงค์ของหลักสูตร</div>
-          <ul className="pt-8 md:pt-8 text-left text-sm md:text-base text-white list-disc pl-6 max-w-2xl">
-            <li>ผู้เรียนสามารถปลูกผักไฮโดรโปนิกส์แบบอัจฉริยะด้วยระบบ AI เพื่อเพิ่มมูลค่า</li>
-            <li>เลือกและปรับใช้ความรู้ในการปลูกผักและผสมสารอาหารโดยใช้เทคโนโลยี AI</li>
-            <li>วิเคราะห์ข้อมูลและควบคุมการปลูกผักไฮโดรโปนิกส์ให้เหมาะสมกับสภาพแวดล้อม</li>
-            <li>ออกแบบและพัฒนาเทคโนโลยีเพื่อใช้ในการเกษตรสมัยใหม่</li>
-            <li>พัฒนาทักษะการแก้ปัญหาและนวัตกรรมในระบบการปลูกผักไฮโดรโปนิกส์</li>
-          </ul>
+          {/* Carousel Controls */}
+          <button type="button" className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none hidden lg:block" data-carousel-prev>
+            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+              <svg className="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 1 1 5l4 4" />
+              </svg>
+              <span className="sr-only">Previous</span>
+            </span>
+          </button>
+          <button type="button" className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none hidden lg:block" data-carousel-next>
+            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+              <svg className="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
+              </svg>
+              <span className="sr-only">Next</span>
+            </span>
+          </button>
+
+          {/* Carousel Indicators */}
+          <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+            <button type="button" className="w-3 h-3 rounded-full bg-white/50 hover:bg-white" aria-current="true" aria-label="Slide 1" data-carousel-slide-to="0"></button>
+            {/* Add more indicators for additional slides */}
+          </div>
         </div>
       </div>
 
@@ -319,31 +385,49 @@ export default function Home() {
         <div className="py-12 h-full md:px-6 lg:px-8">
           <div className="text-center md:pb-12 text-xl md:text-2xl font-bold text-[#0A2463]">สิ่งที่จะได้รับจากการอบรม</div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 w-full px-4 sm:px-6 py-6 md:px-10 lg:px-20 max-w-7xl mx-auto">
-            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
-              <FontAwesomeIcon icon={faBookOpen} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
-              <div className="pt-4 text-[#0A2463] font-bold text-base">เรียนฟรี! ไม่มีค่าใช้จ่าย</div>
-              <div className="pt-4 text-[#0A2463] text-xs text-center">ตลอดหลักสูตร</div>
-            </div>
-            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
-              <FontAwesomeIcon icon={faAward} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
-              <div className="pt-4 text-[#0A2463] font-bold text-base">ได้รับประกาศนียบัตร</div>
-              <div className="pt-4 text-[#0A2463] text-xs text-center">หลังจบการอบรม</div>
-            </div>
-            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
-              <FontAwesomeIcon icon={faMicrochip} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
-              <div className="pt-4 text-[#0A2463] font-bold text-base">ทักษะ AI-Hydroponics</div>
-              <div className="pt-4 text-[#0A2463] text-xs text-center">ปลูกผักไฮโดรโปนิกส์ด้วยระบบอัจฉริยะ</div>
-            </div>
-            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
-              <FontAwesomeIcon icon={faUserGroup} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
-              <div className="pt-4 text-[#0A2463] font-bold text-base">อาหารกลางวัน/อาหารว่าง</div>
-              <div className="pt-4 text-[#0A2463] text-xs text-center">สำหรับผู้เข้าอบรม</div>
-            </div>
-            <div className="h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center">
-              <FontAwesomeIcon icon={faClock} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
-              <div className="pt-4 text-[#0A2463] font-bold text-base">รับจำนวนจำกัด 40 คน/รุ่น</div>
-              <div className="pt-4 text-[#0A2463] text-xs text-center">สมัครก่อนมีสิทธิ์ก่อน</div>
-            </div>
+            {[
+              {
+                icon: faBookOpen,
+                title: "เรียนฟรี! ไม่มีค่าใช้จ่าย",
+                desc: "ตลอดหลักสูตร",
+              },
+              {
+                icon: faAward,
+                title: "ได้รับประกาศนียบัตร",
+                desc: "หลังจบการอบรม",
+              },
+              {
+                icon: faMicrochip,
+                title: "ทักษะ AI-Hydroponics",
+                desc: "ปลูกผักไฮโดรโปนิกส์ด้วยระบบอัจฉริยะ",
+              },
+              {
+                icon: faUserGroup,
+                title: "อาหารกลางวัน/อาหารว่าง",
+                desc: "สำหรับผู้เข้าอบรม",
+              },
+              {
+                icon: faClock,
+                title: "รับจำนวนจำกัด 40 คน/รุ่น",
+                desc: "สมัครก่อนมีสิทธิ์ก่อน",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                ref={el => cardRefs.current[idx] = el}
+                className={
+                  `h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center
+                  animate__animated
+                  ${cardVisible[idx] ? "animate__fadeInUp" : ""}
+                  ${cardVisible[idx] ? `animate__delay-${idx}s` : "opacity-0"}`
+                }
+                style={{ minHeight: 180 }}
+              >
+                <FontAwesomeIcon icon={item.icon} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
+                <div className="pt-4 text-[#0A2463] font-bold text-base">{item.title}</div>
+                <div className="pt-4 text-[#0A2463] text-xs text-center">{item.desc}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -417,7 +501,7 @@ export default function Home() {
                               height: "12px",
                             }}
                           />
-                           {course.view_count} ผู้เข้าชม
+                          {course.view_count} ผู้เข้าชม
                         </div>
                       </div>
 
@@ -626,6 +710,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

@@ -39,7 +39,7 @@ export default function Navbar() {
         </Link>
 
         {/* Mobile Menu Button */}
-        <div className="xl:hidden">
+        <div className="lg:hidden">
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
@@ -52,7 +52,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden xl:flex space-x-6 text-white">
+        <div className="hidden lg:flex space-x-6 text-white">
           {menuItems.map((item) => (
             <div key={item.path}>
               <Link 
