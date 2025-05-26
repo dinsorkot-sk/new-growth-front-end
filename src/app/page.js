@@ -102,6 +102,40 @@ export default function Home() {
   // สำหรับ fade up animation
   const cardRefs = useRef([]);
   const [cardVisible, setCardVisible] = useState([false, false, false, false, false]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+    const observers = [];
+    cardRefs.current.forEach((ref, idx) => {
+      if (!ref) return;
+      const observer = new window.IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setCardVisible((prev) => {
+                if (prev[idx]) return prev;
+                const updated = [...prev];
+                updated[idx] = true;
+                return updated;
+              });
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+      observer.observe(ref);
+      observers.push(observer);
+    });
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, [isClient]);
 
   const goToPrevious = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -234,35 +268,6 @@ export default function Home() {
   // เพิ่ม state สำหรับแสดง loading
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const observers = [];
-    cardRefs.current.forEach((ref, idx) => {
-      if (!ref) return;
-      const observer = new window.IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setCardVisible((prev) => {
-                if (prev[idx]) return prev;
-                const updated = [...prev];
-                updated[idx] = true;
-                return updated;
-              });
-              observer.disconnect();
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-      observer.observe(ref);
-      observers.push(observer);
-    });
-    return () => {
-      observers.forEach((observer) => observer.disconnect());
-    };
-  }, []);
-
   return (
     <div>
       <div
@@ -345,13 +350,13 @@ export default function Home() {
             </div>
 
             {/* Add more slides as needed */}
-            <div className="hidden duration-700 ease-in-out" data-carousel-item>
+            {/* <div className="hidden duration-700 ease-in-out" data-carousel-item>
               <img
                 src="/docs/images/carousel/carousel-1.svg"
                 className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
                 alt="..."
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Carousel Controls */}
@@ -380,57 +385,116 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ส่วนที่3 */}
-      <div className="w-full bg-[#F9FAFB]">
-        <div className="py-12 h-full md:px-6 lg:px-8">
-          <div className="text-center md:pb-12 text-xl md:text-2xl font-bold text-[#0A2463]">สิ่งที่จะได้รับจากการอบรม</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 w-full px-4 sm:px-6 py-6 md:px-10 lg:px-20 max-w-7xl mx-auto">
-            {[
-              {
-                icon: faBookOpen,
-                title: "เรียนฟรี! ไม่มีค่าใช้จ่าย",
-                desc: "ตลอดหลักสูตร",
-              },
-              {
-                icon: faAward,
-                title: "ได้รับประกาศนียบัตร",
-                desc: "หลังจบการอบรม",
-              },
-              {
-                icon: faMicrochip,
-                title: "ทักษะ AI-Hydroponics",
-                desc: "ปลูกผักไฮโดรโปนิกส์ด้วยระบบอัจฉริยะ",
-              },
-              {
-                icon: faUserGroup,
-                title: "อาหารกลางวัน/อาหารว่าง",
-                desc: "สำหรับผู้เข้าอบรม",
-              },
-              {
-                icon: faClock,
-                title: "รับจำนวนจำกัด 40 คน/รุ่น",
-                desc: "สมัครก่อนมีสิทธิ์ก่อน",
-              },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                ref={el => cardRefs.current[idx] = el}
-                className={
-                  `h-auto bg-[#ffffff] rounded-lg drop-shadow-lg p-4 md:p-6 flex flex-col items-center
-                  animate__animated
-                  ${cardVisible[idx] ? "animate__fadeInUp" : ""}
-                  ${cardVisible[idx] ? `animate__delay-${idx}s` : "opacity-0"}`
-                }
-                style={{ minHeight: 180 }}
-              >
-                <FontAwesomeIcon icon={item.icon} style={{ color: "#0A2463", width: "32px", height: "32px" }} />
-                <div className="pt-4 text-[#0A2463] font-bold text-base">{item.title}</div>
-                <div className="pt-4 text-[#0A2463] text-xs text-center">{item.desc}</div>
-              </div>
-            ))}
+            {/* ส่วนที่5 */}
+            <div className="w-full bg-[#F9FAFB]">
+        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
+          <div className="flex justify-between text-[#0A2463] text-2xl font-bold">
+            ข่าวและกิจกรรม
+            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline">ดูข่าวทั้งหมด</div>
+          </div>
+
+          {/* ใช้ grid นอก loop */}
+          <div className="pt-4 sm:pt-6 md:pt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
+              {paginatedNews.map((news) => {
+                const decodedContent = news.content.replace(/\\"/g, '"');
+                const imgMatch = decodedContent.match(
+                  /<img[^>]+src="([^">]+)"/
+                );
+                const imageFromContent = imgMatch ? imgMatch[1] : null;
+                const cleanedContent = decodedContent.replace(
+                  /<img[^>]*>/g,
+                  ""
+                );
+
+                return (
+                  <div
+                    key={news.id}
+                    className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg flex flex-col"
+                  >
+                    {/* รูปภาพ */}
+                    <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
+                      <Image
+                        src={
+                          news.image?.image_path
+                            ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
+                            : "/fallback.jpg"
+                        }
+                        alt={news.title}
+                        width={400}
+                        height={160}
+                        className="w-full h-40 object-cover rounded"
+                      />
+                    </div>
+
+                    {/* เนื้อหา */}
+                    <div className="h-full p-4 flex flex-col">
+                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
+                        <FontAwesomeIcon
+                          icon={faCalendar}
+                          style={{
+                            color: "#0A2463",
+                            width: "14px",
+                            height: "14px",
+                          }}
+                        />
+                        {new Date(news.published_date).toLocaleDateString()}
+                      </div>
+
+                      <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
+                        {news.title}
+                      </div>
+
+                      <div
+                        className="text-[#4B5563] text-xs pt-2 sm:pt-4 flex-grow"
+                      >{news.short_description}</div>
+
+                      <div className="text-blue-600 text-xs mt-3">
+                        หมวดหมู่:{" "}
+                        {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
+                      </div>
+
+                      <div
+                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
+                        onClick={() => handleNewsViewDetails(news.id)}
+                      >
+                        อ่านเพิ่มเติม
+                        <FontAwesomeIcon
+                          icon={faArrowRight}
+                          style={{ color: "#0A2463", width: "12px", height: "12px" }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
+
+        <div className="flex justify-center pt-8 gap-2 pb-8">
+          <button
+            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
+            disabled={coursePage === 1}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ก่อนหน้า
+          </button>
+          <span className="px-2 text-sm text-[#0A2463] font-medium">
+            หน้า {coursePage} / {totalCoursePages}
+          </span>
+          <button
+            onClick={() =>
+              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
+            }
+            disabled={coursePage === totalCoursePages}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ถัดไป
+          </button>
+        </div>
       </div>
+
 
       {/* ส่วนที่ 4 */}
       <div className="w-full bg-[#ffffff]">
@@ -546,115 +610,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ส่วนที่5 */}
-      <div className="w-full bg-[#F9FAFB]">
-        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
-          <div className="flex justify-between text-[#0A2463] text-2xl font-bold">
-            ข่าวและกิจกรรม
-            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline">ดูข่าวทั้งหมด</div>
-          </div>
-
-          {/* ใช้ grid นอก loop */}
-          <div className="pt-4 sm:pt-6 md:pt-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
-              {paginatedNews.map((news) => {
-                const decodedContent = news.content.replace(/\\"/g, '"');
-                const imgMatch = decodedContent.match(
-                  /<img[^>]+src="([^">]+)"/
-                );
-                const imageFromContent = imgMatch ? imgMatch[1] : null;
-                const cleanedContent = decodedContent.replace(
-                  /<img[^>]*>/g,
-                  ""
-                );
-
-                return (
-                  <div
-                    key={news.id}
-                    className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg flex flex-col"
-                  >
-                    {/* รูปภาพ */}
-                    <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
-                      <Image
-                        src={
-                          news.image?.image_path
-                            ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
-                            : "/fallback.jpg"
-                        }
-                        alt={news.title}
-                        width={400}
-                        height={160}
-                        className="w-full h-40 object-cover rounded"
-                      />
-                    </div>
-
-                    {/* เนื้อหา */}
-                    <div className="h-full p-4 flex flex-col">
-                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                        <FontAwesomeIcon
-                          icon={faCalendar}
-                          style={{
-                            color: "#0A2463",
-                            width: "14px",
-                            height: "14px",
-                          }}
-                        />
-                        {new Date(news.published_date).toLocaleDateString()}
-                      </div>
-
-                      <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
-                        {news.title}
-                      </div>
-
-                      <div
-                        className="text-[#4B5563] text-xs pt-2 sm:pt-4 flex-grow"
-                      >{news.short_description}</div>
-
-                      <div className="text-blue-600 text-xs mt-3">
-                        หมวดหมู่:{" "}
-                        {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
-                      </div>
-
-                      <div
-                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
-                        onClick={() => handleNewsViewDetails(news.id)}
-                      >
-                        อ่านเพิ่มเติม
-                        <FontAwesomeIcon
-                          icon={faArrowRight}
-                          style={{ color: "#0A2463", width: "12px", height: "12px" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center pt-8 gap-2 pb-8">
-          <button
-            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
-            disabled={coursePage === 1}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
-          >
-            ก่อนหน้า
-          </button>
-          <span className="px-2 text-sm text-[#0A2463] font-medium">
-            หน้า {coursePage} / {totalCoursePages}
-          </span>
-          <button
-            onClick={() =>
-              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
-            }
-            disabled={coursePage === totalCoursePages}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
-          >
-            ถัดไป
-          </button>
-        </div>
-      </div>
 
       {/* ส่วนที่6 */}
       <div className="w-full bg-[#39A9DB]">
