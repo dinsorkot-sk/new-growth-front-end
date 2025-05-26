@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Slider from 'react-slick'; // Assuming you're using react-slick
 import Image from 'next/image';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -50,19 +50,68 @@ const CustomPrevArrow = (props) => {
 };
 
 const Carousel = ({ backgroundImages = [] }) => {
+    const videoRefs = useRef({});
     const hasImages = backgroundImages && backgroundImages.length > 0;
     
+    // Preload all videos when component mounts
+    useEffect(() => {
+        backgroundImages.forEach((url, index) => {
+            if (isVideo(url)) {
+                const video = videoRefs.current[`video-${index}`];
+                if (video) {
+                    video.load();
+                }
+            }
+        });
+    }, [backgroundImages]);
+
     const settings = {
         dots: false,
         infinite: hasImages,
-        speed: 1000,
+        speed: 2000,
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: hasImages,
-        autoplay: hasImages,
+        autoplay: true,
         autoplaySpeed: 5000,
         nextArrow: <CustomNextArrow />,
         prevArrow: <CustomPrevArrow />,
+    };
+
+    const isVideo = (url) => {
+        return url.match(/\.(mp4|webm|ogg)$/i);
+    };
+
+    const renderMedia = (url, index) => {
+        if (isVideo(url)) {
+            return (
+                <div className="relative w-full h-full min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+                    <video
+                        ref={el => videoRefs.current[`video-${index}`] = el}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        className="absolute inset-0 w-full h-full object-cover"
+                    >
+                        <source src={url} type={`video/${url.split('.').pop()}`} />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            );
+        }
+        return (
+            <div className="relative w-full h-full min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+                <Image
+                    src={url}
+                    alt={`Slide ${index + 2}`}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                />
+            </div>
+        );
     };
 
     // Default content when no images are provided
@@ -136,15 +185,9 @@ const Carousel = ({ backgroundImages = [] }) => {
                 </div>
             </div>
             {hasImages ? (
-                backgroundImages.map((image, index) => (
-                    <div key={index} className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
-                        <Image
-                            src={image}
-                            alt={`Slide ${index + 2}`}
-                            fill
-                            className="object-cover"
-                            priority={index === 0}
-                        />
+                backgroundImages.map((media, index) => (
+                    <div key={index} className="relative w-full">
+                        {renderMedia(media, index)}
                     </div>
                 ))
             ) : (
