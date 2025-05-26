@@ -246,7 +246,7 @@ export default function Home() {
     try {
       console.log('กำลังดึงข้อมูลรูปภาพ...');
 
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/board?offset=0&limit=10`);
       console.log(response.data);
       // Update the backgroundImages state with the retrieved images
       if (response.data) {
@@ -268,6 +268,55 @@ export default function Home() {
   // เพิ่ม state สำหรับแสดง loading
   const [isLoading, setIsLoading] = useState(true);
 
+  // เพิ่ม refs สำหรับ scroll animations
+  const newsSectionRef = useRef(null);
+  const courseSectionRef = useRef(null);
+  const ctaSectionRef = useRef(null);
+  const infoSectionRef = useRef(null);
+
+  // เพิ่ม state สำหรับ scroll animations
+  const [isNewsVisible, setIsNewsVisible] = useState(false);
+  const [isCourseVisible, setIsCourseVisible] = useState(false);
+  const [isCtaVisible, setIsCtaVisible] = useState(false);
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
+
+  // เพิ่ม useEffect สำหรับ scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (entry.target === newsSectionRef.current) {
+              setIsNewsVisible(true);
+            } else if (entry.target === courseSectionRef.current) {
+              setIsCourseVisible(true);
+            } else if (entry.target === ctaSectionRef.current) {
+              setIsCtaVisible(true);
+            } else if (entry.target === infoSectionRef.current) {
+              setIsInfoVisible(true);
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -100px 0px"
+      }
+    );
+
+    if (newsSectionRef.current) observer.observe(newsSectionRef.current);
+    if (courseSectionRef.current) observer.observe(courseSectionRef.current);
+    if (ctaSectionRef.current) observer.observe(ctaSectionRef.current);
+    if (infoSectionRef.current) observer.observe(infoSectionRef.current);
+
+    return () => {
+      if (newsSectionRef.current) observer.unobserve(newsSectionRef.current);
+      if (courseSectionRef.current) observer.unobserve(courseSectionRef.current);
+      if (ctaSectionRef.current) observer.unobserve(ctaSectionRef.current);
+      if (infoSectionRef.current) observer.unobserve(infoSectionRef.current);
+    };
+  }, []);
+
   return (
     <div>
       <div
@@ -286,9 +335,9 @@ export default function Home() {
             backgroundColor: "rgba(0, 0, 0, 0.4)", // ปรับความเข้มได้ตามต้องการ (0.4 = 40% opacity)
           }}
         ></div>
-        <div id="default-carousel" className="relative w-full" data-carousel="slide">
+        <div id="default-carousel" className="relative w-full flex justify-center" data-carousel="slide">
           {/* Carousel wrapper */}
-          <div className="relative min-h-[600px] md:min-h-[500px] lg:min-h-[600px] overflow-hidden">
+          <div className="relative min-h-[600px] md:min-h-[500px] lg:min-h-[600px] overflow-hidden max-w-7xl w-full">
             {/* Hero Slide 1 */}
             <div className="hidden duration-700 ease-in-out px-5 lg:px-20 " data-carousel-item>
               <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20">
@@ -350,13 +399,23 @@ export default function Home() {
             </div>
 
             {/* Add more slides as needed */}
-            {/* <div className="hidden duration-700 ease-in-out" data-carousel-item>
+            <div className="hidden duration-700 ease-in-out" data-carousel-item>
               <img
-                src="/docs/images/carousel/carousel-1.svg"
+                src="https://cdn.pixabay.com/photo/2024/07/23/13/03/moon-8915307_640.png"
                 className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
                 alt="..."
               />
-            </div> */}
+            </div>
+
+            {backgroundImages.map((imageUrl, index) => (
+              <div key={index} className="hidden duration-700 ease-in-out" data-carousel-item>
+                <img
+                  src={imageUrl}
+                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                  alt={`Slide ${index + 1}`}
+                />
+              </div>
+            ))}
           </div>
 
           {/* Carousel Controls */}
@@ -385,205 +444,190 @@ export default function Home() {
         </div>
       </div>
 
-            {/* ส่วนที่5 */}
-            <div className="w-full bg-[#F9FAFB]">
+      {/* ส่วนที่5 */}
+      <div className="w-full bg-[#F9FAFB]" ref={newsSectionRef}>
         <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
-          <div className="flex justify-between text-[#0A2463] text-2xl font-bold">
+          <div className={`flex justify-between text-[#0A2463] text-2xl font-bold transition-all duration-1000 ${isNewsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             ข่าวและกิจกรรม
-            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline">ดูข่าวทั้งหมด</div>
+            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูข่าวทั้งหมด</div>
           </div>
 
-          {/* ใช้ grid นอก loop */}
           <div className="pt-4 sm:pt-6 md:pt-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
-              {paginatedNews.map((news) => {
-                const decodedContent = news.content.replace(/\\"/g, '"');
-                const imgMatch = decodedContent.match(
-                  /<img[^>]+src="([^">]+)"/
-                );
-                const imageFromContent = imgMatch ? imgMatch[1] : null;
-                const cleanedContent = decodedContent.replace(
-                  /<img[^>]*>/g,
-                  ""
-                );
+              {paginatedNews.map((news, index) => (
+                <div
+                  key={news.id}
+                  className={`h-full bg-[#ffffff] drop-shadow-xl rounded-lg flex flex-col transition-all duration-1000 hover:shadow-2xl hover:-translate-y-1 ${isNewsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                  style={{ transitionDelay: `${index * 0.1}s` }}
+                >
+                  {/* รูปภาพ */}
+                  <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
+                    <Image
+                      src={
+                        news.image?.image_path
+                          ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
+                          : "/fallback.jpg"
+                      }
+                      alt={news.title}
+                      width={400}
+                      height={160}
+                      className="w-full h-40 object-cover rounded"
+                    />
+                  </div>
 
-                return (
-                  <div
-                    key={news.id}
-                    className="h-full bg-[#ffffff] drop-shadow-xl rounded-lg flex flex-col"
-                  >
-                    {/* รูปภาพ */}
-                    <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
-                      <Image
-                        src={
-                          news.image?.image_path
-                            ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
-                            : "/fallback.jpg"
-                        }
-                        alt={news.title}
-                        width={400}
-                        height={160}
-                        className="w-full h-40 object-cover rounded"
+                  {/* เนื้อหา */}
+                  <div className="h-full p-4 flex flex-col">
+                    <div className="flex items-center gap-1 text-xs text-[#6B7280]">
+                      <FontAwesomeIcon
+                        icon={faCalendar}
+                        style={{
+                          color: "#0A2463",
+                          width: "14px",
+                          height: "14px",
+                        }}
                       />
+                      {new Date(news.published_date).toLocaleDateString()}
                     </div>
 
-                    {/* เนื้อหา */}
-                    <div className="h-full p-4 flex flex-col">
-                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
+                    <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
+                      {news.title}
+                    </div>
+
+                    <div
+                      className="text-[#4B5563] text-xs pt-2 sm:pt-4 flex-grow"
+                    >{news.short_description}</div>
+
+                    <div className="text-blue-600 text-xs mt-3">
+                      หมวดหมู่:{" "}
+                      {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
+                    </div>
+
+                    <div
+                      className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
+                      onClick={() => handleNewsViewDetails(news.id)}
+                    >
+                      อ่านเพิ่มเติม
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        style={{ color: "#0A2463", width: "12px", height: "12px" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center pt-8 gap-2 pb-8">
+          <button
+            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
+            disabled={coursePage === 1}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ก่อนหน้า
+          </button>
+          <span className="px-2 text-sm text-[#0A2463] font-medium">
+            หน้า {coursePage} / {totalCoursePages}
+          </span>
+          <button
+            onClick={() =>
+              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
+            }
+            disabled={coursePage === totalCoursePages}
+            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+          >
+            ถัดไป
+          </button>
+        </div>
+      </div>
+
+      {/* ส่วนที่ 4 */}
+      <div className="w-full bg-[#ffffff]" ref={courseSectionRef}>
+        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
+          <div className={`flex justify-between text-[#0A2463] text-xl sm:text-xl md:text-2xl font-bold transition-all duration-1000 ${isCourseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            เนื้อหาแนะนำ
+            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูเนื้อหาทั้งหมด</div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
+            {paginatedCourses.map((course, index) => (
+              <div key={course.id} className="pt-4 sm:pt-6 md:pt-8">
+                <div className={`h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden transition-all duration-1000 hover:shadow-2xl hover:-translate-y-1 ${isCourseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                  style={{ transitionDelay: `${index * 0.1}s` }}>
+                  {/* ส่วนรูปภาพ 40% */}
+                  <div className="relative h-[45%] w-full">
+                    <Image
+                      src={
+                        course.image?.image_path
+                          ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path.startsWith("/") ? "" : "/"
+                          }${course.image.image_path}`
+                          : "/fallback.jpg"
+                      }
+                      alt={course.name}
+                      width={400}
+                      height={160}
+                      className="w-full h-40 object-cover rounded"
+                    />
+                  </div>
+
+                  {/* ส่วนข้อความ 60% */}
+                  <div className="h-[60%] p-4">
+                    <div className="text-[#0A2463] text-base font-bold">
+                      {course.name}
+                    </div>
+                    <div className="text-[#4B5563] text-xs pt-4">
+                      {course.description}
+                    </div>
+                    <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 pt-4 text-[#4B5563] text-xs">
+                      <div className="flex items-center gap-1">
                         <FontAwesomeIcon
-                          icon={faCalendar}
+                          icon={faClock}
                           style={{
                             color: "#0A2463",
                             width: "14px",
                             height: "14px",
                           }}
                         />
-                        {new Date(news.published_date).toLocaleDateString()}
+                        12 weeks
                       </div>
-
-                      <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
-                        {news.title}
-                      </div>
-
-                      <div
-                        className="text-[#4B5563] text-xs pt-2 sm:pt-4 flex-grow"
-                      >{news.short_description}</div>
-
-                      <div className="text-blue-600 text-xs mt-3">
-                        หมวดหมู่:{" "}
-                        {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
-                      </div>
-
-                      <div
-                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
-                        onClick={() => handleNewsViewDetails(news.id)}
-                      >
-                        อ่านเพิ่มเติม
+                      <div className="flex items-center gap-1">
                         <FontAwesomeIcon
-                          icon={faArrowRight}
-                          style={{ color: "#0A2463", width: "12px", height: "12px" }}
+                          icon={faCalendar}
+                          style={{
+                            color: "#0A2463",
+                            width: "12px",
+                            height: "12px",
+                          }}
                         />
+                        {dateFormatter(course.updated_at)}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <FontAwesomeIcon
+                          icon={faUserGroup}
+                          style={{
+                            color: "#0A2463",
+                            width: "12px",
+                            height: "12px",
+                          }}
+                        />
+                        {course.view_count} ผู้เข้าชม
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
 
-        <div className="flex justify-center pt-8 gap-2 pb-8">
-          <button
-            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
-            disabled={coursePage === 1}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
-          >
-            ก่อนหน้า
-          </button>
-          <span className="px-2 text-sm text-[#0A2463] font-medium">
-            หน้า {coursePage} / {totalCoursePages}
-          </span>
-          <button
-            onClick={() =>
-              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
-            }
-            disabled={coursePage === totalCoursePages}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
-          >
-            ถัดไป
-          </button>
-        </div>
-      </div>
-
-
-      {/* ส่วนที่ 4 */}
-      <div className="w-full bg-[#ffffff]">
-        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
-          <div className="flex justify-between text-[#0A2463] text-xl sm:text-xl md:text-2xl font-bold">
-            เนื้อหาแนะนำ
-            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline">ดูเนื้อหาทั้งหมด</div>
-          </div>
-          {/* การ์ด */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
-            {paginatedCourses.map((course) => {
-              return (
-                <div key={course.id} className="pt-4 sm:pt-6 md:pt-8">
-                  <div className="h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden">
-                    {/* ส่วนรูปภาพ 40% */}
-                    <div className="relative h-[45%] w-full">
-                      <Image
-                        src={
-                          course.image?.image_path
-                            ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path.startsWith("/") ? "" : "/"
-                            }${course.image.image_path}`
-                            : "/fallback.jpg"
-                        }
-                        alt={course.name}
-                        width={400}
-                        height={160}
-                        className="w-full h-40 object-cover rounded"
+                    <div
+                      className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
+                      onClick={() => handleCoureseViewDetails(course.id)}
+                    >
+                      ดูรายละเอียด
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        style={{ color: "#0A2463", width: "12px", height: "12px" }}
                       />
-                    </div>
-
-                    {/* ส่วนข้อความ 60% */}
-                    <div className="h-[60%] p-4">
-                      <div className="text-[#0A2463] text-base font-bold">
-                        {course.name}
-                      </div>
-                      <div className="text-[#4B5563] text-xs pt-4">
-                        {course.description}
-                      </div>
-                      <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 pt-4 text-[#4B5563] text-xs">
-                        <div className="flex items-center gap-1">
-                          <FontAwesomeIcon
-                            icon={faClock}
-                            style={{
-                              color: "#0A2463",
-                              width: "14px",
-                              height: "14px",
-                            }}
-                          />
-                          12 weeks
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <FontAwesomeIcon
-                            icon={faCalendar}
-                            style={{
-                              color: "#0A2463",
-                              width: "12px",
-                              height: "12px",
-                            }}
-                          />
-                          {dateFormatter(course.updated_at)}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <FontAwesomeIcon
-                            icon={faUserGroup}
-                            style={{
-                              color: "#0A2463",
-                              width: "12px",
-                              height: "12px",
-                            }}
-                          />
-                          {course.view_count} ผู้เข้าชม
-                        </div>
-                      </div>
-
-                      <div
-                        className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
-                        onClick={() => handleCoureseViewDetails(course.id)}
-                      >
-                        ดูรายละเอียด
-                        <FontAwesomeIcon
-                          icon={faArrowRight}
-                          style={{ color: "#0A2463", width: "12px", height: "12px" }}
-                        />
-                      </div>
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -610,21 +654,22 @@ export default function Home() {
         </div>
       </div>
 
-
       {/* ส่วนที่6 */}
-      <div className="w-full bg-[#39A9DB]">
+      <div className="w-full bg-[#39A9DB]" ref={ctaSectionRef}>
         <div className="px-4 py-8 md:p-12 lg:p-20 h-full">
           <div className="flex flex-col justify-center items-center text-white">
-            <div className="font-bold text-xl sm:text-2xl">
+            <div className={`font-bold text-xl sm:text-2xl transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               พร้อมที่จะสร้างอนาคตประเทศไทยหรือยัง?
             </div>
-            <div className="text-center pt-2 px-2 sm:px-4 md:px-8 max-w-2xl">
+            <div className={`text-center pt-2 px-2 sm:px-4 md:px-8 max-w-2xl transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              style={{ transitionDelay: '0.2s' }}>
               เข้าร่วมโปรแกรมของเราและเป็นส่วนหนึ่งของนักประดิษฐ์และผู้นำรุ่นต่อไปของประเทศไทยในอุตสาหกรรม
               New Growth Engine
             </div>
-            <div className="pt-4 md:pt-6">
+            <div className={`pt-4 md:pt-6 transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              style={{ transitionDelay: '0.4s' }}>
               <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
-                <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer hover:bg-gray-100 transition-all">
+                <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:scale-105">
                   เข้าร่วม
                 </div>
               </a>
@@ -633,18 +678,28 @@ export default function Home() {
         </div>
       </div>
 
-      <div id="course-info" className="w-full bg-[#E1F2FE] py-10 px-4 md:px-20">
+      <div id="course-info" className="w-full bg-[#E1F2FE] py-10 px-4 md:px-20" ref={infoSectionRef}>
         <div className="max-w-4xl mx-auto">
-          <div className="text-2xl font-bold text-[#0A2463] mb-4">รายละเอียดหลักสูตร</div>
+          <div className={`text-2xl font-bold text-[#0A2463] mb-4 transition-all duration-1000 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            รายละเอียดหลักสูตร
+          </div>
           <ul className="list-disc pl-6 text-[#0A2463] text-sm md:text-base mb-4">
-            <li>ระยะเวลาอบรม 4 เดือน (285 ชั่วโมง) ทฤษฎี 60 ชั่วโมง ปฏิบัติ 225 ชั่วโมง</li>
-            <li>เริ่มอบรม กรกฎาคม - ตุลาคม 2568</li>
-            <li>คุณสมบัติ: อายุ 18 ปีขึ้นไป, จบ ม.6 หรือเทียบเท่า, เกษตรกร/เจ้าของฟาร์ม/ผู้สนใจ</li>
-            <li>สถานที่: มหาวิทยาลัยแม่โจ้</li>
-            <li>หน่วยงานร่วม: มหาวิทยาลัยแม่โจ้, บริษัท อินคูซิชั่นโพสต์, บริษัท พีพีพี ฟู้ด</li>
+            {[
+              'ระยะเวลาอบรม 4 เดือน (285 ชั่วโมง) ทฤษฎี 60 ชั่วโมง ปฏิบัติ 225 ชั่วโมง',
+              'เริ่มอบรม กรกฎาคม - ตุลาคม 2568',
+              'คุณสมบัติ: อายุ 18 ปีขึ้นไป, จบ ม.6 หรือเทียบเท่า, เกษตรกร/เจ้าของฟาร์ม/ผู้สนใจ',
+              'สถานที่: มหาวิทยาลัยแม่โจ้',
+              'หน่วยงานร่วม: มหาวิทยาลัยแม่โจ้, บริษัท อินคูซิชั่นโพสต์, บริษัท พีพีพี ฟู้ด'
+            ].map((item, index) => (
+              <li key={index} className={`transition-all duration-1000 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                style={{ transitionDelay: `${index * 0.1}s` }}>
+                {item}
+              </li>
+            ))}
           </ul>
           <div className="flex flex-col sm:flex-row gap-4 items-center mt-4">
-            <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+            <div className={`bg-white rounded-lg shadow p-4 flex flex-col items-center transition-all duration-1000 hover:shadow-xl hover:-translate-y-1 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              style={{ transitionDelay: '0.6s' }}>
               <span className="font-bold text-[#0A2463]">ติดต่อสอบถาม</span>
               <span className="text-xs text-[#0A2463]">โทร: 084-150-0677 (ดร. พิษณุศักดิ์)</span>
               <span className="text-xs text-[#0A2463]">โทร: 089-837-8992 (ดร. สุกเชษฐ์)</span>
@@ -652,9 +707,10 @@ export default function Home() {
               <span className="text-xs text-[#0A2463]">E-mail: sutkhet@mju.ac.th</span>
             </div>
             {admission?.link_register && (
-              <div className="flex flex-col items-center">
+              <div className={`flex flex-col items-center transition-all duration-1000 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                style={{ transitionDelay: '0.8s' }}>
                 <span className="font-bold text-[#0A2463] mb-2">สมัครออนไลน์</span>
-                <div className="w-28 h-28 flex items-center justify-center bg-white border-2 border-[#39A9DB] rounded-lg">
+                <div className="w-28 h-28 flex items-center justify-center bg-white border-2 border-[#39A9DB] rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105">
                   {admission?.link_register && (
                     <QRCodeSVG value={admission.link_register} size={100} />
                   )}
@@ -665,6 +721,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
