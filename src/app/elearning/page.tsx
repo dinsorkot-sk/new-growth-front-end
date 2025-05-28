@@ -40,8 +40,8 @@ export default function ResourcesPage() {
     try {
       setLoading(true);
       const currentPagination = showType === "Video" 
-        ? paginationRef.current.video 
-        : paginationRef.current.document;
+        ? paginationVideo 
+        : paginationDocument;
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API}/document/getallDocumentAndResouceVideo?offset=${currentPagination.offset}&limit=${currentPagination.limit}&type=${showType}`
@@ -55,13 +55,11 @@ export default function ResourcesPage() {
       setResources(data.data);
 
       if (showType === "Video") {
-        paginationRef.current.video.total = data.pagination.total;
         setPaginationVideo(prev => ({
           ...prev,
           total: data.pagination.total,
         }));
       } else {
-        paginationRef.current.document.total = data.pagination.total;
         setPaginationDocument(prev => ({
           ...prev,
           total: data.pagination.total,
@@ -74,7 +72,7 @@ export default function ResourcesPage() {
       setError("Failed to load resources. Please try again later.");
       setLoading(false);
     }
-  }, [showType]);
+  }, [showType, paginationVideo.offset, paginationDocument.offset]);
 
   useEffect(() => {
     const timeoutId = setTimeout(fetchResources, 300);
@@ -251,19 +249,17 @@ export default function ResourcesPage() {
 
   const handleNextPage = () => {
     if (showType === "Video") {
-      if (paginationRef.current.video.offset + paginationRef.current.video.limit < paginationRef.current.video.total) {
-        paginationRef.current.video.offset += paginationRef.current.video.limit;
+      if (paginationVideo.offset + paginationVideo.limit < paginationVideo.total) {
         setPaginationVideo(prev => ({
           ...prev,
-          offset: paginationRef.current.video.offset,
+          offset: prev.offset + prev.limit,
         }));
       }
     } else {
-      if (paginationRef.current.document.offset + paginationRef.current.document.limit < paginationRef.current.document.total) {
-        paginationRef.current.document.offset += paginationRef.current.document.limit;
+      if (paginationDocument.offset + paginationDocument.limit < paginationDocument.total) {
         setPaginationDocument(prev => ({
           ...prev,
-          offset: paginationRef.current.document.offset,
+          offset: prev.offset + prev.limit,
         }));
       }
     }
@@ -271,19 +267,17 @@ export default function ResourcesPage() {
 
   const handlePrevPage = () => {
     if (showType === "Video") {
-      if (paginationRef.current.video.offset - paginationRef.current.video.limit >= 0) {
-        paginationRef.current.video.offset -= paginationRef.current.video.limit;
+      if (paginationVideo.offset - paginationVideo.limit >= 0) {
         setPaginationVideo(prev => ({
           ...prev,
-          offset: paginationRef.current.video.offset,
+          offset: prev.offset - prev.limit,
         }));
       }
     } else {
-      if (paginationRef.current.document.offset - paginationRef.current.document.limit >= 0) {
-        paginationRef.current.document.offset -= paginationRef.current.document.limit;
+      if (paginationDocument.offset - paginationDocument.limit >= 0) {
         setPaginationDocument(prev => ({
           ...prev,
-          offset: paginationRef.current.document.offset,
+          offset: prev.offset - prev.limit,
         }));
       }
     }
