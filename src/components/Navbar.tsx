@@ -70,9 +70,14 @@ export default function Navbar() {
 
         {/* Apply Button - Desktop */}
         <div className="hidden xl:block">
-          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full">
+          <a href={registerUrl} className="w-full">
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
               เข้าร่วมกับเรา
+            </button>
+          </a>
+          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full mx-3">
+            <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+              เจ้าหน้าที่
             </button>
           </a>
         </div>
@@ -98,9 +103,14 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
-          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
+          <a href={registerUrl} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
               เข้าร่วมกับเรา
+            </button>
+          </a>
+          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full my-2 ">
+            <button className="w-full bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+              เจ้าหน้าที่
             </button>
           </a>
         </div>
