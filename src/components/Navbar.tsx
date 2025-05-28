@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
+  const registerUrl = process.env.NEXT_PUBLIC_API || "#";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -70,7 +70,7 @@ export default function Navbar() {
 
         {/* Apply Button - Desktop */}
         <div className="hidden xl:block">
-          <a href={registerUrl} className="w-full">
+          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full">
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
               เข้าร่วมกับเรา
             </button>
@@ -98,7 +98,7 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
-          <a href={registerUrl} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
+          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
               เข้าร่วมกับเรา
             </button>
