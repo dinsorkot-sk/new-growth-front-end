@@ -390,91 +390,124 @@ const fetchMedia = async () => {
       {/* Gallery Section */}
       <div className="bg-[#F9FAFB]  p-4 md:p-10">
         <div className='mx-auto max-w-7xl'>
-      <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight ">บรรยากาศโครงการ</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        {combinedMedia.length > 0 ? (
-          combinedMedia.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-xl overflow-hidden h-52 shadow bg-white hover:shadow-lg transition-shadow cursor-pointer relative"
-              onClick={() => {
-                setSelectedMedia({
-                  type: item.type,
-                  path: item.path
-                });
-                setShowModal(true);
-              }}
-            >
-              {item.type === 'video' ? (
-                <>
-                  <div className="relative w-full h-full">
-                    <video
-                      className="absolute top-0 left-0 w-full h-full object-cover"
-                      muted
-                      playsInline
-                      preload="metadata"
-                    >
-                      <source src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`} type={`video/${getVideoType(item.path)}`} />
-                      Your browser does not support the video tag.
-                    </video>
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#00000080] pointer-events-none">
-                      <Play className="text-white" size={48} />
-                    </div>
+          <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight ">บรรยากาศโครงการ</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            {combinedMedia.length > 0 ? (
+              combinedMedia.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                  onClick={() => {
+                    setSelectedMedia({
+                      type: item.type,
+                      path: item.path,
+                      title: item.type === 'video' ? item.title : item.description,
+                      date: item.date,
+                      description: item.type === 'video' ? item.description : item.description
+                    });
+                    setShowModal(true);
+                  }}
+                >
+                  <div className="relative h-52">
+                    {item.type === 'video' ? (
+                      <>
+                        <video
+                          className="w-full h-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        >
+                          <source src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`} type={`video/${getVideoType(item.path)}`} />
+                          Your browser does not support the video tag.
+                        </video>
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#00000080] opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="relative w-16 h-16">
+                            <div className="absolute inset-0 bg-white/30 rounded-full"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`}
+                        alt={item.description || ""}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
+                        className="object-cover object-center"
+                      />
+                    )}
                   </div>
-                </>
-              ) : (
-                <div className="relative w-full h-full">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_IMG}/${item.path}`}
-                    alt={item.description || ""}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 25vw"
-                    style={{ objectFit: 'cover', objectPosition: 'center' }}
-                    className="object-cover object-center"
-                  />
+                  <div className="p-4">
+                    <h3 className="font-semibold text-blue-900 mb-2 line-clamp-2">
+                      {item.type === 'video' ? item.title : (item.description || 'รูปภาพ')}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-2">
+                      {formatDate(item.date.toISOString())}
+                    </p>
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {item.description || (item.type === 'video' ? 'วิดีโอจากโครงการ' : 'รูปภาพจากโครงการ')}
+                    </p>
+                  </div>
                 </div>
-              )}
-              
-            </div>
-          ))
-        ) : (
-          <div className="col-span-1 md:col-span-2 lg:col-span-4 text-center py-6 text-gray-500">
-            ไม่พบข้อมูลมีเดีย
+              ))
+            ) : (
+              <div className="col-span-1 md:col-span-2 lg:col-span-4 text-center py-6 text-gray-500">
+                ไม่พบข้อมูลมีเดีย
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
       </div>
       {showModal && selectedMedia && (
         <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center p-4" onClick={closeModal}>
-          <div className="relative w-full max-w-4xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <button 
-              onClick={closeModal}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors bg-red-500 rounded-full p-2"
-            >
-              <X size={24} />
-            </button>
-            
-            {selectedMedia.type === 'video' ? (
-              <video 
-                className="w-full h-auto max-h-[80vh] rounded-lg" 
-                controls 
-                autoPlay
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="absolute top-4 right-4 z-10">
+              <button 
+                onClick={closeModal}
+                className="text-gray-600 hover:text-gray-800 transition-colors bg-white rounded-full p-2 shadow-lg"
               >
-                <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
-              </video>
-            ) : (
-              <div className="relative w-full h-auto max-h-[80vh]">
-                <Image 
-                  src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
-                  alt="Selected media"
-                  width={1200}
-                  height={800}
-                  style={{ objectFit: 'contain' }}
-                  className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
-                />
-              </div>
-            )}
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="relative">
+              {selectedMedia.type === 'video' ? (
+                <video 
+                  className="w-full h-auto max-h-[70vh] object-contain bg-black" 
+                  controls 
+                  autoPlay
+                >
+                  <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
+                </video>
+              ) : (
+                <div className="relative w-full h-auto max-h-[70vh]">
+                  <Image 
+                    src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
+                    alt={selectedMedia.title || "Selected media"}
+                    width={1200}
+                    height={800}
+                    style={{ objectFit: 'contain' }}
+                    className="w-full h-auto max-h-[70vh] object-contain"
+                  />
+                </div>
+              )}
+            </div>
+            
+            <div className="p-6 bg-white">
+              <h3 className="text-xl font-semibold text-blue-900 mb-2">
+                {selectedMedia.title || (selectedMedia.type === 'video' ? 'วิดีโอ' : 'รูปภาพ')}
+              </h3>
+              <p className="text-gray-500 mb-3">
+                {formatDate(new Date().toISOString())}
+              </p>
+              <p className="text-gray-600">
+                {selectedMedia.description || (selectedMedia.type === 'video' ? 'วิดีโอจากโครงการ' : 'รูปภาพจากโครงการ')}
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -490,6 +523,6 @@ const fetchMedia = async () => {
       )}
     </div>
 
-    </div>
+    
   );
 }

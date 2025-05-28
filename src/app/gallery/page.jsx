@@ -142,11 +142,11 @@ export default function AllPhotos() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
                 {galleryMedia.map((media, index) => (
                   <div 
                     key={media.type + '-' + media.id} 
-                    className="rounded-lg overflow-hidden shadow-md cursor-pointer transform hover:scale-105 transition-transform duration-300"
+                    className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
                     onClick={() => handleMediaClick(media)}
                   >
                     <div className="relative pt-[75%]">
@@ -165,11 +165,31 @@ export default function AllPhotos() {
                             <source src={`${process.env.NEXT_PUBLIC_IMG}/${media.path}`} type={`video/${getVideoType(media.path)}`} />
                             Your browser does not support the video tag.
                           </video>
-                          <div className="absolute inset-0 flex items-center justify-center bg-[#00000080] pointer-events-none">
-                            <Play className="text-white" size={48} />
+                          <div className="absolute inset-0 flex items-center justify-center bg-[#00000080] opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="relative w-16 h-16">
+                              <div className="absolute inset-0 bg-white/30 rounded-full"></div>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1"></div>
+                              </div>
+                            </div>
                           </div>
                         </>
                       )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-blue-900 mb-2 line-clamp-2">
+                        {media.type === 'video' ? media.title : 'รูปภาพจากโครงการ'}
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-2">
+                        {new Date().toLocaleDateString('th-TH', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {media.description || (media.type === 'video' ? 'วิดีโอจากโครงการ' : 'รูปภาพจากโครงการ')}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -240,29 +260,49 @@ export default function AllPhotos() {
       {/* Media Modal */}
       {showModal && selectedMedia && (
         <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center p-4" onClick={closeModal}>
-          <div className="relative w-full max-w-4xl max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <button 
-              onClick={closeModal}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors bg-red-500 rounded-full p-2"
-            >
-              <X size={24} />
-            </button>
-            
-            {selectedMedia.type === 'video' ? (
-              <video 
-                className="w-full h-auto max-h-[80vh] rounded-lg" 
-                controls 
-                autoPlay
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="absolute top-4 right-4 z-10">
+              <button 
+                onClick={closeModal}
+                className="text-gray-600 hover:text-gray-800 transition-colors bg-white rounded-full p-2 shadow-lg"
               >
-                <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
-              </video>
-            ) : (
-              <img 
-                src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
-                alt="Selected media"
-                className="w-full h-auto max-h-[80vh] object-contain rounded-lg" 
-              />
-            )}
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="relative">
+              {selectedMedia.type === 'video' ? (
+                <video 
+                  className="w-full h-auto max-h-[70vh] object-contain bg-black" 
+                  controls 
+                  autoPlay
+                >
+                  <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
+                </video>
+              ) : (
+                <img 
+                  src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
+                  alt={selectedMedia.description || "Selected media"}
+                  className="w-full h-auto max-h-[70vh] object-contain" 
+                />
+              )}
+            </div>
+            
+            <div className="p-6 bg-white">
+              <h3 className="text-xl font-semibold text-blue-900 mb-2">
+                {selectedMedia.type === 'video' ? selectedMedia.title : 'รูปภาพจากโครงการ'}
+              </h3>
+              <p className="text-gray-500 mb-3">
+                {new Date().toLocaleDateString('th-TH', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+              <p className="text-gray-600">
+                {selectedMedia.description || (selectedMedia.type === 'video' ? 'วิดีโอจากโครงการ' : 'รูปภาพจากโครงการ')}
+              </p>
+            </div>
           </div>
         </div>
       )}

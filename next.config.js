@@ -15,7 +15,12 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'api.bunditpunmai-mju.com',
-        pathname: '/upload/**',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.bunditpunmai-mju.com',
+        pathname: '/**',
       },
     ],
   },
