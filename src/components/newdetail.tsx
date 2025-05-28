@@ -12,6 +12,7 @@ export default function Newandeventdetail({ params }: { params: string }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
@@ -116,6 +117,16 @@ export default function Newandeventdetail({ params }: { params: string }) {
               layout="responsive"
               priority
             />
+          ) : newsData.images && newsData.images.length > 0 ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_IMG}/${newsData.images[0].image_path}`}
+              alt={newsData.title || newsData.images[0].description || 'Featured Image'}
+              className="object-cover"
+              width={1200}
+              height={600}
+              layout="responsive"
+              priority
+            />
           ) : (
             <div className="w-full h-[400px] bg-gray-200 flex items-center justify-center">
               <span className="text-gray-500">ไม่มีรูปภาพ</span>
@@ -199,10 +210,12 @@ export default function Newandeventdetail({ params }: { params: string }) {
                           />
                         </video>
                       </div>
-                      <h3 className="text-lg font-semibold mb-2 line-clamp-2">{resource.title}</h3>
                       {resource.description && (
-                        <p className="text-gray-600 text-sm line-clamp-2">{resource.description}</p>
+                         <p className="text-gray-600 text-sm">วันที่เพิ่ม: {formatDate(resource.published_date)}</p>
                       )}
+                      <h3 className="text-lg mb-2 line-clamp-2 text-gray-600">{resource.description}</h3>
+                     
+
                     </div>
                   )
                 ))}
@@ -213,6 +226,37 @@ export default function Newandeventdetail({ params }: { params: string }) {
               </div>
             )}
           </div>
+
+          {/* Image Gallery Section */}
+          {newsData.images && newsData.images.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">รูปภาพที่เกี่ยวข้อง</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {newsData.images.map((image) => (
+                  <div 
+                    key={image.id} 
+                    className="bg-gray-50 p-4 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+                    onClick={() => setSelectedImage(image)}
+                  >
+                    <div className="relative aspect-square mb-3">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_IMG}/${image.image_path}`}
+                        alt={image.description || 'Related Image'}
+                        className="rounded-lg object-cover"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                    {image.created_at && (
+                      <p className="text-gray-600 text-sm">วันที่เพิ่ม: {formatDate(image.created_at)}</p>
+                    )}
+                    <h3 className="text-lg mb-2 line-clamp-2 text-gray-600">{image.description || 'ไม่มีคำอธิบาย'}</h3>
+                    
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Video Modal */}
           {selectedVideo && (
@@ -242,6 +286,40 @@ export default function Newandeventdetail({ params }: { params: string }) {
                   </video>
                   {selectedVideo.description && (
                     <p className="mt-4 text-gray-600">{selectedVideo.description}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Image Modal */}
+          {selectedImage && (
+            <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg w-full max-w-4xl">
+                <div className="p-4 border-b flex justify-between items-center">
+                  <h3 className="text-xl font-semibold">{selectedImage.description || 'ไม่มีคำอธิบาย'}</h3>
+                  <button 
+                    onClick={() => setSelectedImage(null)}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <div className="relative aspect-video w-full">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_IMG}/${selectedImage.image_path}`}
+                      alt={selectedImage.description || 'Related Image'}
+                      className="rounded-lg object-contain"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
+                  {selectedImage.description && (
+                    <p className="mt-4 text-gray-600">{selectedImage.description}</p>
+                  )}
+                  {selectedImage.created_at && (
+                    <p className="mt-2 text-gray-600 text-sm">วันที่เพิ่ม: {formatDate(selectedImage.created_at)}</p>
                   )}
                 </div>
               </div>

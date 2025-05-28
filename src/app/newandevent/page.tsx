@@ -339,7 +339,7 @@ const fetchMedia = async () => {
                   <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-2xl duration-200 cursor-pointer"  onClick={() => handleViewDetails(news.id, news.view_count)}>
                     <div className="relative">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_IMG}/${news.image?.image_path}`}
+                        src={news.image?.image_path ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}` : (images.length > 0 ? `${process.env.NEXT_PUBLIC_IMG}/${images[0].image_path}` : '/placeholder-image.jpg')}
                         alt={news.title}
                         className="w-full h-56 object-cover object-center bg-gray-100"
                         width={600}
