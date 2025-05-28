@@ -71,12 +71,12 @@ export default function Navbar() {
         {/* Apply Button - Desktop */}
         <div className="hidden xl:block">
           <a href={registerUrl} className="w-full">
-            <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+            <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer">
               เข้าร่วมกับเรา
             </button>
           </a>
           <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full mx-3">
-            <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+            <button className="bg-white hover:bg-white rounded-md py-2 px-4 text-blue-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white cursor-pointer">
               เจ้าหน้าที่
             </button>
           </a>
@@ -109,7 +109,7 @@ export default function Navbar() {
             </button>
           </a>
           <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full my-2 ">
-            <button className="w-full bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+            <button className="w-full bg-white hover:bg-white rounded-md py-2 px-4 text-blue-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white cursor-pointer">
               เจ้าหน้าที่
             </button>
           </a>

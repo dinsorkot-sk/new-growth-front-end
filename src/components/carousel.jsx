@@ -164,7 +164,6 @@ const Carousel = ({ backgroundImages = [] }) => {
                             <a href="#" className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
                                 <div className="flex justify-evenly items-center w-full text-center text-sm">
                                     สมัครเข้าร่วมโครงการ
-                                    <FontAwesomeIcon icon={faGreaterThan} className="text-white w-[13px] h-[13px]" />
                                 </div>
                             </a>
                             <a href="#course-info" className="px-6 h-12 bg-white hover:bg-gray-100 transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">
