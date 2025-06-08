@@ -4,3 +4,8 @@ body {
   font-family: "Inter", sans-serif;
   font-family: 'Prompt', sans-serif;
 }
+
+
+.ql-editor p img {
+  margin: 0 auto;
+}
