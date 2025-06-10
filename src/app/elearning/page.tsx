@@ -72,7 +72,7 @@ export default function ResourcesPage() {
       setError("Failed to load resources. Please try again later.");
       setLoading(false);
     }
-  }, [showType, paginationVideo.offset, paginationDocument.offset]);
+  }, [showType, paginationVideo, paginationDocument]);
 
   useEffect(() => {
     const timeoutId = setTimeout(fetchResources, 300);

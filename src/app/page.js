@@ -305,16 +305,22 @@ export default function Home() {
       }
     );
 
-    if (newsSectionRef.current) observer.observe(newsSectionRef.current);
-    if (courseSectionRef.current) observer.observe(courseSectionRef.current);
-    if (ctaSectionRef.current) observer.observe(ctaSectionRef.current);
-    if (infoSectionRef.current) observer.observe(infoSectionRef.current);
+    // Store refs in variables to avoid stale values in cleanup
+    const newsSection = newsSectionRef.current;
+    const courseSection = courseSectionRef.current;
+    const ctaSection = ctaSectionRef.current;
+    const infoSection = infoSectionRef.current;
+
+    if (newsSection) observer.observe(newsSection);
+    if (courseSection) observer.observe(courseSection);
+    if (ctaSection) observer.observe(ctaSection);
+    if (infoSection) observer.observe(infoSection);
 
     return () => {
-      if (newsSectionRef.current) observer.unobserve(newsSectionRef.current);
-      if (courseSectionRef.current) observer.unobserve(courseSectionRef.current);
-      if (ctaSectionRef.current) observer.unobserve(ctaSectionRef.current);
-      if (infoSectionRef.current) observer.unobserve(infoSectionRef.current);
+      if (newsSection) observer.unobserve(newsSection);
+      if (courseSection) observer.unobserve(courseSection);
+      if (ctaSection) observer.unobserve(ctaSection);
+      if (infoSection) observer.unobserve(infoSection);
     };
   }, []);
 
