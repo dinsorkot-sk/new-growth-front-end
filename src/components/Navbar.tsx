@@ -24,7 +24,7 @@ export default function Navbar() {
     { name: "ติดต่อเรา", path: "/contact" },
   ];
 
-  const isActive = (path) => pathname === path;
+  const isActive = (path: string): boolean => pathname === path;
 
   if (!mounted) return null;
 
