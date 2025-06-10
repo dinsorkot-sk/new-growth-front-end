@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const registerUrl = process.env.NEXT_PUBLIC_API || "#";
+  const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
