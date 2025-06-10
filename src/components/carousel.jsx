@@ -52,6 +52,7 @@ const CustomPrevArrow = (props) => {
 const Carousel = ({ backgroundImages = [] }) => {
     const videoRefs = useRef({});
     const hasImages = backgroundImages && backgroundImages.length > 0;
+    const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
     
     // Preload all videos when component mounts
     useEffect(() => {
@@ -161,7 +162,7 @@ const Carousel = ({ backgroundImages = [] }) => {
 
                         {/* Buttons Section */}
                         <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
-                            <a href="#" className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
+                            <a href={registerUrl} className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
                                 <div className="flex justify-evenly items-center w-full text-center text-sm">
                                     สมัครเข้าร่วมโครงการ
                                 </div>
