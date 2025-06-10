@@ -138,10 +138,10 @@ export default async function Home() {
             <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
               <span className="font-bold text-[#0A2463]">ติดต่อสอบถาม</span>
               <span className="text-xs text-[#0A2463]">
-                โทร: 084-150-0677 (ดร. พิษณุศักดิ์)
+                โทร: 084-150-0677 (อ.ดร.พยุงศักดิ์)
               </span>
               <span className="text-xs text-[#0A2463]">
-                โทร: 089-837-8992 (ดร. สุกเชษฐ์)
+                โทร: 089-837-8992 (อ.ดร.สุดเขต)
               </span>
               <span className="text-xs text-[#0A2463]">
                 E-mail: Payungsak.kae@gmail.com

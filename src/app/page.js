@@ -593,8 +593,8 @@ export default function Home() {
             <div className={`bg-white rounded-lg shadow p-4 flex flex-col items-center transition-all duration-1000 hover:shadow-xl hover:-translate-y-1 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
               style={{ transitionDelay: '0.6s' }}>
               <span className="font-bold text-[#0A2463]">ติดต่อสอบถาม</span>
-              <span className="text-xs text-[#0A2463]">โทร: 084-150-0677 (ดร. พิษณุศักดิ์)</span>
-              <span className="text-xs text-[#0A2463]">โทร: 089-837-8992 (ดร. สุกเชษฐ์)</span>
+              <span className="text-xs text-[#0A2463]">โทร: 084-150-0677 (อ.ดร.พยุงศักดิ์)</span>
+              <span className="text-xs text-[#0A2463]">โทร: 089-837-8992 (อ.ดร.สุดเขต)</span>
               <span className="text-xs text-[#0A2463]">E-mail: Payungsak.kae@gmail.com</span>
               <span className="text-xs text-[#0A2463]">E-mail: sutkhet@mju.ac.th</span>
             </div>
