@@ -28,7 +28,7 @@ const CustomNextArrow = (props) => {
             }}
             onClick={onClick}
         >
-           
+
         </div>
     );
 };
@@ -44,16 +44,16 @@ const CustomPrevArrow = (props) => {
             }}
             onClick={onClick}
         >
-           
+
         </div>
     );
 };
 
-const Carousel = ({ backgroundImages = [] }) => {
+const Carousel = ({ registerUrl, backgroundImages = [] }) => {
     const videoRefs = useRef({});
     const hasImages = backgroundImages && backgroundImages.length > 0;
-    const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
-    
+    // const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
+
     // Preload all videos when component mounts
     useEffect(() => {
         backgroundImages.forEach((url, index) => {

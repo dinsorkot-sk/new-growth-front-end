@@ -4,14 +4,27 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import axios from "axios";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
+  const [admission, setAdmission] = useState(null);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API}/admission`)
+      .then((res) => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setAdmission(res.data[0]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching admission:", error);
+      });
+  }, []);
 
   const menuItems = [
     { name: "หน้าแรก", path: "/" },
@@ -70,7 +83,7 @@ export default function Navbar() {
 
         {/* Apply Button - Desktop */}
         <div className="hidden xl:block">
-          <a href={registerUrl} className="w-full">
+          <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-full">
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer">
               เข้าร่วมกับเรา
             </button>
@@ -103,7 +116,7 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
-          <a href={registerUrl} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
+          <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
               เข้าร่วมกับเรา
             </button>

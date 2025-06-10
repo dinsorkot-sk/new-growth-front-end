@@ -339,7 +339,7 @@ export default function Home() {
         <div
           className="absolute inset-0"
         ></div>
-        <Carousel backgroundImages={backgroundImages} />
+        <Carousel registerUrl={admission.link_register || process.env.NEXT_PUBLIC_REGISTER} backgroundImages={backgroundImages} />
       </div>
 
       {/* ส่วนที่5 */}
@@ -566,7 +566,8 @@ export default function Home() {
             </div>
             <div className={`pt-4 md:pt-6 transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
               style={{ transitionDelay: '0.4s' }}>
-              <a href={`${process.env.NEXT_PUBLIC_REGISTER}`}>
+              <a href={admission.link_register ||
+                process.env.NEXT_PUBLIC_REGISTER}>
                 <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:scale-105">
                   เข้าร่วม
                 </div>
