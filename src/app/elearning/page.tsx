@@ -38,7 +38,10 @@ export default function ResourcesPage() {
 
   const fetchResources = useCallback(async () => {
     try {
-      setLoading(true);
+      if (resources.length === 0) {
+        setLoading(true);
+      }
+
       const currentPagination = showType === "Video" 
         ? paginationVideo 
         : paginationDocument;
@@ -52,8 +55,7 @@ export default function ResourcesPage() {
       }
 
       const data = await response.json();
-      setResources(data.data);
-
+      
       if (showType === "Video") {
         setPaginationVideo(prev => ({
           ...prev,
@@ -65,19 +67,38 @@ export default function ResourcesPage() {
           total: data.pagination.total,
         }));
       }
-
+      
+      setResources(data.data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching resources:", error);
       setError("Failed to load resources. Please try again later.");
       setLoading(false);
     }
-  }, [showType, paginationVideo, paginationDocument]);
+  }, [showType, paginationVideo.offset, paginationVideo.limit, paginationDocument.offset, paginationDocument.limit, resources.length]);
+
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  const debouncedFetchResources = useCallback(
+    debounce(() => {
+      fetchResources();
+    }, 300),
+    [fetchResources]
+  );
 
   useEffect(() => {
-    const timeoutId = setTimeout(fetchResources, 300);
-    return () => clearTimeout(timeoutId);
-  }, [fetchResources]);
+    debouncedFetchResources();
+  }, [debouncedFetchResources]);
 
   const processedResources = resources.map((item) => {
     const icon = item.type.toLowerCase().includes("video")
@@ -283,6 +304,21 @@ export default function ResourcesPage() {
     }
   };
 
+  // Add effect to handle pagination changes
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchResources();
+    }, 50);
+    return () => clearTimeout(timeoutId);
+  }, [paginationVideo.offset, paginationDocument.offset, fetchResources]);
+
+  // Modify the loading indicator to be less intrusive
+  const renderLoadingIndicator = () => (
+    <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center">
+      <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+    </div>
+  );
+
   return (
     <div className="mx-auto">
       <div className="bg-[#0A2463] md:h-50 text-white py-10 px-10">
@@ -338,13 +374,6 @@ export default function ResourcesPage() {
           {showType === "Video" ? "วิดีโอทั้งหมด" : "เอกสารทั้งหมด"}
         </h1>
 
-        {loading && (
-          <div className="text-center py-10">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <p className="mt-2 text-gray-600">กำลังโหลดข้อมูล...</p>
-          </div>
-        )}
-
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
             <strong className="font-bold">Error! </strong>
@@ -352,156 +381,160 @@ export default function ResourcesPage() {
           </div>
         )}
 
-        {!loading && !error && (
-          <>
-            {filteredResources.length === 0 ? (
-              <div className="text-center py-10">
-                <p className="text-gray-600">ไม่พบข้อมูลที่ค้นหา</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredResources.map((resource) => (
-                  <div
-                    key={resource.id}
-                    className="bg-white rounded-lg shadow-md p-6"
-                  >
-                    <div className="md:flex justify-between">
-                      <div className="md:flex items-start space-x-4">
-                        <div className="mt-1 text-lg text-center my-3 md:my-0">
-                          {renderIcon(resource.icon)}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-[#0A2463]">
-                            {resource.title}
-                          </h3>
-                          <p className="text-[#4B5563] text-sm mt-1">
-                            {resource.description}
-                          </p>
+        <div className="relative">
+          {loading && resources.length === 0 && renderLoadingIndicator()}
+          
+          {!loading && !error && (
+            <>
+              {filteredResources.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-600">ไม่พบข้อมูลที่ค้นหา</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredResources.map((resource) => (
+                    <div
+                      key={resource.id}
+                      className="bg-white rounded-lg shadow-md p-6"
+                    >
+                      <div className="md:flex justify-between">
+                        <div className="md:flex items-start space-x-4">
+                          <div className="mt-1 text-lg text-center my-3 md:my-0">
+                            {renderIcon(resource.icon)}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-[#0A2463]">
+                              {resource.title}
+                            </h3>
+                            <p className="text-[#4B5563] text-sm mt-1">
+                              {resource.description}
+                            </p>
 
-                          <div className="flex flex-wrap gap-x-8 gap-y-2 mt-3 text-xs text-[#6B7280]">
-                            <div>
-                              <span className="font-semibold">ประเภท:</span>{" "}
-                              {resource.type}
-                            </div>
-                            {resource.duration && (
+                            <div className="flex flex-wrap gap-x-8 gap-y-2 mt-3 text-xs text-[#6B7280]">
                               <div>
-                                <span className="font-semibold">ความยาว:</span>{" "}
-                                {resource.duration}
+                                <span className="font-semibold">ประเภท:</span>{" "}
+                                {resource.type}
                               </div>
-                            )}
-                            {resource.pages && (
+                              {resource.duration && (
+                                <div>
+                                  <span className="font-semibold">ความยาว:</span>{" "}
+                                  {resource.duration}
+                                </div>
+                              )}
+                              {resource.pages && (
+                                <div>
+                                  <span className="font-semibold">หน้า:</span>{" "}
+                                  {resource.pages}
+                                </div>
+                              )}
                               <div>
-                                <span className="font-semibold">หน้า:</span>{" "}
-                                {resource.pages}
+                                <span className="font-semibold">วันที่:</span>{" "}
+                                {resource.date}
                               </div>
-                            )}
-                            <div>
-                              <span className="font-semibold">วันที่:</span>{" "}
-                              {resource.date}
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex flex-col items-center justify-center space-y-3 mt-3 md:mt-0">
-                        {resource.url && renderActionButton(resource)}
-                        {resource.isDownloadable && resource.url && (
-                          <button
-                            onClick={() => downloadResource(resource)}
-                            disabled={downloadingId === resource.id}
-                            className={`flex items-center justify-center transition-colors text-sm cursor-pointer ${
-                              downloadingId === resource.id
-                                ? "opacity-50 cursor-not-allowed"
-                                : "hover:text-blue-500"
-                            }`}
-                          >
-                            <span className="mr-2">
-                              {downloadingId === resource.id ? "⏳" : "⬇️"}
-                            </span>
-                            <span className="text-[#374151]">
-                              {downloadingId === resource.id
-                                ? "กำลังดาวน์โหลด..."
-                                : "ดาวน์โหลด"}
-                            </span>
-                          </button>
-                        )}
+                        <div className="flex flex-col items-center justify-center space-y-3 mt-3 md:mt-0">
+                          {resource.url && renderActionButton(resource)}
+                          {resource.isDownloadable && resource.url && (
+                            <button
+                              onClick={() => downloadResource(resource)}
+                              disabled={downloadingId === resource.id}
+                              className={`flex items-center justify-center transition-colors text-sm cursor-pointer ${
+                                downloadingId === resource.id
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "hover:text-blue-500"
+                              }`}
+                            >
+                              <span className="mr-2">
+                                {downloadingId === resource.id ? "⏳" : "⬇️"}
+                              </span>
+                              <span className="text-[#374151]">
+                                {downloadingId === resource.id
+                                  ? "กำลังดาวน์โหลด..."
+                                  : "ดาวน์โหลด"}
+                              </span>
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
-              <div className="text-sm text-gray-600">
-                {showType === "Video" ? (
-                  <>
-                    แสดง {paginationVideo.offset + 1}-
-                    {Math.min(
-                      paginationVideo.offset + filteredResources.length,
+        <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
+          <div className="text-sm text-gray-600">
+            {showType === "Video" ? (
+              <>
+                แสดง {paginationVideo.offset + 1}-
+                {Math.min(
+                  paginationVideo.offset + filteredResources.length,
+                  paginationVideo.total
+                )}{" "}
+                จากทั้งหมด {paginationVideo.total} รายการ
+              </>
+            ) : (
+              <>
+                แสดง {paginationDocument.offset + 1}-
+                {Math.min(
+                  paginationDocument.offset + filteredResources.length,
+                  paginationDocument.total
+                )}{" "}
+                จากทั้งหมด {paginationDocument.total} รายการ
+              </>
+            )}
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={handlePrevPage}
+              disabled={
+                showType === "Video"
+                  ? paginationVideo.offset === 0
+                  : paginationDocument.offset === 0
+              }
+              className={`px-4 py-2 border rounded ${
+                (
+                  showType === "Video"
+                    ? paginationVideo.offset === 0
+                    : paginationDocument.offset === 0
+                )
+                  ? "bg-gray-100 text-gray-400"
+                  : "bg-white text-blue-500 hover:bg-blue-50"
+              }`}
+            >
+              ก่อนหน้า
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={
+                showType === "Video"
+                  ? paginationVideo.offset + paginationVideo.limit >=
+                    paginationVideo.total
+                  : paginationDocument.offset + paginationDocument.limit >=
+                    paginationDocument.total
+              }
+              className={`px-4 py-2 border rounded ${
+                (
+                  showType === "Video"
+                    ? paginationVideo.offset + paginationVideo.limit >=
                       paginationVideo.total
-                    )}{" "}
-                    จากทั้งหมด {paginationVideo.total} รายการ
-                  </>
-                ) : (
-                  <>
-                    แสดง {paginationDocument.offset + 1}-
-                    {Math.min(
-                      paginationDocument.offset + filteredResources.length,
+                    : paginationDocument.offset +
+                        paginationDocument.limit >=
                       paginationDocument.total
-                    )}{" "}
-                    จากทั้งหมด {paginationDocument.total} รายการ
-                  </>
-                )}
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={
-                    showType === "Video"
-                      ? paginationVideo.offset === 0
-                      : paginationDocument.offset === 0
-                  }
-                  className={`px-4 py-2 border rounded ${
-                    (
-                      showType === "Video"
-                        ? paginationVideo.offset === 0
-                        : paginationDocument.offset === 0
-                    )
-                      ? "bg-gray-100 text-gray-400"
-                      : "bg-white text-blue-500 hover:bg-blue-50"
-                  }`}
-                >
-                  ก่อนหน้า
-                </button>
-                <button
-                  onClick={handleNextPage}
-                  disabled={
-                    showType === "Video"
-                      ? paginationVideo.offset + paginationVideo.limit >=
-                        paginationVideo.total
-                      : paginationDocument.offset + paginationDocument.limit >=
-                        paginationDocument.total
-                  }
-                  className={`px-4 py-2 border rounded ${
-                    (
-                      showType === "Video"
-                        ? paginationVideo.offset + paginationVideo.limit >=
-                          paginationVideo.total
-                        : paginationDocument.offset +
-                            paginationDocument.limit >=
-                          paginationDocument.total
-                    )
-                      ? "bg-gray-100 text-gray-400"
-                      : "bg-white text-blue-500 hover:bg-blue-50"
-                  }`}
-                >
-                  ถัดไป
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+                )
+                  ? "bg-gray-100 text-gray-400"
+                  : "bg-white text-blue-500 hover:bg-blue-50"
+              }`}
+            >
+              ถัดไป
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
