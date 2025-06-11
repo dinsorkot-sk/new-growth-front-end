@@ -70,7 +70,6 @@ export default function Home() {
   };
 
   const createThaiMonthRange = (startDate: any, endDate: any) => {
-    if (!(startDate instanceof Date) || !(endDate instanceof Date)) return "-";
     const thaiMonths = [
       "มกราคม",
       "กุมภาพันธ์",
@@ -85,6 +84,16 @@ export default function Home() {
       "พฤศจิกายน",
       "ธันวาคม",
     ];
+
+    if (!(startDate instanceof Date)) return "-";
+
+    if (!(endDate instanceof Date)) {
+      const day = startDate.getDate();
+      const month = thaiMonths[startDate.getMonth()];
+      const year = startDate.getFullYear();
+      return `ตั้งแต่ ${day} ${month} ${year}`;
+    }
+
     const startMonth = thaiMonths[startDate.getMonth()];
     const endMonth = thaiMonths[endDate.getMonth()];
     const startYear = startDate.getFullYear();
@@ -109,17 +118,25 @@ export default function Home() {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API}/admission`);
         // Convert date strings to Date objects and add computed fields
         const data = res.data.map((item: any) => {
-          const startDate = new Date(item.startDate);
-          const endDate = new Date(item.endDate);
-          const selectionStartDate = new Date(item.selectionStartDate);
-          const selectionEndDate = new Date(item.selectionEndDate);
-          const trainingStartDate = new Date(item.trainingStartDate);
+          const startDate = item.startDate ? new Date(item.startDate) : null;
+          const endDate = item.endDate ? new Date(item.endDate) : null;
+          const selectionStartDate = item.selectionStartDate
+            ? new Date(item.selectionStartDate)
+            : null;
+          const selectionEndDate = item.selectionEndDate
+            ? new Date(item.selectionEndDate)
+            : null;
+          const trainingStartDate = item.trainingStartDate
+            ? new Date(item.trainingStartDate)
+            : null;
           // Compute trainingEndDate (2 months after trainingStartDate)
-          const trainingEndDate = new Date(
-            trainingStartDate.getFullYear(),
-            trainingStartDate.getMonth() + 2,
-            trainingStartDate.getDate()
-          );
+          const trainingEndDate = trainingStartDate
+            ? new Date(
+                trainingStartDate.getFullYear(),
+                trainingStartDate.getMonth() + 2,
+                trainingStartDate.getDate()
+              )
+            : null;
           return {
             ...item,
             startDate,
@@ -128,12 +145,8 @@ export default function Home() {
             selectionEndDate,
             trainingStartDate,
             trainingEndDate,
-            application: `${formatThaiDate(startDate)} - ${formatThaiDate(
-              endDate
-            )}`,
-            selection: `${formatThaiDate(
-              selectionStartDate
-            )} - ${formatThaiDate(selectionEndDate)}`,
+            application: createThaiMonthRange(startDate, endDate),
+            selection: createThaiMonthRange(selectionStartDate, selectionEndDate),
             training: createThaiMonthRange(trainingStartDate, trainingEndDate),
           };
         });
@@ -341,82 +354,94 @@ export default function Home() {
                 })}
               </div>
               <div className="pt-2">
-                <div className="grid grid-cols-1 pt-6 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className={`grid ${
+                  batches[activeBatchIdx]?.startDate && batches[activeBatchIdx]?.selectionStartDate && batches[activeBatchIdx]?.trainingStartDate
+                    ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
+                    : batches[activeBatchIdx]?.startDate && batches[activeBatchIdx]?.selectionStartDate
+                    ? 'grid-cols-1 sm:grid-cols-2 max-w-6xl'
+                    : 'grid-cols-1 max-w-2xl'
+                } gap-6 mx-auto`}>
                   {/* กล่องระยะเวลาการรับสมัคร */}
-                  <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
-                    <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        style={{
-                          color: "#0A2463",
-                          width: "18px",
-                          height: "18px",
-                        }}
-                      />
-                    </div>
-                    <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
-                      ระยะเวลาการรับสมัคร
-                    </div>
-                    <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                      {batches[activeBatchIdx].application}
-                    </div>
-                    {getBatchStatus(batches[activeBatchIdx]) ===
-                      "เปิดรับสมัครอยู่" && (
-                      <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        เปิดรับสมัครอยู่
+                  {batches[activeBatchIdx]?.startDate && (
+                      <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
+                        <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            style={{
+                              color: "#0A2463",
+                              width: "18px",
+                              height: "18px",
+                            }}
+                          />
+                        </div>
+                        <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
+                          ระยะเวลาการรับสมัคร
+                        </div>
+                        <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
+                          {batches[activeBatchIdx].application}
+                        </div>
+                        {getBatchStatus(batches[activeBatchIdx]) ===
+                          "เปิดรับสมัครอยู่" && (
+                          <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            เปิดรับสมัครอยู่
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
                   {/* กล่องคัดเลือก */}
-                  <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
-                    <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                      <FontAwesomeIcon
-                        icon={faUserCheck}
-                        style={{
-                          color: "#0A2463",
-                          width: "18px",
-                          height: "18px",
-                        }}
-                      />
-                    </div>
-                    <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
-                      คัดเลือก
-                    </div>
-                    <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                      {batches[activeBatchIdx].selection}
-                    </div>
-                    {getBatchStatus(batches[activeBatchIdx]) ===
-                      "อยู่ในช่วงคัดเลือก" && (
-                      <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        กำลังคัดเลือก
+                  {batches[activeBatchIdx]?.selectionStartDate && (
+                      <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
+                        <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
+                          <FontAwesomeIcon
+                            icon={faUserCheck}
+                            style={{
+                              color: "#0A2463",
+                              width: "18px",
+                              height: "18px",
+                            }}
+                          />
+                        </div>
+                        <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
+                          คัดเลือก
+                        </div>
+                        <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
+                          {batches[activeBatchIdx].selection}
+                        </div>
+                        {getBatchStatus(batches[activeBatchIdx]) ===
+                          "อยู่ในช่วงคัดเลือก" && (
+                          <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            กำลังคัดเลือก
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
                   {/* กล่องเริ่มอบรม */}
-                  <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
-                    <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
-                      <FontAwesomeIcon
-                        icon={faClock}
-                        style={{
-                          color: "#0A2463",
-                          width: "18px",
-                          height: "18px",
-                        }}
-                      />
-                    </div>
-                    <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
-                      เริ่มอบรม
-                    </div>
-                    <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                      {batches[activeBatchIdx].training}
-                    </div>
-                    {getBatchStatus(batches[activeBatchIdx]) ===
-                      "อยู่ในช่วงการอบรม" && (
-                      <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        กำลังอบรม
+                  {batches[activeBatchIdx]?.trainingStartDate && (
+                      <div className="flex flex-col items-center text-center w-full h-full min-h-[205px] bg-[#F9FAFB] rounded-lg p-6">
+                        <div className="flex justify-center items-center w-[56px] h-[56px] rounded-full bg-[#E1F2FE]">
+                          <FontAwesomeIcon
+                            icon={faClock}
+                            style={{
+                              color: "#0A2463",
+                              width: "18px",
+                              height: "18px",
+                            }}
+                          />
+                        </div>
+                        <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
+                          เริ่มอบรม
+                        </div>
+                        <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
+                          {batches[activeBatchIdx].training}
+                        </div>
+                        {getBatchStatus(batches[activeBatchIdx]) ===
+                          "อยู่ในช่วงการอบรม" && (
+                          <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            กำลังอบรม
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
                 </div>
               </div>
             </>
