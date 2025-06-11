@@ -250,6 +250,14 @@ export default function ResourcesPage() {
     setSelectedResource(null);
   };
 
+  // Move useEffect before any conditional returns
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchResources();
+    }, 50);
+    return () => clearTimeout(timeoutId);
+  }, [paginationVideo.offset, paginationDocument.offset, fetchResources]);
+
   if (selectedResource) {
     return (
       <ResourceViewer resource={selectedResource} onBack={handleCloseViewer} />
@@ -291,14 +299,6 @@ export default function ResourcesPage() {
       }
     }
   };
-
-  // Move this useEffect outside of any conditional blocks
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchResources();
-    }, 50);
-    return () => clearTimeout(timeoutId);
-  }, [paginationVideo.offset, paginationDocument.offset, fetchResources]);
 
   // Modify the loading indicator to be less intrusive
   const renderLoadingIndicator = () => (
