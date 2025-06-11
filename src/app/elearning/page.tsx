@@ -75,26 +75,14 @@ export default function ResourcesPage() {
       setError("Failed to load resources. Please try again later.");
       setLoading(false);
     }
-  }, [showType, paginationVideo.offset, paginationVideo.limit, paginationDocument.offset, paginationDocument.limit, resources.length]);
+  }, [showType, paginationVideo, paginationDocument, resources.length]);
 
-  const debounce = (func, wait) => {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  };
-
-  const debouncedFetchResources = useCallback(
-    debounce(() => {
+  const debouncedFetchResources = useCallback(() => {
+    const timeoutId = setTimeout(() => {
       fetchResources();
-    }, 300),
-    [fetchResources]
-  );
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [fetchResources]);
 
   useEffect(() => {
     debouncedFetchResources();
@@ -304,7 +292,7 @@ export default function ResourcesPage() {
     }
   };
 
-  // Add effect to handle pagination changes
+  // Move this useEffect outside of any conditional blocks
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchResources();
