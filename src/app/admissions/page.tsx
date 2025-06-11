@@ -202,16 +202,17 @@ export default function Home() {
     return 0;
   };
 
-  const getBatchStatus = (batch: any) => {
+  const getOverallBatchStatus = (batch: any) => {
     const currentDate = new Date();
     if (!batch) return "-";
     if (currentDate < batch.startDate) {
       return "กำลังจะเปิดรับสมัครเร็วๆ นี้";
-    } else if (currentDate >= batch.startDate && currentDate <= batch.endDate) {
+    } else if ((currentDate >= batch.startDate && currentDate <= batch.endDate) || 
+               (currentDate >= batch.startDate && !batch.endDate)) {
       return "เปิดรับสมัครอยู่";
     } else if (
-      currentDate > batch.endDate &&
-      currentDate <= batch.selectionEndDate
+      (currentDate > batch.endDate && currentDate <= batch.selectionEndDate) ||
+      (currentDate > batch.endDate && !batch.selectionEndDate && batch.selectionStartDate && currentDate >= batch.selectionStartDate)
     ) {
       return "อยู่ในช่วงคัดเลือก";
     } else if (
@@ -231,8 +232,27 @@ export default function Home() {
     }
   };
 
+  // New helper functions for individual card status
+  const isApplicationOpen = (batch: any) => {
+    const currentDate = new Date();
+    if (!batch || !batch.startDate) return false; // Must have a start date
+    return currentDate >= batch.startDate && (currentDate <= batch.endDate || !batch.endDate);
+  };
+
+  const isSelectionPhase = (batch: any) => {
+    const currentDate = new Date();
+    if (!batch || !batch.selectionStartDate) return false; // Must have a selection start date
+    return currentDate >= batch.selectionStartDate && (currentDate <= batch.selectionEndDate || !batch.selectionEndDate);
+  };
+
+  const isTrainingPhase = (batch: any) => {
+    const currentDate = new Date();
+    if (!batch || !batch.trainingStartDate) return false; // Must have a training start date
+    return currentDate >= batch.trainingStartDate && (currentDate <= batch.trainingEndDate || !batch.trainingEndDate);
+  };
+
   const getStatusColor = (batch: any) => {
-    const status = getBatchStatus(batch);
+    const status = getOverallBatchStatus(batch);
     switch (status) {
       case "เปิดรับสมัครอยู่":
         return "text-green-600";
@@ -250,10 +270,10 @@ export default function Home() {
   };
 
   const isBatchActive = (batch: any) => {
-    const currentDate = new Date();
-    if (!batch) return false;
     return (
-      currentDate >= batch.startDate && currentDate <= batch.trainingEndDate
+      isApplicationOpen(batch) ||
+      isSelectionPhase(batch) ||
+      isTrainingPhase(batch)
     );
   };
 
@@ -322,7 +342,7 @@ export default function Home() {
                     batches[activeBatchIdx]
                   )}`}
                 >
-                  {getBatchStatus(batches[activeBatchIdx])}
+                  {getOverallBatchStatus(batches[activeBatchIdx])}
                 </span>
               </div>
               {getDaysRemaining(batches[activeBatchIdx]) && (
@@ -357,9 +377,11 @@ export default function Home() {
                 <div className={`grid ${
                   batches[activeBatchIdx]?.startDate && batches[activeBatchIdx]?.selectionStartDate && batches[activeBatchIdx]?.trainingStartDate
                     ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
-                    : batches[activeBatchIdx]?.startDate && batches[activeBatchIdx]?.selectionStartDate
+                    : (batches[activeBatchIdx]?.startDate && batches[activeBatchIdx]?.selectionStartDate) || 
+                      (batches[activeBatchIdx]?.startDate && batches[activeBatchIdx]?.trainingStartDate) ||
+                      (batches[activeBatchIdx]?.selectionStartDate && batches[activeBatchIdx]?.trainingStartDate)
                     ? 'grid-cols-1 sm:grid-cols-2 max-w-6xl'
-                    : 'grid-cols-1 max-w-2xl'
+                    : 'grid-cols-1 max-w-3xl'
                 } gap-6 mx-auto`}>
                   {/* กล่องระยะเวลาการรับสมัคร */}
                   {batches[activeBatchIdx]?.startDate && (
@@ -380,8 +402,7 @@ export default function Home() {
                         <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
                           {batches[activeBatchIdx].application}
                         </div>
-                        {getBatchStatus(batches[activeBatchIdx]) ===
-                          "เปิดรับสมัครอยู่" && (
+                        {isApplicationOpen(batches[activeBatchIdx]) && (
                           <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             เปิดรับสมัครอยู่
                           </div>
@@ -407,8 +428,7 @@ export default function Home() {
                         <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
                           {batches[activeBatchIdx].selection}
                         </div>
-                        {getBatchStatus(batches[activeBatchIdx]) ===
-                          "อยู่ในช่วงคัดเลือก" && (
+                        {isSelectionPhase(batches[activeBatchIdx]) && (
                           <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                             กำลังคัดเลือก
                           </div>
@@ -431,11 +451,14 @@ export default function Home() {
                         <div className="pt-4 text-base sm:text-lg text-[#0A2463] font-bold">
                           เริ่มอบรม
                         </div>
-                        <div className="pt-2 text-xs sm:text-sm text-[#4B5563]">
-                          {batches[activeBatchIdx].training}
+                        <div className="pt-1 text-xs sm:text-sm text-[#4B5563]">
+                          ตั้งแต่ {new Date(batches[activeBatchIdx].trainingStartDate).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })} เป็นต้นไป
                         </div>
-                        {getBatchStatus(batches[activeBatchIdx]) ===
-                          "อยู่ในช่วงการอบรม" && (
+                        {isTrainingPhase(batches[activeBatchIdx]) && (
                           <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                             กำลังอบรม
                           </div>
