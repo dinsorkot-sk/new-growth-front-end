@@ -14,6 +14,14 @@ export default function Home() {
     const [replyText, setReplyText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [replyName, setReplyName] = useState("");
+    // New states for question creation
+    const [showModal, setShowModal] = useState(false);
+    const [newQuestion, setNewQuestion] = useState({
+        text: '',
+        posted_by: ''
+    });
+    const [questionError, setQuestionError] = useState(null);
+    const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
     // Pagination states
     const [offset, setOffset] = useState(0);
     const [limit] = useState(10);
@@ -39,12 +47,13 @@ export default function Home() {
                     }
                 }
             );
-
+            console.log(response.data.data)
             // แปลงข้อมูลตามโครงสร้าง API ที่ได้รับมา
             const formattedData = response.data.data.map((item) => ({
                 id: item.id,
                 question: item.title,
                 postedBy: item.posted_by,
+                status: item.status,
                 createdAt: new Date(item.created_at).toLocaleDateString('th-TH', {
                     year: 'numeric',
                     month: 'long',
@@ -177,18 +186,139 @@ export default function Home() {
         }
     };
 
+    // Add new function for handling question creation
+    const handleSaveQuestion = async () => {
+        if (!newQuestion.text.trim() || !newQuestion.posted_by.trim()) {
+            setQuestionError('กรุณากรอกข้อมูลให้ครบถ้วน');
+            return;
+        }
+
+        setIsSubmittingQuestion(true);
+        setQuestionError(null);
+
+        try {
+            const apiUrl = `${process.env.NEXT_PUBLIC_API}/admin/topic`;
+            await axios.post(apiUrl, {
+                title: newQuestion.text,
+                posted_by: newQuestion.posted_by,
+                status: "hidden",
+                answers: []
+            });
+
+            // Reset form and close modal
+            setNewQuestion({ text: '', posted_by: '' });
+            setShowModal(false);
+            
+            // Refresh the data
+            fetchFAQData();
+        } catch (error) {
+            console.error('Error creating question:', error);
+            if (error.response) {
+                setQuestionError('ไม่สามารถสร้างคำถามได้: ' + (error.response.data.message || 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์'));
+            } else if (error.request) {
+                setQuestionError('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+            } else {
+                setQuestionError('เกิดข้อผิดพลาดในการสร้างคำถาม');
+            }
+        } finally {
+            setIsSubmittingQuestion(false);
+        }
+    };
+
     return (
-
-
         <div>
             <div className="bg-[#0A2463] h-auto p-10 md:p-20">
                 <div className="text-4xl font-bold text-white">กระทู้คำถาม</div>
                 <div className="text-wrap max-w-3xl text-xl mt-5 text-white">คำถามทั่วไปเกี่ยวกับโปรแกรมการฝึกอบรม กระบวนการสมัคร และอื่นๆ ของเรา</div>
             </div>
+
+            {/* Question Creation Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
+                        <h2 className="text-2xl font-bold text-[#0A2463] mb-6">สร้างคำถามใหม่</h2>
+                        
+                        {questionError && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-4">
+                                {questionError}
+                            </div>
+                        )}
+
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="questionName" className="block text-sm font-medium text-gray-700 mb-1">
+                                    ชื่อของคุณ
+                                </label>
+                                <input
+                                    type="text"
+                                    id="questionName"
+                                    value={newQuestion.posted_by}
+                                    onChange={(e) => setNewQuestion({ ...newQuestion, posted_by: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="กรอกชื่อของคุณ"
+                                    disabled={isSubmittingQuestion}
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="questionText" className="block text-sm font-medium text-gray-700 mb-1">
+                                    คำถามของคุณ
+                                </label>
+                                <textarea
+                                    id="questionText"
+                                    value={newQuestion.text}
+                                    onChange={(e) => setNewQuestion({ ...newQuestion, text: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-lg p-3 min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="เขียนคำถามของคุณที่นี่..."
+                                    disabled={isSubmittingQuestion}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-4 mt-6">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                                disabled={isSubmittingQuestion}
+                            >
+                                ยกเลิก
+                            </button>
+                            <button
+                                onClick={handleSaveQuestion}
+                                disabled={isSubmittingQuestion}
+                                className={`px-6 py-3 rounded-lg text-white font-medium ${
+                                    isSubmittingQuestion
+                                        ? 'bg-gray-400 cursor-not-allowed'
+                                        : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
+                                }`}
+                            >
+                                {isSubmittingQuestion ? (
+                                    <span className="flex items-center">
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        กำลังส่ง...
+                                    </span>
+                                ) : 'สร้างคำถาม'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex justify-center bg-[#F9FAFB]">
                 <div className="w-full max-w-5xl py-4">
                     <div className=''>
                         <div className="w-full px-4 py-8">
+                            <div className="flex justify-end mb-6">
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className="px-6 py-3 bg-[#39A9DB] text-white rounded-lg hover:bg-[#2D87AF] transition"
+                                >
+                                    สร้างคำถามใหม่
+                                </button>
+                            </div>
                             {isLoading ? (
                                 <div className="text-center py-10">
                                     <p className="text-lg">กำลังโหลดข้อมูล...</p>
@@ -244,7 +374,7 @@ export default function Home() {
                                                     </div>
 
                                                     <div className="space-y-6">
-                                                        {faq.answers.filter(answer => answer.status !== "hide").map((answer, ansIdx) => (
+                                                        {faq.answers.filter(answer => answer.status === "show").map((answer, ansIdx) => (
                                                             <div key={answer.id} className="bg-gray-50 p-4 rounded-lg">
 
                                                                 <div className="flex items-center mb-3">
@@ -369,25 +499,6 @@ export default function Home() {
                                                     </svg>
                                                 </button>
                                             </div>
-
-                                            {/* Page Numbers */}
-                                            {/* {pagination.totalPages > 1 && (
-                                            <div className="flex space-x-2">
-                                                {[...Array(pagination.totalPages)].map((_, i) => (
-                                                    <button
-                                                        key={i}
-                                                        onClick={() => goToPage(i + 1)}
-                                                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                                            pagination.currentPage === i + 1
-                                                                ? 'bg-[#0A2463] text-white'
-                                                                : 'bg-white text-[#0A2463] border hover:bg-blue-50'
-                                                        }`}
-                                                    >
-                                                        {i + 1}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        )} */}
                                         </div>
                                     )}
                                 </div>
