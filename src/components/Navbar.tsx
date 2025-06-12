@@ -15,12 +15,12 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    setActiveBatchTitle(sessionStorage.getItem('activeBatchTitle') || '');
     axios
       .get(`${process.env.NEXT_PUBLIC_API}/admission`)
       .then((res) => {
         if (Array.isArray(res.data) && res.data.length > 0) {
           setAdmission(res.data[0]);
+          setActiveBatchTitle(res.data[0].title || '');
         }
       })
       .catch((error) => {
@@ -87,7 +87,7 @@ export default function Navbar() {
         <div className=" hidden xl:flex">
           <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-auto hidden xl:block">
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer">
-              {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
+              {activeBatchTitle ? `สมัคร${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
             </button>
           </a>
           <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-auto mx-3 hidden 2xl:block">

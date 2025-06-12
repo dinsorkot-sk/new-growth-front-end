@@ -49,16 +49,14 @@ const CustomPrevArrow = (props) => {
     );
 };
 
-const Carousel = ({ registerUrl, backgroundImages = [] }) => {
+const Carousel = ({ registerUrl, backgroundImages = [], activeBatchTitle = '' }) => {
     const videoRefs = useRef({});
     const hasImages = backgroundImages && backgroundImages.length > 0;
-    const [activeBatchTitle, setActiveBatchTitle] = React.useState('');
 
     // const registerUrl = process.env.NEXT_PUBLIC_REGISTER || "#";
 
     // Preload all videos when component mounts
     useEffect(() => {
-        setActiveBatchTitle(sessionStorage.getItem('activeBatchTitle') || '');
         backgroundImages.forEach((url, index) => {
             if (isVideo(url)) {
                 const video = videoRefs.current[`video-${index}`];
@@ -167,7 +165,7 @@ const Carousel = ({ registerUrl, backgroundImages = [] }) => {
                         <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
                             <a href={registerUrl} className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
                                 <div className="flex justify-evenly items-center w-full text-center text-sm">
-                                    {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
+                                    {activeBatchTitle ? `สมัคร${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
                                 </div>
                             </a>
                             <a href="#course-info" className="px-6 h-12 bg-white hover:bg-gray-100 transition-colors duration-300 rounded-md flex items-center justify-center font-medium shadow-md text-[#0A2463]">

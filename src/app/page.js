@@ -277,7 +277,11 @@ export default function Home() {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/admission`);
       if (Array.isArray(response.data) && response.data.length > 0) {
-        setAdmission(response.data[0]);
+        const admissionData = response.data[0];
+        setAdmission({
+          ...admissionData,
+          activeBatchTitle: admissionData.title || admissionData.batch_title || ''
+        });
       }
     } catch (error) {
       console.error("Error fetching admission:", error);
@@ -408,7 +412,8 @@ export default function Home() {
         <div className="absolute inset-0"></div>
         <Carousel 
           registerUrl={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} 
-          backgroundImages={backgroundImages} 
+          backgroundImages={backgroundImages}
+          activeBatchTitle={admission?.activeBatchTitle || ''}
         />
       </div>
 
