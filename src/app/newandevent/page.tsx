@@ -89,12 +89,55 @@ export default function Home() {
     next: null
   });
 
+  const router = useRouter();
+
+  const fetchMedia = useCallback(async () => {
+    try {
+      console.log('กำลังดึงข้อมูลมีเดีย...');
+      const offset = (mediaPagination.currentPage - 1) * 10; // 10 items per page
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=${offset}&limit=10`
+      );
+
+      console.log('Media API response:', response.data);
+
+      if (response.data && typeof response.data === 'object') {
+        const responseImages = Array.isArray(response.data.images) ? response.data.images : [];
+        const responseVideos = Array.isArray(response.data.videos) ? response.data.videos : [];
+
+        console.log(`พบรูปภาพ ${responseImages.length} รายการ และวิดีโอ ${responseVideos.length} รายการ`);
+
+        setImages(responseImages);
+        setVideos(responseVideos);
+
+        // Update pagination based on the new response format
+        const totalItems = (response.data.pagination?.images?.total || 0) +
+          (response.data.pagination?.videos?.total || 0);
+        const totalPages = Math.ceil(totalItems / 10) - 1;
+
+        setMediaPagination({
+          totalCount: totalItems,
+          currentPage: mediaPagination.currentPage,
+          totalPages: totalPages,
+          prev: mediaPagination.currentPage > 1,
+          next: mediaPagination.currentPage < totalPages
+        });
+      } else {
+        console.error('รูปแบบข้อมูลจาก API ไม่ถูกต้อง:', response.data);
+        setImages([]);
+        setVideos([]);
+      }
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลมีเดีย:', error);
+      setImages([]);
+      setVideos([]);
+    }
+  }, [mediaPagination.currentPage]);
+
   const closeModal = () => {
     setShowModal(false);
     setSelectedMedia(null);
   };
-
-  const router = useRouter();
 
   // Fetch news from API
   useEffect(() => {
@@ -114,7 +157,11 @@ export default function Home() {
       }
     };
     fetchNews();
-  }, []);
+  }, [fetchMedia]);
+
+  useEffect(() => {
+    fetchMedia();
+  }, [fetchMedia]);
 
   // Load more news function
   const loadMoreNews = async () => {
@@ -202,72 +249,6 @@ export default function Home() {
 
   const [displayCount, setDisplayCount] = useState(12);
 
-  const fetchMedia = async () => {
-    try {
-      console.log('กำลังดึงข้อมูลมีเดีย...');
-      const offset = (mediaPagination.currentPage - 1) * 10; // 10 items per page
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=${offset}&limit=10`
-      );
-
-      console.log('Media API response:', response.data);
-
-      if (response.data && typeof response.data === 'object') {
-        const responseImages = Array.isArray(response.data.images) ? response.data.images : [];
-        const responseVideos = Array.isArray(response.data.videos) ? response.data.videos : [];
-
-        console.log(`พบรูปภาพ ${responseImages.length} รายการ และวิดีโอ ${responseVideos.length} รายการ`);
-
-        setImages(responseImages);
-        setVideos(responseVideos);
-
-        // Update pagination based on the new response format
-        const totalItems = (response.data.pagination?.images?.total || 0) +
-          (response.data.pagination?.videos?.total || 0);
-        const totalPages = Math.ceil(totalItems / 10) - 1;
-
-        setMediaPagination({
-          totalCount: totalItems,
-          currentPage: mediaPagination.currentPage,
-          totalPages: totalPages,
-          prev: mediaPagination.currentPage > 1,
-          next: mediaPagination.currentPage < totalPages
-        });
-      } else {
-        console.error('รูปแบบข้อมูลจาก API ไม่ถูกต้อง:', response.data);
-        setImages([]);
-        setVideos([]);
-      }
-    } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลมีเดีย:', error);
-      setImages([]);
-      setVideos([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchMedia();
-  }, [mediaPagination.currentPage]);
-
-  const handleViewAllGallery = () => {
-    router.push('/gallery');
-  };
-
-  const handleViewDetails = (newId: number, view_count: number) => {
-    axios.put(`${process.env.NEXT_PUBLIC_API}/news/view/${newId}`, {
-      view_count: view_count + 1
-    }, {
-      headers: { 'Content-Type': 'application/json' }
-    }).catch(() => { });
-    router.push(`/newandevent/${newId}`);
-  };
-
-  const getVideoType = (path: string) => {
-    if (!path) return 'mp4';
-    const extension = path.split('.').pop().toLowerCase();
-    return extension || 'mp4';
-  };
-
   // ใช้ useCallback เพื่อไม่ให้ combineAndSortMedia เปลี่ยน reference ทุก render
   const combineAndSortMedia = useCallback((images: Image[], videos: Video[]) => {
     // แปลงรูปภาพให้อยู่ในรูปแบบเดียวกับที่จะใช้แสดงผล
@@ -302,6 +283,25 @@ export default function Home() {
     const sortedMedia = combineAndSortMedia(images, videos);
     setCombinedMedia(sortedMedia);
   }, [images, videos, displayCount, combineAndSortMedia]);
+
+  const handleViewAllGallery = () => {
+    router.push('/gallery');
+  };
+
+  const handleViewDetails = (newId: number, view_count: number) => {
+    axios.put(`${process.env.NEXT_PUBLIC_API}/news/view/${newId}`, {
+      view_count: view_count + 1
+    }, {
+      headers: { 'Content-Type': 'application/json' }
+    }).catch(() => { });
+    router.push(`/newandevent/${newId}`);
+  };
+
+  const getVideoType = (path: string) => {
+    if (!path) return 'mp4';
+    const extension = path.split('.').pop().toLowerCase();
+    return extension || 'mp4';
+  };
 
   return (
     <div className="bg-gradient-to-b from-[#0A2463] via-[#F9FAFB] to-white min-h-screen">
@@ -563,7 +563,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-
-
   );
 }

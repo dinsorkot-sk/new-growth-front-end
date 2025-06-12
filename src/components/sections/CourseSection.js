@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCalendar, faUserGroup, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,7 +17,7 @@ const CourseSection = ({
       <div className="h-full px-4 py-8 md:px-8 lg:px-16 xl:px-24">
         <div className={`flex justify-between items-center text-[#0A2463] text-xl md:text-2xl font-bold transition-all duration-1000 ${isCourseVisible ? 'opacity-100 translate-y-0' : 'translate-y-10'}`}>
           เนื้อหาแนะนำ
-          <a href="/courses" className="text-[#39A9DB] text-sm md:text-base cursor-pointer hover:text-[#0A2463]">ดูเนื้อหาทั้งหมด</a>
+          <Link href="/courses" className="text-[#39A9DB] text-sm md:text-base cursor-pointer hover:text-[#0A2463]">ดูเนื้อหาทั้งหมด</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 lg:gap-10 pt-6 md:pt-8 lg:pt-12">
           {courseList.map((course, index) => (

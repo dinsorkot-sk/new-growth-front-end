@@ -54,7 +54,7 @@ export default function Navbar() {
         </Link>
 
         {/* Mobile Menu Button */}
-        <div className="lg:hidden">
+        <div className="xl:hidden">
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
@@ -67,7 +67,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex space-x-6 text-white">
+        <div className="hidden xl:flex space-x-6 text-white">
           {menuItems.map((item) => (
             <div key={item.path}>
               <Link 
@@ -84,13 +84,13 @@ export default function Navbar() {
         </div>
 
         {/* Apply Button - Desktop */}
-        <div className="hidden xl:block">
-          <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-full">
+        <div className=" hidden xl:flex">
+          <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-auto hidden xl:block">
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer">
               {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
             </button>
           </a>
-          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full mx-3">
+          <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-auto mx-3 hidden 2xl:block">
             <button className="bg-white hover:bg-white rounded-md py-2 px-4 text-blue-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white cursor-pointer">
               เจ้าหน้าที่
             </button>

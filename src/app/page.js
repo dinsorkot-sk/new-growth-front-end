@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Carousel from '../components/carousel';
@@ -233,7 +233,76 @@ export default function Home() {
     }).format(date);
   };
 
-  // API calls
+  const fetchMedia = useCallback(async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/board?offset=0&limit=10`);
+      if (response.data) {
+        const imageUrls = response.data.images.map(item => 
+          `${process.env.NEXT_PUBLIC_IMG}/${item.image_path.replace(/\\/g, "/")}`
+        );
+        setBackgroundImages(imageUrls);
+      }
+    } catch (error) {
+      console.error('Error fetching media:', error);
+    }
+  }, []);
+
+  const fetchNews = useCallback(async () => {
+    try {
+      const offset = (newsPage - 1) * NEWS_PER_PAGE;
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/news?offset=${offset}&limit=${NEWS_PER_PAGE}&search=`
+      );
+      setNewsList(response.data.data);
+      setNewsPagination(response.data.pagination);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
+  }, [newsPage]);
+
+  const fetchCourses = useCallback(async () => {
+    try {
+      const offset = (coursePage - 1) * COURSES_PER_PAGE;
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/course?offset=${offset}&limit=${COURSES_PER_PAGE}&search=`
+      );
+      setCourseList(response.data.data);
+      setCoursePagination(response.data.pagination);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  }, [coursePage]);
+
+  const fetchAdmission = useCallback(async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/admission`);
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        setAdmission(response.data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching admission:", error);
+    }
+  }, []);
+
+  const fetchInterviewVideos = useCallback(async () => {
+    try {
+      const startIndex = (videoPage - 1) * VIDEOS_PER_PAGE;
+      const endIndex = startIndex + VIDEOS_PER_PAGE;
+      const paginatedVideos = sampleInterviewVideos.slice(startIndex, endIndex);
+
+      setInterviewVideos(paginatedVideos);
+      setVideoPagination({
+        totalCount: sampleInterviewVideos.length,
+        currentPage: videoPage,
+        totalPages: Math.ceil(sampleInterviewVideos.length / VIDEOS_PER_PAGE),
+        prev: videoPage > 1 ? videoPage - 1 : null,
+        next: videoPage < Math.ceil(sampleInterviewVideos.length / VIDEOS_PER_PAGE) ? videoPage + 1 : null
+      });
+    } catch (error) {
+      console.error("Error fetching interview videos:", error);
+    }
+  }, [videoPage]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -253,77 +322,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, [newsPage, coursePage, videoPage]); // Add dependencies for pagination
-
-  const fetchMedia = async () => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/board?offset=0&limit=10`);
-      if (response.data) {
-        const imageUrls = response.data.images.map(item => 
-          `${process.env.NEXT_PUBLIC_IMG}/${item.image_path.replace(/\\/g, "/")}`
-        );
-        setBackgroundImages(imageUrls);
-      }
-    } catch (error) {
-      console.error('Error fetching media:', error);
-    }
-  };
-
-  const fetchNews = async () => {
-    try {
-      const offset = (newsPage - 1) * NEWS_PER_PAGE;
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API}/news?offset=${offset}&limit=${NEWS_PER_PAGE}&search=`
-      );
-      setNewsList(response.data.data);
-      setNewsPagination(response.data.pagination);
-    } catch (error) {
-      console.error("Error fetching news:", error);
-    }
-  };
-
-  const fetchCourses = async () => {
-    try {
-      const offset = (coursePage - 1) * COURSES_PER_PAGE;
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API}/course?offset=${offset}&limit=${COURSES_PER_PAGE}&search=`
-      );
-      setCourseList(response.data.data);
-      setCoursePagination(response.data.pagination);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    }
-  };
-
-  const fetchAdmission = async () => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/admission`);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        setAdmission(response.data[0]);
-      }
-    } catch (error) {
-      console.error("Error fetching admission:", error);
-    }
-  };
-
-  const fetchInterviewVideos = async () => {
-    try {
-      const startIndex = (videoPage - 1) * VIDEOS_PER_PAGE;
-      const endIndex = startIndex + VIDEOS_PER_PAGE;
-      const paginatedVideos = sampleInterviewVideos.slice(startIndex, endIndex);
-
-      setInterviewVideos(paginatedVideos);
-      setVideoPagination({
-        totalCount: sampleInterviewVideos.length,
-        currentPage: videoPage,
-        totalPages: Math.ceil(sampleInterviewVideos.length / VIDEOS_PER_PAGE),
-        prev: videoPage > 1 ? videoPage - 1 : null,
-        next: videoPage < Math.ceil(sampleInterviewVideos.length / VIDEOS_PER_PAGE) ? videoPage + 1 : null
-      });
-    } catch (error) {
-      console.error("Error fetching interview videos:", error);
-    }
-  };
+  }, [fetchMedia, fetchNews, fetchCourses, fetchAdmission, fetchInterviewVideos]);
 
   // Event handlers
   const handleCoureseViewDetails = (courseId) => {

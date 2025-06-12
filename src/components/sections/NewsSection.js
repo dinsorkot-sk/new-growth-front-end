@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -15,7 +16,7 @@ const NewsSection = ({
       <div className="h-full px-4 py-8 md:px-8 lg:px-16 xl:px-24">
         <div className={`flex justify-between items-center text-[#0A2463] text-xl md:text-2xl font-bold transition-all duration-1000 ${isNewsVisible ? 'opacity-100 translate-y-0' : 'translate-y-10'}`}>
           ข่าวและกิจกรรม
-          <a href="/newandevent" className="text-[#39A9DB] text-sm md:text-base cursor-pointer hover:text-[#0A2463]">ดูข่าวทั้งหมด</a>
+          <Link href="/newandevent" className="text-[#39A9DB] text-sm md:text-base cursor-pointer hover:text-[#0A2463]">ดูข่าวทั้งหมด</Link>
         </div>
 
         <div className="pt-6 md:pt-8 lg:pt-12">
