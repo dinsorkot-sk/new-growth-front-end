@@ -1,4 +1,12 @@
+import React, { useState, useEffect } from 'react';
+
 const CtaSection = ({ isCtaVisible, admission }) => {
+  const [activeBatchTitle, setActiveBatchTitle] = useState("");
+
+  useEffect(() => {
+    setActiveBatchTitle(sessionStorage.getItem('activeBatchTitle') || '');
+  }, []);
+
   return (
     <div className="w-full bg-[#39A9DB]">
       <div className="px-4 py-8 md:p-12 lg:p-20 h-full">
@@ -15,7 +23,7 @@ const CtaSection = ({ isCtaVisible, admission }) => {
             style={{ transitionDelay: '0.4s' }}>
             <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER}>
               <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:scale-105">
-                เข้าร่วม
+                {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
               </div>
             </a>
           </div>

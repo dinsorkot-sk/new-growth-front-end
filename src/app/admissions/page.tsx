@@ -152,7 +152,17 @@ export default function Home() {
         });
         setBatches(data);
         // Set active batch to current
-        setActiveBatchIdx(getCurrentBatchIdx(data));
+        const storedBatchTitle = sessionStorage.getItem('activeBatchTitle');
+        if (storedBatchTitle) {
+          const storedIdx = data.findIndex((batch: any) => batch.title === storedBatchTitle);
+          if (storedIdx !== -1) {
+            setActiveBatchIdx(storedIdx);
+          } else {
+            setActiveBatchIdx(getCurrentBatchIdx(data));
+          }
+        } else {
+          setActiveBatchIdx(getCurrentBatchIdx(data));
+        }
       } catch (e) {
         setBatches([]);
       }
@@ -314,7 +324,7 @@ export default function Home() {
                 batches[batches.length - 1]?.link_register ||
                 process.env.NEXT_PUBLIC_REGISTER}>
               <div className="flex justify-center sm:justify-center items-center w-[130px] h-[50px] rounded-md bg-[#39A9DB] text-white font-medium">
-                เข้าร่วมกับเรา
+                {sessionStorage.getItem('activeBatchTitle') ? `สมัคร ${sessionStorage.getItem('activeBatchTitle')}` : 'สมัครเข้าร่วมโครงการ'}
               </div>
             </a>
           </div>
@@ -356,7 +366,10 @@ export default function Home() {
                   return (
                     <button
                       key={batch.id}
-                      onClick={() => setActiveBatchIdx(idx)}
+                      onClick={() => {
+                        setActiveBatchIdx(idx);
+                        sessionStorage.setItem('activeBatchTitle', batch.title);
+                      }}
                       className={`px-3 py-2 sm:px-6 sm:py-2 rounded-md text-sm sm:text-base transition-all duration-200 ${
                         activeBatchIdx === idx
                           ? "bg-[#0A2463] text-white"
@@ -704,7 +717,7 @@ export default function Home() {
               }
             >
               <div className="flex justify-center items-center w-[200px] sm:w-[245px] h-[48px] sm:h-[52px] bg-white rounded-md text-[#0A2463] text-sm sm:text-base font-medium cursor-pointer hover:bg-gray-100 transition">
-                เริ่มต้นการสมัครของคุณ
+                {sessionStorage.getItem('activeBatchTitle') ? `สมัคร ${sessionStorage.getItem('activeBatchTitle')}` : 'สมัครเข้าร่วมโครงการ'}
               </div>
             </a>
           </div>

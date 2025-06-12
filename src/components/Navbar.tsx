@@ -11,9 +11,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const [admission, setAdmission] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [activeBatchTitle, setActiveBatchTitle] = useState("");
 
   useEffect(() => {
     setMounted(true);
+    setActiveBatchTitle(sessionStorage.getItem('activeBatchTitle') || '');
     axios
       .get(`${process.env.NEXT_PUBLIC_API}/admission`)
       .then((res) => {
@@ -85,7 +87,7 @@ export default function Navbar() {
         <div className="hidden xl:block">
           <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-full">
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer">
-              เข้าร่วมกับเรา
+              {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
             </button>
           </a>
           <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full mx-3">
@@ -118,7 +120,7 @@ export default function Navbar() {
           ))}
           <a href={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} className="w-full" role="menuitem" tabIndex={0} onClick={() => setIsMenuOpen(false)}>
             <button className="bg-blue-500 hover:bg-blue-600 rounded-md py-2 px-4 text-white transition-colors w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
-              เข้าร่วมกับเรา
+              {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
             </button>
           </a>
           <a href={`https://admin.bunditpunmai-mju.com/admin/login`} className="w-full my-2 ">
