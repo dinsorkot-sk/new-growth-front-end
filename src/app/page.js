@@ -1,223 +1,211 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import Navbar from "../components/Navbar";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faGreaterThan,
-  faBookOpen,
-  faUserGroup,
-  faAward,
-  faMicrochip,
-  faBrain,
-  faLightbulb,
-  faClock,
-  faCalendar,
-  faArrowRight,
-} from "@fortawesome/free-solid-svg-icons";
-import 'animate.css';
-import { QRCodeSVG } from 'qrcode.react';
 import Carousel from '../components/carousel';
+import NewsSection from '../components/sections/NewsSection';
+import CourseSection from '../components/sections/CourseSection';
+import InterviewSection from '../components/sections/InterviewSection';
+import CtaSection from '../components/sections/CtaSection';
+import InfoSection from '../components/sections/InfoSection';
+
+// Constants
+const NEWS_PER_PAGE = 9;
+const COURSES_PER_PAGE = 6;
+const VIDEOS_PER_PAGE = 6;
+
+// Sample interview videos data
+const sampleInterviewVideos = [
+  {
+    id: 1,
+    title: "สัมภาษณ์ผู้เข้าอบรมรุ่นที่ 1",
+    interviewee: "คุณกุญช์ชญา",
+    description: "ประสบการณ์การเข้าร่วมโครงการและผลลัพธ์ที่ได้รับ",
+    duration: "2:08",
+    publishedDate: "2024-03-15",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1PvyybODszBvjpylAhXjChkU7z5GfRQzQ/preview"
+  },
+  {
+    id: 2,
+    title: "สัมภาษณ์ผู้เข้าอบรมรุ่นที่ 1",
+    interviewee: "คุณลีลาวดี",
+    description: "การนำความรู้ไปประยุกต์ใช้ในชีวิตจริง",
+    duration: "0:51",
+    publishedDate: "2024-03-20",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1y334XJkHeCp7HbBd1zPDyjLA2_g2G2Gb/preview"
+  },
+  {
+    id: 3,
+    title: "สัมภาษณ์ผู้เข้าอบรมรุ่นที่ 3",
+    interviewee: "คุณสุริยา",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:39",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/10vOI0EV7-NYJzmIyJWj70YbP2uS7dyln/preview"
+  }
+];
 
 export default function Home() {
+  // State declarations
   const [newsList, setNewsList] = useState([]);
   const [courseList, setCourseList] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [admission, setAdmission] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [backgroundImages, setBackgroundImages] = useState([]);
+  const [interviewVideos, setInterviewVideos] = useState([]);
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetchMedia();
-  }, []);
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API}/news`)
-      .then((res) => {
-        setNewsList(res.data.data); // เข้าถึงข้อมูลจาก API
-        console.log(res.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching news:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API}/course`)
-      .then((res) => {
-        setCourseList(res.data.data); // เข้าถึงข้อมูลจาก API
-        console.log(res.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching news:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API}/admission`)
-      .then((res) => {
-        if (Array.isArray(res.data) && res.data.length > 0) {
-          setAdmission(res.data[0]);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching admission:", error);
-      });
-  }, []);
-
-  const dateFormatter = (p_date) => {
-    const date = new Date(p_date);
-    const formatter = new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-    return formatter.format(date);
-  };
-
-  const [coursePage, setCoursePage] = useState(1);
-  const coursesPerPage = 6;
-  const paginatedCourses = courseList.slice(
-    (coursePage - 1) * coursesPerPage,
-    coursePage * coursesPerPage
-  );
-  const totalCoursePages = Math.ceil(courseList.length / coursesPerPage);
-
-  // Pagination สำหรับข่าว
-  
+  // Pagination states
   const [newsPage, setNewsPage] = useState(1);
-  const newsPerPage = 9;
-  const paginatedNews = newsList
-  // const paginatedNews = newsList.slice(
-  //   (newsPage - 1) * newsPerPage,
-  //   newsPage * newsPerPage
-  // );
-  const totalNewsPages = Math.ceil(newsList.length / newsPerPage);
+  const [coursePage, setCoursePage] = useState(1);
+  const [videoPage, setVideoPage] = useState(1);
+  const [newsPagination, setNewsPagination] = useState({
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    prev: null,
+    next: null
+  });
+  const [coursePagination, setCoursePagination] = useState({
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    prev: null,
+    next: null
+  });
+  const [videoPagination, setVideoPagination] = useState({
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    prev: null,
+    next: null
+  });
 
-  const [isDragging, setIsDragging] = useState(false);
+  // Animation states
+  const [isNewsVisible, setIsNewsVisible] = useState(false);
+  const [isCourseVisible, setIsCourseVisible] = useState(false);
+  const [isCtaVisible, setIsCtaVisible] = useState(false);
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const [isInterviewVisible, setIsInterviewVisible] = useState(false);
+
+  // Refs
+  const newsSectionRef = useRef(null);
+  const courseSectionRef = useRef(null);
+  const ctaSectionRef = useRef(null);
+  const infoSectionRef = useRef(null);
+  const interviewSectionRef = useRef(null);
   const sliderRef = useRef(null);
   const startXRef = useRef(null);
 
-  // สำหรับ fade up animation
-  const cardRefs = useRef([]);
-  const [cardVisible, setCardVisible] = useState([false, false, false, false, false]);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
-    const observers = [];
-    cardRefs.current.forEach((ref, idx) => {
-      if (!ref) return;
-      const observer = new window.IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setCardVisible((prev) => {
-                if (prev[idx]) return prev;
-                const updated = [...prev];
-                updated[idx] = true;
-                return updated;
-              });
-              observer.disconnect();
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-      observer.observe(ref);
-      observers.push(observer);
-    });
-    return () => {
-      observers.forEach((observer) => observer.disconnect());
-    };
-  }, [isClient]);
-
-  const goToPrevious = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? backgroundImages.length - 1 : prevIndex - 1
-    );
-  };
-
-  const goToNext = () => {
-    setCurrentImageIndex(
-      (prevIndex) => (prevIndex + 1) % backgroundImages.length
-    );
-  };
-
-  // Start dragging (both touch and mouse)
-  const handleDragStart = (clientX) => {
-    startXRef.current = clientX;
-    setIsDragging(true);
-  };
-
-  // End dragging and calculate slide direction
-  const handleDragEnd = (clientX) => {
-    if (!isDragging || startXRef.current === null) return;
-
-    const diffX = startXRef.current - clientX;
-    // If dragged right -> show previous image, if dragged left -> show next image
-    if (Math.abs(diffX) > 50) {
-      // Set minimum drag distance (threshold)
-      if (diffX > 0) {
-        goToNext();
-      } else {
-        goToPrevious();
-      }
-    }
-
-    setIsDragging(false);
-    startXRef.current = null;
-  };
-
-  // Touch Events
-  const handleTouchStart = (e) => {
-    handleDragStart(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = (e) => {
-    if (startXRef.current === null) return;
-    handleDragEnd(e.changedTouches[0].clientX);
-  };
-
-  // Mouse Events
-  const handleMouseDown = (e) => {
-    handleDragStart(e.clientX);
-  };
-
-  const handleMouseUp = (e) => {
-    if (startXRef.current === null) return;
-    handleDragEnd(e.clientX);
-  };
-
-  const handleMouseLeave = (e) => {
-    if (isDragging) {
-      handleDragEnd(e.clientX);
-    }
-  };
-
-  // Prevent text selection during dragging
-  useEffect(() => {
-    const preventDefault = (e) => {
-      if (isDragging) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener("selectstart", preventDefault);
-    return () => {
-      document.removeEventListener("selectstart", preventDefault);
-    };
-  }, [isDragging]);
-
   const router = useRouter();
+
+  // Helper functions
+  const dateFormatter = (p_date) => {
+    const date = new Date(p_date);
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(date);
+  };
+
+  // API calls
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        await Promise.all([
+          fetchMedia(),
+          fetchNews(),
+          fetchCourses(),
+          fetchAdmission(),
+          fetchInterviewVideos()
+        ]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [newsPage, coursePage, videoPage]); // Add dependencies for pagination
+
+  const fetchMedia = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/board?offset=0&limit=10`);
+      if (response.data) {
+        const imageUrls = response.data.images.map(item => 
+          `${process.env.NEXT_PUBLIC_IMG}/${item.image_path.replace(/\\/g, "/")}`
+        );
+        setBackgroundImages(imageUrls);
+      }
+    } catch (error) {
+      console.error('Error fetching media:', error);
+    }
+  };
+
+  const fetchNews = async () => {
+    try {
+      const offset = (newsPage - 1) * NEWS_PER_PAGE;
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/news?offset=${offset}&limit=${NEWS_PER_PAGE}&search=`
+      );
+      setNewsList(response.data.data);
+      setNewsPagination(response.data.pagination);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const offset = (coursePage - 1) * COURSES_PER_PAGE;
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/course?offset=${offset}&limit=${COURSES_PER_PAGE}&search=`
+      );
+      setCourseList(response.data.data);
+      setCoursePagination(response.data.pagination);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
+
+  const fetchAdmission = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/admission`);
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        setAdmission(response.data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching admission:", error);
+    }
+  };
+
+  const fetchInterviewVideos = async () => {
+    try {
+      const startIndex = (videoPage - 1) * VIDEOS_PER_PAGE;
+      const endIndex = startIndex + VIDEOS_PER_PAGE;
+      const paginatedVideos = sampleInterviewVideos.slice(startIndex, endIndex);
+
+      setInterviewVideos(paginatedVideos);
+      setVideoPagination({
+        totalCount: sampleInterviewVideos.length,
+        currentPage: videoPage,
+        totalPages: Math.ceil(sampleInterviewVideos.length / VIDEOS_PER_PAGE),
+        prev: videoPage > 1 ? videoPage - 1 : null,
+        next: videoPage < Math.ceil(sampleInterviewVideos.length / VIDEOS_PER_PAGE) ? videoPage + 1 : null
+      });
+    } catch (error) {
+      console.error("Error fetching interview videos:", error);
+    }
+  };
+
+  // Event handlers
   const handleCoureseViewDetails = (courseId) => {
     const course = courseList.find(c => c.id === courseId);
     if (course) {
@@ -229,6 +217,7 @@ export default function Home() {
     }
     router.push(`/courses/${courseId}`);
   };
+
   const handleNewsViewDetails = (newId) => {
     const news = newsList.find(n => n.id === newId);
     if (news) {
@@ -241,63 +230,21 @@ export default function Home() {
     router.push(`/newandevent/${newId}`);
   };
 
-  // เพิ่ม state สำหรับเก็บ URL รูปภาพสำหรับ background
-  const [backgroundImages, setBackgroundImages] = useState([]);
-
-  // ในส่วนของ useEffect ให้เรียกใช้ fetchMedia เมื่อ component mount
-  const fetchMedia = async () => {
-    try {
-      console.log('กำลังดึงข้อมูลรูปภาพ...');
-
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/board?offset=0&limit=10`);
-      console.log(response.data);
-      // Update the backgroundImages state with the retrieved images
-      if (response.data) {
-        const imageUrls = response.data.images.map(item => {
-          return `${process.env.NEXT_PUBLIC_IMG}/${item.image_path.replace(/\\/g, "/")}`
-        });
-        console.log(imageUrls);
-        setBackgroundImages(imageUrls);
-      }
-
-    } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:', error);
-      // Keep using default images in case of error
-    } finally {
-      setIsLoading(false);
-    }
+  const handleVideoViewDetails = (videoId) => {
+    router.push(`/interviews/${videoId}`);
   };
 
-  // เพิ่ม state สำหรับแสดง loading
-  const [isLoading, setIsLoading] = useState(true);
-
-  // เพิ่ม refs สำหรับ scroll animations
-  const newsSectionRef = useRef(null);
-  const courseSectionRef = useRef(null);
-  const ctaSectionRef = useRef(null);
-  const infoSectionRef = useRef(null);
-
-  // เพิ่ม state สำหรับ scroll animations
-  const [isNewsVisible, setIsNewsVisible] = useState(false);
-  const [isCourseVisible, setIsCourseVisible] = useState(false);
-  const [isCtaVisible, setIsCtaVisible] = useState(false);
-  const [isInfoVisible, setIsInfoVisible] = useState(false);
-
-  // เพิ่ม useEffect สำหรับ scroll animations
+  // Intersection Observer setup
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (entry.target === newsSectionRef.current) {
-              setIsNewsVisible(true);
-            } else if (entry.target === courseSectionRef.current) {
-              setIsCourseVisible(true);
-            } else if (entry.target === ctaSectionRef.current) {
-              setIsCtaVisible(true);
-            } else if (entry.target === infoSectionRef.current) {
-              setIsInfoVisible(true);
-            }
+            if (entry.target === newsSectionRef.current) setIsNewsVisible(true);
+            else if (entry.target === courseSectionRef.current) setIsCourseVisible(true);
+            else if (entry.target === interviewSectionRef.current) setIsInterviewVisible(true);
+            else if (entry.target === ctaSectionRef.current) setIsCtaVisible(true);
+            else if (entry.target === infoSectionRef.current) setIsInfoVisible(true);
           }
         });
       },
@@ -307,387 +254,71 @@ export default function Home() {
       }
     );
 
-    // Store refs in variables to avoid stale values in cleanup
-    const newsSection = newsSectionRef.current;
-    const courseSection = courseSectionRef.current;
-    const ctaSection = ctaSectionRef.current;
-    const infoSection = infoSectionRef.current;
+    const sections = [
+      newsSectionRef.current,
+      courseSectionRef.current,
+      interviewSectionRef.current,
+      ctaSectionRef.current,
+      infoSectionRef.current
+    ];
 
-    if (newsSection) observer.observe(newsSection);
-    if (courseSection) observer.observe(courseSection);
-    if (ctaSection) observer.observe(ctaSection);
-    if (infoSection) observer.observe(infoSection);
+    sections.forEach(section => section && observer.observe(section));
 
-    return () => {
-      if (newsSection) observer.unobserve(newsSection);
-      if (courseSection) observer.unobserve(courseSection);
-      if (ctaSection) observer.unobserve(ctaSection);
-      if (infoSection) observer.unobserve(infoSection);
-    };
+    return () => sections.forEach(section => section && observer.unobserve(section));
   }, []);
-
-  // Add this state near your other state declarations
-  const [newsPagination, setNewsPagination] = useState({
-    totalCount: 0,
-    currentPage: 1,
-    totalPages: 1,
-    prev: null,
-    next: null
-  });
-
-  // Replace the existing news fetching useEffect with this updated version
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const offset = (newsPage - 1) * newsPerPage;
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API}/news?offset=${offset}&limit=${newsPerPage}&search=`
-        );
-        
-        setNewsList(response.data.data);
-        setNewsPagination(response.data.pagination);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
-
-    fetchNews();
-  }, [newsPage]); // Add newsPage as dependency
-
-  // เพิ่ม state สำหรับ course pagination
-  const [coursePagination, setCoursePagination] = useState({
-    totalCount: 0,
-    currentPage: 1,
-    totalPages: 1,
-    prev: null,
-    next: null
-  });
-
-  // แก้ไข useEffect สำหรับการดึงข้อมูลคอร์ส
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const offset = (coursePage - 1) * coursesPerPage;
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API}/course?offset=${offset}&limit=${coursesPerPage}&search=`
-        );
-        
-        setCourseList(response.data.data);
-        setCoursePagination(response.data.pagination);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-      }
-    };
-
-    fetchCourses();
-  }, [coursePage]);
 
   return (
     <div>
-      <div
-        ref={sliderRef}
-        className="w-full bg-cover bg-center transition-all duration-1000 relative select-none"
-      >
+      <div ref={sliderRef} className="w-full bg-cover bg-center transition-all duration-1000 relative select-none">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white"></div>
           </div>
         )}
-        {/* เพิ่มชั้น overlay สำหรับทำให้พื้นหลังโปร่งแสง */}
-        <div
-          className="absolute inset-0"
-        ></div>
-        <Carousel registerUrl={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} backgroundImages={backgroundImages} />
+        <div className="absolute inset-0"></div>
+        <Carousel 
+          registerUrl={admission?.link_register || process.env.NEXT_PUBLIC_REGISTER} 
+          backgroundImages={backgroundImages} 
+        />
       </div>
 
-      {/* ส่วนที่5 */}
-      <div className="w-full bg-[#F9FAFB]" ref={newsSectionRef}>
-        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
-          <div className={`flex justify-between text-[#0A2463] text-2xl font-bold transition-all duration-1000 ${isNewsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            ข่าวและกิจกรรม
-            <a href="/newandevent" className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูข่าวทั้งหมด</a>
-          </div>
+      <NewsSection
+        newsList={newsList}
+        isNewsVisible={isNewsVisible}
+        newsPagination={newsPagination}
+        newsPage={newsPage}
+        setNewsPage={setNewsPage}
+        handleNewsViewDetails={handleNewsViewDetails}
+      />
 
-          <div className="pt-4 sm:pt-6 md:pt-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
-              {paginatedNews.map((news, index) => (
-                <div
-                  key={news.id}
-                  className={`h-full bg-[#ffffff] drop-shadow-xl rounded-lg flex flex-col transition-all duration-1000 hover:shadow-2xl hover:-translate-y-1 ${isNewsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                  style={{ transitionDelay: `${index * 0.1}s` }}
-                >
-                  {/* รูปภาพ */}
-                  <div className="relative h-48 sm:h-56 md:h-48 lg:h-48 w-full">
-                    <Image
-                      src={
-                        news.image?.image_path
-                          ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}`
-                          : "/fallback.jpg"
-                      }
-                      alt={news.title}
-                      width={400}
-                      height={160}
-                      className="w-full h-40 object-cover rounded"
-                    />
-                  </div>
+      <CourseSection
+        courseList={courseList}
+        isCourseVisible={isCourseVisible}
+        coursePagination={coursePagination}
+        coursePage={coursePage}
+        setCoursePage={setCoursePage}
+        handleCoureseViewDetails={handleCoureseViewDetails}
+        dateFormatter={dateFormatter}
+      />
 
-                  {/* เนื้อหา */}
-                  <div className="h-full p-4 flex flex-col">
-                    <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        style={{
-                          color: "#0A2463",
-                          width: "14px",
-                          height: "14px",
-                        }}
-                      />
-                      {new Date(news.published_date).toLocaleDateString()}
-                    </div>
+      <InterviewSection
+        interviewVideos={interviewVideos}
+        isInterviewVisible={isInterviewVisible}
+        videoPagination={videoPagination}
+        videoPage={videoPage}
+        setVideoPage={setVideoPage}
+        handleVideoViewDetails={handleVideoViewDetails}
+      />
 
-                    <div className="text-[#0A2463] text-sm sm:text-base font-bold pt-2 sm:pt-4">
-                      {news.title}
-                    </div>
+      <CtaSection
+        isCtaVisible={isCtaVisible}
+        admission={admission}
+      />
 
-                    <div
-                      className="text-[#4B5563] text-xs pt-2 sm:pt-4 flex-grow"
-                    >{news.short_description}</div>
-
-                    <div className="text-blue-600 text-xs mt-3">
-                      หมวดหมู่:{" "}
-                      {news.tagAssignments?.[0]?.tag?.name || "ทั่วไป"}
-                    </div>
-
-                    <div
-                      className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] font-bold cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
-                      onClick={() => handleNewsViewDetails(news.id)}
-                    >
-                      อ่านเพิ่มเติม
-                      <FontAwesomeIcon
-                        icon={faArrowRight}
-                        style={{ color: "#0A2463", width: "12px", height: "12px" }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="text-center text-sm text-[#6B7280] my-4">
-            แสดง {((newsPagination.currentPage - 1) * newsPerPage) + 1} - {Math.min(newsPagination.currentPage * newsPerPage, newsPagination.totalCount)} 
-            จาก {newsPagination.totalCount} ข่าว
-          </div>
-          <div className="flex justify-center items-center pt-8 gap-4 pb-8">
-            <button
-              onClick={() => setNewsPage((prev) => Math.max(prev - 1, 1))}
-              disabled={!newsPagination.prev}
-              className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
-            >
-              ก่อนหน้า
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[#0A2463] font-medium">
-                หน้า {newsPagination.currentPage} / {newsPagination.totalPages}
-              </span>
-            </div>
-            <button
-              onClick={() => setNewsPage((prev) => prev + 1)}
-              disabled={!newsPagination.next}
-              className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
-            >
-              ถัดไป
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ส่วนที่ 4 */}
-      <div className="w-full bg-[#ffffff]" ref={courseSectionRef}>
-        <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
-          <div className={`flex justify-between text-[#0A2463] text-xl sm:text-xl md:text-2xl font-bold transition-all duration-1000 ${isCourseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            เนื้อหาแนะนำ
-            <a href="/courses" className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูเนื้อหาทั้งหมด</a>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
-            {paginatedCourses.map((course, index) => (
-              <div key={course.id} className="pt-4 sm:pt-6 md:pt-8">
-                <div className={`h-[396px] bg-white drop-shadow-xl rounded-lg flex flex-col overflow-hidden transition-all duration-1000 hover:shadow-2xl hover:-translate-y-1 ${isCourseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                  style={{ transitionDelay: `${index * 0.1}s` }}>
-                  {/* ส่วนรูปภาพ 40% */}
-                  <div className="relative h-[45%] w-full">
-                    <Image
-                      src={
-                        course.image?.image_path
-                          ? `${process.env.NEXT_PUBLIC_IMG}${course.image.image_path.startsWith("/") ? "" : "/"
-                          }${course.image.image_path}`
-                          : "/fallback.jpg"
-                      }
-                      alt={course.name}
-                      width={400}
-                      height={160}
-                      className="w-full h-40 object-cover rounded"
-                    />
-                  </div>
-
-                  {/* ส่วนข้อความ 60% */}
-                  <div className="h-[60%] p-4">
-                    <div className="text-[#0A2463] text-base font-bold">
-                      {course.name}
-                    </div>
-                    <div className="text-[#4B5563] text-xs pt-4">
-                      {course.description}
-                    </div>
-                    <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 pt-4 text-[#4B5563] text-xs">
-                      <div className="flex items-center gap-1">
-                        <FontAwesomeIcon
-                          icon={faClock}
-                          style={{
-                            color: "#0A2463",
-                            width: "14px",
-                            height: "14px",
-                          }}
-                        />
-                        12 weeks
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <FontAwesomeIcon
-                          icon={faCalendar}
-                          style={{
-                            color: "#0A2463",
-                            width: "12px",
-                            height: "12px",
-                          }}
-                        />
-                        {dateFormatter(course.updated_at)}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <FontAwesomeIcon
-                          icon={faUserGroup}
-                          style={{
-                            color: "#0A2463",
-                            width: "12px",
-                            height: "12px",
-                          }}
-                        />
-                        {course.view_count} ผู้เข้าชม
-                      </div>
-                    </div>
-
-                    <div
-                      className="flex items-center pt-4 gap-2 text-sm text-[#0A2463] cursor-pointer hover:underline hover:text-[#39A9DB] transition-colors duration-200"
-                      onClick={() => handleCoureseViewDetails(course.id)}
-                    >
-                      ดูรายละเอียด
-                      <FontAwesomeIcon
-                        icon={faArrowRight}
-                        style={{ color: "#0A2463", width: "12px", height: "12px" }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="text-center text-sm text-[#6B7280] my-4">
-          แสดง {((coursePagination.currentPage - 1) * coursesPerPage) + 1} - {Math.min(coursePagination.currentPage * coursesPerPage, coursePagination.totalCount)} 
-          จาก {coursePagination.totalCount} คอร์ส
-        </div>
-        <div className="flex justify-center items-center pt-8 gap-4 pb-8">
-          <button
-            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
-            disabled={!coursePagination.prev}
-            className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
-          >
-            ก่อนหน้า
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[#0A2463] font-medium">
-              หน้า {coursePagination.currentPage} / {coursePagination.totalPages}
-            </span>
-          </div>
-          <button
-            onClick={() => setCoursePage((prev) => prev + 1)}
-            disabled={!coursePagination.next}
-            className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
-          >
-            ถัดไป
-          </button>
-        </div>
-      </div>
-
-      {/* ส่วนที่6 */}
-      <div className="w-full bg-[#39A9DB]" ref={ctaSectionRef}>
-        <div className="px-4 py-8 md:p-12 lg:p-20 h-full">
-          <div className="flex flex-col justify-center items-center text-white">
-            <div className={`font-bold text-xl sm:text-2xl transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              พร้อมที่จะสร้างอนาคตประเทศไทยหรือยัง?
-            </div>
-            <div className={`text-center pt-2 px-2 sm:px-4 md:px-8 max-w-2xl transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-              style={{ transitionDelay: '0.2s' }}>
-              เข้าร่วมโปรแกรมของเราและเป็นส่วนหนึ่งของนักประดิษฐ์และผู้นำรุ่นต่อไปของประเทศไทยในอุตสาหกรรม
-              New Growth Engine
-            </div>
-            <div className={`pt-4 md:pt-6 transition-all duration-1000 ${isCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-              style={{ transitionDelay: '0.4s' }}>
-              <a href={admission?.link_register ||
-                process.env.NEXT_PUBLIC_REGISTER}>
-                <div className="flex justify-center items-center w-[140px] sm:w-[160px] h-[40px] sm:h-[52px] bg-white text-[#0A2463] rounded-md cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:scale-105">
-                  เข้าร่วม
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="course-info" className="w-full bg-[#E1F2FE] py-10 px-4 md:px-20" ref={infoSectionRef}>
-        <div className="max-w-4xl mx-auto">
-          <div className={`text-2xl font-bold text-[#0A2463] mb-4 transition-all duration-1000 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            รายละเอียดหลักสูตร
-          </div>
-          <ul className="list-disc pl-6 text-[#0A2463] text-sm md:text-base mb-4">
-            {[
-              'ระยะเวลาอบรม 4 เดือน (285 ชั่วโมง) ทฤษฎี 60 ชั่วโมง ปฏิบัติ 225 ชั่วโมง',
-              'เริ่มอบรม กรกฎาคม - ตุลาคม 2568',
-              'คุณสมบัติ: อายุ 18 ปีขึ้นไป, จบ ม.6 หรือเทียบเท่า, เกษตรกร/เจ้าของฟาร์ม/ผู้สนใจ',
-              'สถานที่: มหาวิทยาลัยแม่โจ้',
-              'หน่วยงานร่วม: มหาวิทยาลัยแม่โจ้, บริษัท อินคูซิชั่นโพสต์, บริษัท พีพีพี ฟู้ด'
-            ].map((item, index) => (
-              <li key={index} className={`transition-all duration-1000 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${index * 0.1}s` }}>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <div className="flex flex-col sm:flex-row gap-4 items-center mt-4">
-            <div className={`bg-white rounded-lg shadow p-4 flex flex-col items-center transition-all duration-1000 hover:shadow-xl hover:-translate-y-1 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-              style={{ transitionDelay: '0.6s' }}>
-              <span className="font-bold text-[#0A2463]">ติดต่อสอบถาม</span>
-              <span className="text-xs text-[#0A2463]">โทร: 084-150-0677 (อ.ดร.พยุงศักดิ์)</span>
-              <span className="text-xs text-[#0A2463]">โทร: 089-837-8992 (อ.ดร.สุดเขต)</span>
-              <span className="text-xs text-[#0A2463]">E-mail: Payungsak.kae@gmail.com</span>
-              <span className="text-xs text-[#0A2463]">E-mail: sutkhet@mju.ac.th</span>
-            </div>
-            {admission?.link_register && (
-              <div className={`flex flex-col items-center transition-all duration-1000 ${isInfoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: '0.8s' }}>
-                <span className="font-bold text-[#0A2463] mb-2">สมัครออนไลน์</span>
-                <div className="w-28 h-28 flex items-center justify-center bg-white border-2 border-[#39A9DB] rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105">
-                  {admission?.link_register && (
-                    <QRCodeSVG value={admission.link_register} size={100} />
-                  )}
-                </div>
-                <span className="text-xs text-[#0A2463] mt-1">สแกน QR เพื่อสมัคร</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      <InfoSection
+        isInfoVisible={isInfoVisible}
+        admission={admission}
+      />
     </div>
   );
 }
