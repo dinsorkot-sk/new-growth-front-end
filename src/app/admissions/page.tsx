@@ -109,6 +109,16 @@ export default function Home() {
   const [batches, setBatches] = useState([]);
   const [activeBatchIdx, setActiveBatchIdx] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [activeBatchTitle, setActiveBatchTitle] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedTitle = sessionStorage.getItem('activeBatchTitle');
+      if (storedTitle) {
+        setActiveBatchTitle(storedTitle);
+      }
+    }
+  }, []);
 
   // Fetch batches from API
   useEffect(() => {
@@ -324,7 +334,7 @@ export default function Home() {
                 batches[batches.length - 1]?.link_register ||
                 process.env.NEXT_PUBLIC_REGISTER}>
               <div className="flex justify-center sm:justify-center items-center w-[130px] h-[50px] rounded-md bg-[#39A9DB] text-white font-medium">
-                {sessionStorage.getItem('activeBatchTitle') ? `สมัคร ${sessionStorage.getItem('activeBatchTitle')}` : 'สมัครเข้าร่วมโครงการ'}
+                {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
               </div>
             </a>
           </div>
@@ -717,7 +727,7 @@ export default function Home() {
               }
             >
               <div className="flex justify-center items-center w-[200px] sm:w-[245px] h-[48px] sm:h-[52px] bg-white rounded-md text-[#0A2463] text-sm sm:text-base font-medium cursor-pointer hover:bg-gray-100 transition">
-                {sessionStorage.getItem('activeBatchTitle') ? `สมัคร ${sessionStorage.getItem('activeBatchTitle')}` : 'สมัครเข้าร่วมโครงการ'}
+                {activeBatchTitle ? `สมัคร ${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}
               </div>
             </a>
           </div>
