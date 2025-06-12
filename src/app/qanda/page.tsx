@@ -201,7 +201,6 @@ export default function Home() {
             await axios.post(apiUrl, {
                 title: newQuestion.text,
                 posted_by: newQuestion.posted_by,
-                status: "hidden",
                 answers: []
             });
 
