@@ -80,10 +80,6 @@ export default function Home() {
             // อัปเดต state pagination ด้วยข้อมูลที่ได้รับจาก API
             setPagination(response.data.pagination);
 
-            if (formattedData.length > 0) {
-                setOpenIndex(0); // ตั้งค่าให้รายการแรกเปิด
-            }
-
             setFaqData(formattedData);
             console.log(formattedData)
             setIsLoading(false);
