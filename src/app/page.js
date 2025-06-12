@@ -88,12 +88,14 @@ export default function Home() {
   const totalCoursePages = Math.ceil(courseList.length / coursesPerPage);
 
   // Pagination สำหรับข่าว
+  
   const [newsPage, setNewsPage] = useState(1);
-  const newsPerPage = 4;
-  const paginatedNews = newsList.slice(
-    (newsPage - 1) * newsPerPage,
-    newsPage * newsPerPage
-  );
+  const newsPerPage = 9;
+  const paginatedNews = newsList
+  // const paginatedNews = newsList.slice(
+  //   (newsPage - 1) * newsPerPage,
+  //   newsPage * newsPerPage
+  // );
   const totalNewsPages = Math.ceil(newsList.length / newsPerPage);
 
   const [isDragging, setIsDragging] = useState(false);
@@ -324,6 +326,64 @@ export default function Home() {
     };
   }, []);
 
+  // Add this state near your other state declarations
+  const [newsPagination, setNewsPagination] = useState({
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    prev: null,
+    next: null
+  });
+
+  // Replace the existing news fetching useEffect with this updated version
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const offset = (newsPage - 1) * newsPerPage;
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API}/news?offset=${offset}&limit=${newsPerPage}&search=`
+        );
+        
+        setNewsList(response.data.data);
+        setNewsPagination(response.data.pagination);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchNews();
+  }, [newsPage]); // Add newsPage as dependency
+
+  // เพิ่ม state สำหรับ course pagination
+  const [coursePagination, setCoursePagination] = useState({
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    prev: null,
+    next: null
+  });
+
+  // แก้ไข useEffect สำหรับการดึงข้อมูลคอร์ส
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const offset = (coursePage - 1) * coursesPerPage;
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API}/course?offset=${offset}&limit=${coursesPerPage}&search=`
+        );
+        
+        setCourseList(response.data.data);
+        setCoursePagination(response.data.pagination);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, [coursePage]);
+
   return (
     <div>
       <div
@@ -347,7 +407,7 @@ export default function Home() {
         <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
           <div className={`flex justify-between text-[#0A2463] text-2xl font-bold transition-all duration-1000 ${isNewsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             ข่าวและกิจกรรม
-            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูข่าวทั้งหมด</div>
+            <a href="/newandevent" className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูข่าวทั้งหมด</a>
           </div>
 
           <div className="pt-4 sm:pt-6 md:pt-8">
@@ -415,28 +475,32 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-center pt-8 gap-2 pb-8">
-          <button
-            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
-            disabled={coursePage === 1}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
-          >
-            ก่อนหน้า
-          </button>
-          <span className="px-2 text-sm text-[#0A2463] font-medium">
-            หน้า {coursePage} / {totalCoursePages}
-          </span>
-          <button
-            onClick={() =>
-              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
-            }
-            disabled={coursePage === totalCoursePages}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
-          >
-            ถัดไป
-          </button>
+          <div className="text-center text-sm text-[#6B7280] my-4">
+            แสดง {((newsPagination.currentPage - 1) * newsPerPage) + 1} - {Math.min(newsPagination.currentPage * newsPerPage, newsPagination.totalCount)} 
+            จาก {newsPagination.totalCount} ข่าว
+          </div>
+          <div className="flex justify-center items-center pt-8 gap-4 pb-8">
+            <button
+              onClick={() => setNewsPage((prev) => Math.max(prev - 1, 1))}
+              disabled={!newsPagination.prev}
+              className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
+            >
+              ก่อนหน้า
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-[#0A2463] font-medium">
+                หน้า {newsPagination.currentPage} / {newsPagination.totalPages}
+              </span>
+            </div>
+            <button
+              onClick={() => setNewsPage((prev) => prev + 1)}
+              disabled={!newsPagination.next}
+              className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
+            >
+              ถัดไป
+            </button>
+          </div>
         </div>
       </div>
 
@@ -445,7 +509,7 @@ export default function Home() {
         <div className="h-full p-4 sm:p-8 md:p-12 lg:p-20">
           <div className={`flex justify-between text-[#0A2463] text-xl sm:text-xl md:text-2xl font-bold transition-all duration-1000 ${isCourseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             เนื้อหาแนะนำ
-            <div className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูเนื้อหาทั้งหมด</div>
+            <a href="/courses" className="text-[#39A9DB] text-xs cursor-pointer hover:underline transition-all duration-300 hover:text-[#0A2463]">ดูเนื้อหาทั้งหมด</a>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 lg:gap-20">
             {paginatedCourses.map((course, index) => (
@@ -529,23 +593,27 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex justify-center pt-8 gap-2 pb-8">
+        <div className="text-center text-sm text-[#6B7280] my-4">
+          แสดง {((coursePagination.currentPage - 1) * coursesPerPage) + 1} - {Math.min(coursePagination.currentPage * coursesPerPage, coursePagination.totalCount)} 
+          จาก {coursePagination.totalCount} คอร์ส
+        </div>
+        <div className="flex justify-center items-center pt-8 gap-4 pb-8">
           <button
             onClick={() => setCoursePage((prev) => Math.max(prev - 1, 1))}
-            disabled={coursePage === 1}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+            disabled={!coursePagination.prev}
+            className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
           >
             ก่อนหน้า
           </button>
-          <span className="px-2 text-sm text-[#0A2463] font-medium">
-            หน้า {coursePage} / {totalCoursePages}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[#0A2463] font-medium">
+              หน้า {coursePagination.currentPage} / {coursePagination.totalPages}
+            </span>
+          </div>
           <button
-            onClick={() =>
-              setCoursePage((prev) => Math.min(prev + 1, totalCoursePages))
-            }
-            disabled={coursePage === totalCoursePages}
-            className="px-3 py-1 bg-[#0A2463] text-white rounded disabled:opacity-50"
+            onClick={() => setCoursePage((prev) => prev + 1)}
+            disabled={!coursePagination.next}
+            className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
           >
             ถัดไป
           </button>

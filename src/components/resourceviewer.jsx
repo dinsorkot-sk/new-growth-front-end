@@ -15,12 +15,23 @@ const ResourceViewer = ({ resource, onBack }) => {
       
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API}/document/getDocumentById/${resource.id}`);
+        // เพิ่ม fallback URL และ timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API}/document/getDocumentById/${resource.id}`,
+          { signal: controller.signal }
+        );
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) throw new Error('Failed to fetch document');
         const data = await response.json();
         setDocumentData(data);
       } catch (err) {
-        setError(err.message);
+        console.error('Error fetching document:', err);
+        setError(err.name === 'AbortError' ? 'Connection timeout' : err.message);
       } finally {
         setLoading(false);
       }
@@ -85,11 +96,6 @@ const ResourceViewer = ({ resource, onBack }) => {
                 {resource.date && (
                   <p className="text-sm text-gray-600">
                     เผยแพร่เมื่อ: {resource.date}
-                  </p>
-                )}
-                {resource.duration && (
-                  <p className="text-sm text-gray-600">
-                    ความยาว: {resource.duration}
                   </p>
                 )}
                 {resource.description && (

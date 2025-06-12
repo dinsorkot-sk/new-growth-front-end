@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, ArrowRight, Calendar, X, Play} from 'lucide-react';
+import { Search, ArrowRight, Calendar, X, Play } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
@@ -79,13 +79,20 @@ export default function Home() {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
-const [selectedMedia, setSelectedMedia] = useState(null);
-const [combinedMedia, setCombinedMedia] = useState([]);
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [combinedMedia, setCombinedMedia] = useState([]);
+  const [mediaPagination, setMediaPagination] = useState({
+    totalCount: 0,
+    currentPage: 1,
+    totalPages: 1,
+    prev: null,
+    next: null
+  });
 
-const closeModal = () => {
-  setShowModal(false);
-  setSelectedMedia(null);
-};
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedMedia(null);
+  };
 
   const router = useRouter();
 
@@ -94,7 +101,7 @@ const closeModal = () => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/news?offset=0&limit=10`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/news?offset=0&limit=9`);
         const data = response.data;
         setNewsItems(data.data);
         setPagination(data.pagination);
@@ -145,11 +152,11 @@ const closeModal = () => {
 
   // Filter news based on search query and selected tag
   const filteredNews = newsItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.short_description && item.short_description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesFilter = filter === 'All' || 
-      (item.tagAssignments && 
-        item.tagAssignments.some(tagAssignment => 
+    const matchesFilter = filter === 'All' ||
+      (item.tagAssignments &&
+        item.tagAssignments.some(tagAssignment =>
           tagAssignment.tag && tagAssignment.tag.name === filter
         ));
     return matchesSearch && matchesFilter;
@@ -195,42 +202,52 @@ const closeModal = () => {
 
   const [displayCount, setDisplayCount] = useState(12);
 
-const fetchMedia = async () => {
-  try {
-    console.log('กำลังดึงข้อมูลมีเดีย...');
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=0&limit=10`);
-    
-    // แสดงข้อมูลที่ได้จาก API เพื่อการตรวจสอบ
-    console.log('Media API response:', response.data);
-    
-    // ตรวจสอบว่า response มีรูปแบบตามที่คาดหวังหรือไม่
-    if (response.data && typeof response.data === 'object') {
-      // ตรวจสอบและกำหนดค่าอย่างชัดเจน - อย่าใช้ || [] เพราะอาจเป็น array ว่าง
-      const responseImages = Array.isArray(response.data.images) ? response.data.images : [];
-      const responseVideos = Array.isArray(response.data.videos) ? response.data.videos : [];
-      
-      console.log(`พบรูปภาพ ${responseImages.length} รายการ และวิดีโอ ${responseVideos.length} รายการ`);
-      
-      // ตรวจสอบโครงสร้างข้อมูลวิดีโอ
-      if (responseVideos.length > 0) {
-        console.log('ตัวอย่างข้อมูลวิดีโอแรก:', responseVideos[0]);
-        console.log('มีไฟล์วิดีโอหรือไม่:', responseVideos[0].files && responseVideos[0].files.length > 0);
+  const fetchMedia = async () => {
+    try {
+      console.log('กำลังดึงข้อมูลมีเดีย...');
+      const offset = (mediaPagination.currentPage - 1) * 10; // 10 items per page
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API}/image/getAllImage/vibe?offset=${offset}&limit=10`
+      );
+
+      console.log('Media API response:', response.data);
+
+      if (response.data && typeof response.data === 'object') {
+        const responseImages = Array.isArray(response.data.images) ? response.data.images : [];
+        const responseVideos = Array.isArray(response.data.videos) ? response.data.videos : [];
+
+        console.log(`พบรูปภาพ ${responseImages.length} รายการ และวิดีโอ ${responseVideos.length} รายการ`);
+
+        setImages(responseImages);
+        setVideos(responseVideos);
+
+        // Update pagination based on the new response format
+        const totalItems = (response.data.pagination?.images?.total || 0) +
+          (response.data.pagination?.videos?.total || 0);
+        const totalPages = Math.ceil(totalItems / 10) - 1;
+
+        setMediaPagination({
+          totalCount: totalItems,
+          currentPage: mediaPagination.currentPage,
+          totalPages: totalPages,
+          prev: mediaPagination.currentPage > 1,
+          next: mediaPagination.currentPage < totalPages
+        });
+      } else {
+        console.error('รูปแบบข้อมูลจาก API ไม่ถูกต้อง:', response.data);
+        setImages([]);
+        setVideos([]);
       }
-      
-      setImages(responseImages);
-      setVideos(responseVideos);
-    } else {
-      console.error('รูปแบบข้อมูลจาก API ไม่ถูกต้อง:', response.data);
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลมีเดีย:', error);
       setImages([]);
       setVideos([]);
     }
-  } catch (error) {
-    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลมีเดีย:', error);
-    setImages([]);
-    setVideos([]);
-  }
-};
+  };
 
+  useEffect(() => {
+    fetchMedia();
+  }, [mediaPagination.currentPage]);
 
   const handleViewAllGallery = () => {
     router.push('/gallery');
@@ -241,7 +258,7 @@ const fetchMedia = async () => {
       view_count: view_count + 1
     }, {
       headers: { 'Content-Type': 'application/json' }
-    }).catch(() => {});
+    }).catch(() => { });
     router.push(`/newandevent/${newId}`);
   };
 
@@ -252,7 +269,7 @@ const fetchMedia = async () => {
   };
 
   // ใช้ useCallback เพื่อไม่ให้ combineAndSortMedia เปลี่ยน reference ทุก render
-  const combineAndSortMedia = useCallback((images : Image[], videos : Video[]) => {
+  const combineAndSortMedia = useCallback((images: Image[], videos: Video[]) => {
     // แปลงรูปภาพให้อยู่ในรูปแบบเดียวกับที่จะใช้แสดงผล
     const formattedImages = images.map(img => ({
       id: `img-${img.id}`,
@@ -292,7 +309,7 @@ const fetchMedia = async () => {
       <div className="bg-[#0A2463] md:h-50 text-white py-10 px-10">
         <div className="text-3xl font-bold text-white">ข่าวสารและกิจกรรม</div>
         <div className="text-wrap max-w-2xl text-base mt-5 text-white">
-        ติดตามข่าวสาร กิจกรรม และความสำเร็จล่าสุดจากโครงการฝึกอบรมบัณฑิตไทยแลนด์ 4.0
+          ติดตามข่าวสาร กิจกรรม และความสำเร็จล่าสุดจากโครงการฝึกอบรมบัณฑิตไทยแลนด์ 4.0
         </div>
       </div>
 
@@ -336,7 +353,7 @@ const fetchMedia = async () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredNews.map(news => (
-                  <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-2xl duration-200 cursor-pointer"  onClick={() => handleViewDetails(news.id, news.view_count)}>
+                  <div key={news.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-2xl duration-200 cursor-pointer" onClick={() => handleViewDetails(news.id, news.view_count)}>
                     <div className="relative">
                       <Image
                         src={news.image?.image_path ? `${process.env.NEXT_PUBLIC_IMG}/${news.image.image_path}` : (images.length > 0 ? `${process.env.NEXT_PUBLIC_IMG}/${images[0].image_path}` : '/placeholder-image.jpg')}
@@ -391,7 +408,7 @@ const fetchMedia = async () => {
       <div className="bg-[#F9FAFB]  p-4 md:p-10">
         <div className='mx-auto max-w-7xl'>
           <h1 className="text-3xl font-bold text-blue-900 mb-10 tracking-tight ">บรรยากาศโครงการ</h1>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {combinedMedia.length > 0 ? (
               combinedMedia.map((item) => (
@@ -466,27 +483,27 @@ const fetchMedia = async () => {
         <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center p-4" onClick={closeModal}>
           <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="absolute top-4 right-4 z-10">
-              <button 
+              <button
                 onClick={closeModal}
                 className="text-gray-600 hover:text-gray-800 transition-colors bg-white rounded-full p-2 shadow-lg"
               >
                 <X size={24} />
               </button>
             </div>
-            
+
             <div className="relative">
               {selectedMedia.type === 'video' ? (
-                <video 
-                  className="w-full h-auto max-h-[70vh] object-contain bg-black" 
-                  controls 
+                <video
+                  className="w-full h-auto max-h-[70vh] object-contain bg-black"
+                  controls
                   autoPlay
                 >
                   <source src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} type="video/mp4" />
                 </video>
               ) : (
                 <div className="relative w-full h-auto max-h-[70vh]">
-                  <Image 
-                    src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`} 
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_IMG}/${selectedMedia.path}`}
                     alt={selectedMedia.title || "Selected media"}
                     width={1200}
                     height={800}
@@ -496,7 +513,7 @@ const fetchMedia = async () => {
                 </div>
               )}
             </div>
-            
+
             <div className="p-6 bg-white">
               <h3 className="text-xl font-semibold text-blue-900 mb-2">
                 {selectedMedia.title || (selectedMedia.type === 'video' ? 'วิดีโอ' : 'รูปภาพ')}
@@ -511,18 +528,42 @@ const fetchMedia = async () => {
           </div>
         </div>
       )}
-      
-      {(images.length > 0 || videos.length > 0)  && ( //&& combinedMedia.length >= displayCount
-        <div className="flex justify-center">
+
+      <div className="flex flex-col items-center gap-4 my-8">
+        <div className="text-center text-sm text-[#6B7280]">
+          แสดง {((mediaPagination.currentPage - 1) * 10) + 1} - {Math.min(mediaPagination.currentPage * 10, mediaPagination.totalCount)}
+          จาก {mediaPagination.totalCount} รายการ
+        </div>
+        <div className="flex justify-center items-center gap-4">
           <button
-            onClick={handleViewAllGallery}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold text-lg transition-colors shadow-lg cursor-pointer">
-            ดูเพิ่มเติม
+            onClick={() => setMediaPagination(prev => ({
+              ...prev,
+              currentPage: Math.max(prev.currentPage - 1, 1)
+            }))}
+            disabled={!mediaPagination.prev}
+            className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
+          >
+            ก่อนหน้า
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[#0A2463] font-medium">
+              หน้า {mediaPagination.currentPage} / {mediaPagination.totalPages}
+            </span>
+          </div>
+          <button
+            onClick={() => setMediaPagination(prev => ({
+              ...prev,
+              currentPage: prev.currentPage + 1
+            }))}
+            disabled={!mediaPagination.next}
+            className="px-4 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB] transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 disabled:hover:bg-[#0A2463]"
+          >
+            ถัดไป
           </button>
         </div>
-      )}
+      </div>
     </div>
 
-    
+
   );
 }
