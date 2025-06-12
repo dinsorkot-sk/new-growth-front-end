@@ -121,7 +121,7 @@ export default function Home() {
                 topic_id: topicId,
                 answer_text: replyText,
                 answered_by: replyName,
-                status: "show"
+                status: "hidden"
             });
 
             // อัปเดต UI เมื่อส่งสำเร็จ
