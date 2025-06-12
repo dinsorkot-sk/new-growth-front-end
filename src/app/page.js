@@ -19,7 +19,7 @@ const VIDEOS_PER_PAGE = 6;
 const sampleInterviewVideos = [
   {
     id: 1,
-    title: "สัมภาษณ์ผู้เข้าอบรมรุ่นที่ 1",
+    title: "สัมภาษณ์ผู้เข้าอบรม",
     interviewee: "คุณกุญช์ชญา",
     description: "ประสบการณ์การเข้าร่วมโครงการและผลลัพธ์ที่ได้รับ",
     duration: "2:08",
@@ -29,7 +29,7 @@ const sampleInterviewVideos = [
   },
   {
     id: 2,
-    title: "สัมภาษณ์ผู้เข้าอบรมรุ่นที่ 1",
+    title: "สัมภาษณ์ผู้เข้าอบรม",
     interviewee: "คุณลีลาวดี",
     description: "การนำความรู้ไปประยุกต์ใช้ในชีวิตจริง",
     duration: "0:51",
@@ -39,13 +39,133 @@ const sampleInterviewVideos = [
   },
   {
     id: 3,
-    title: "สัมภาษณ์ผู้เข้าอบรมรุ่นที่ 3",
+    title: "สัมภาษณ์ผู้เข้าอบรม",
     interviewee: "คุณสุริยา",
     description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
     duration: "1:39",
     publishedDate: "2024-03-25",
     category: "สัมภาษณ์",
     embedUrl: "https://drive.google.com/file/d/10vOI0EV7-NYJzmIyJWj70YbP2uS7dyln/preview"
+  },
+  {
+    id: 4,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "คุณบุญรักษ์",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:23",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1sAfalArWond3o4eyEX2nO4wxICyv1TTQ/preview"
+  },
+  {
+    id: 5,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "คุณพิชชานันท์",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "2:31",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/13zUkHMlW5BbVApWpCIe_114CO4QW6PMs/preview"
+  },
+  {
+    id: 6,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "คุณอัจฉรีย์ชัย",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "3:29",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1ms4hZm4hAJTldhYSiMr5-v8iI7_STsrv/preview"
+  },
+  {
+    id: 7,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "คุณอุดมพร",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "4:01",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1U-GjNLLM8IVuscK7joS7lbrgsd8YQ_H5/preview"
+  },
+  {
+    id: 8,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:01",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1Zy3POnp1g5dkF7wI6Di7hXY7PgwkrDDd/preview"
+  },
+  {
+    id: 10,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:18",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1q5bsXc8GimuGRATJgYP8im-paLPDbv0g/preview"
+  },
+  {
+    id: 12,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:35",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1VDLbs7vqI-Eo5Ey37b4U83KNpzcY7icf/preview"
+  },
+  {
+    id: 13,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:38",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1gHJuapErb8GWd2kCcUBazsPkawXy9HYD/preview"
+  },
+  {
+    id: 14,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:41",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/12D_mFBmIwBCaBBOq7eBT1FUalZke3KNk/preview"
+  },
+  {
+    id: 15,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "2:51",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1Rrp5ypEF--pWc9Os2Bew5sWDnq0PQqN8/preview"
+  },
+  {
+    id: 16,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:10",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/1oMACxJGTHmYmdpYGLxdqNwo-8HQfAlFs/preview"
+  },
+  {
+    id: 17,
+    title: "สัมภาษณ์ผู้เข้าอบรม",
+    interviewee: "",
+    description: "ความสำเร็จในการพัฒนาผลิตภัณฑ์ใหม่",
+    duration: "1:34",
+    publishedDate: "2024-03-25",
+    category: "สัมภาษณ์",
+    embedUrl: "https://drive.google.com/file/d/17GzATw7vKQgPjQXlB0P8TPkF73McwA-Q/preview"
   }
 ];
 
@@ -230,9 +350,20 @@ export default function Home() {
     router.push(`/newandevent/${newId}`);
   };
 
-  const handleVideoViewDetails = (videoId) => {
-    router.push(`/interviews/${videoId}`);
+  const handleVideoViewDetails = (src) => {
+    try {
+      const videoUrl = new URL(src);
+      if (!videoUrl.origin) {
+        console.error("Invalid video URL (no origin):", src);
+        return;
+      }
+      window.open(src, '_blank');
+      console.log("Video opened in new tab:", src);
+    } catch (error) {
+      console.error("Error opening video in new tab:", error);
+    }
   };
+  
 
   // Intersection Observer setup
   useEffect(() => {
