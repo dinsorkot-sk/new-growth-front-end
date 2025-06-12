@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const NewsSection = ({ 
-  newsList, 
+  newsList = [], 
   isNewsVisible, 
-  newsPagination, 
+  newsPagination = { currentPage: 1, totalCount: 0, totalPages: 1, prev: false, next: false }, 
   newsPage, 
   setNewsPage, 
   handleNewsViewDetails 
@@ -83,25 +83,29 @@ const NewsSection = ({
         </div>
 
         <div className="text-center text-sm md:text-base text-[#6B7280] mt-12">
-          แสดง {((newsPagination.currentPage - 1) * 9) + 1} - {Math.min(newsPagination.currentPage * 9, newsPagination.totalCount)} 
-          จาก {newsPagination.totalCount} ข่าว
+          {newsPagination && (
+            <>
+              แสดง {((newsPagination?.currentPage - 1) * 9) + 1} - {Math.min(newsPagination?.currentPage * 9, newsPagination?.totalCount)} 
+              จาก {newsPagination?.totalCount} ข่าว
+            </>
+          )}
         </div>
         <div className="flex justify-center items-center pt-8 gap-4 pb-8">
           <button
             onClick={() => setNewsPage((prev) => Math.max(prev - 1, 1))}
-            disabled={!newsPagination.prev}
+            disabled={!newsPagination?.prev}
             className="px-6 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB]"
           >
             ก่อนหน้า
           </button>
           <div className="flex items-center gap-2">
             <span className="text-sm md:text-base text-[#0A2463] font-medium">
-              หน้า {newsPagination.currentPage} / {newsPagination.totalPages}
+              หน้า {newsPagination?.currentPage || 1} / {newsPagination?.totalPages || 1}
             </span>
           </div>
           <button
             onClick={() => setNewsPage((prev) => prev + 1)}
-            disabled={!newsPagination.next}
+            disabled={!newsPagination?.next}
             className="px-6 py-2 bg-[#0A2463] text-white rounded-lg disabled:opacity-50 hover:bg-[#39A9DB]"
           >
             ถัดไป

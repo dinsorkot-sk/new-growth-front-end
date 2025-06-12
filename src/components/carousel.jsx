@@ -129,7 +129,7 @@ const Carousel = ({ registerUrl, backgroundImages = [], activeBatchTitle = '' })
     return (
         <Slider {...settings}>
             <div>
-                <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20 bg-gradient-to-b from-[#0A2463] to-[#1E5499]">
+                <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex flex-col justify-center px-6 py-10 sm:px-10 sm:py-12 md:p-16 lg:p-20 bg-gradient-to-b from-[#0A2463] to-[#1E5499] bg-[url('/img/IMG_2305.png')] bg-cover bg-center before:content-[''] before:absolute before:inset-0 before:bg-black before:opacity-30">
                     {/* Logos Section */}
                     <div className="absolute left-6 top-10 sm:left-10 sm:top-12 md:left-16 md:top-10 lg:left-auto lg:top-20 lg:right-20 flex items-center space-x-4 ">
                         <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px]">
@@ -153,7 +153,7 @@ const Carousel = ({ registerUrl, backgroundImages = [], activeBatchTitle = '' })
                     </div>
 
                     {/* Content Section */}
-                    <div className="mt-24 md:mt-16 lg:mt-0">
+                    <div className="mt-24 md:mt-16 lg:mt-0 z-10">
                         <p className="text-3xl font-bold sm:text-3xl md:text-4xl text-white drop-shadow-lg">
                             โครงการบัณฑิตผลิตพันธุ์ใหม่ (แม่โจ้) ปี 2567-2568
                         </p>
@@ -162,7 +162,7 @@ const Carousel = ({ registerUrl, backgroundImages = [], activeBatchTitle = '' })
                         </p>
 
                         {/* Buttons Section */}
-                        <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6">
+                        <div className="flex flex-col sm:flex-row mt-8 gap-4 sm:gap-6 z-10">
                             <a href={registerUrl} className="px-6 h-12 bg-[#39A9DB] hover:bg-[#2d8ab6] transition-colors duration-300 rounded-md flex items-center justify-center text-white font-medium shadow-md">
                                 <div className="flex justify-evenly items-center w-full text-center text-sm">
                                     {activeBatchTitle ? `สมัคร${activeBatchTitle}` : 'สมัครเข้าร่วมโครงการ'}

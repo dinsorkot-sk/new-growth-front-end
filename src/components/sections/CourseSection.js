@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCalendar, faUserGroup, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const CourseSection = ({
-  courseList,
+  courseList = [],
   isCourseVisible,
-  coursePagination,
+  coursePagination = { currentPage: 1, totalPages: 1, totalCount: 0, prev: false, next: false },
   coursePage,
   setCoursePage,
   handleCoureseViewDetails,
@@ -99,7 +99,7 @@ const CourseSection = ({
       </div>
 
       <div className="text-center text-sm md:text-base text-[#6B7280] mt-12">
-        แสดง {((coursePagination.currentPage - 1) * 6) + 1} - {Math.min(coursePagination.currentPage * 6, coursePagination.totalCount)}
+        แสดง {((coursePagination?.currentPage - 1) * 6) + 1} - {Math.min(coursePagination?.currentPage * 6, coursePagination.totalCount)}
         จาก {coursePagination.totalCount} คอร์ส
       </div>
       <div className="flex justify-center items-center pt-8 gap-4 pb-8">
@@ -112,7 +112,7 @@ const CourseSection = ({
         </button>
         <div className="flex items-center gap-2">
           <span className="text-sm md:text-base text-[#0A2463] font-medium">
-            หน้า {coursePagination.currentPage} / {coursePagination.totalPages}
+            หน้า {coursePagination?.currentPage} / {coursePagination.totalPages}
           </span>
         </div>
         <button
