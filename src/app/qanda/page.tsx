@@ -1,7 +1,13 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const QuillEditor = dynamic(() => import('../../components/quillEditor'), {
+    ssr: false,
+    loading: () => <div className="min-h-[300px] flex items-center justify-center">Loading editor...</div>
+});
 
 export default function Home() {
     const router = useRouter();
@@ -118,24 +124,28 @@ export default function Home() {
         try {
             const apiUrl = `${process.env.NEXT_PUBLIC_API}/answer`;
 
-            // สมมติว่าเรามีข้อมูลของผู้ใช้ปัจจุบัน (ในกรณีจริงอาจได้จาก context หรือ session)
-            const currentUser = 'ผู้ใช้งาน'; // ตัวอย่างค่าเริ่มต้น (ควรเปลี่ยนเป็นข้อมูลจริง)
+            // Create FormData object
+            const formData = new FormData();
+            formData.append('topic_id', topicId);
+            formData.append('answer_text', replyText);
+            formData.append('answered_by', replyName);
+            formData.append('status', "hidden");
 
-            // ส่งข้อมูลไปยัง API
-            await axios.post(apiUrl, {
-                topic_id: topicId,
-                answer_text: replyText,
-                answered_by: replyName,
-                status: "hidden"
+            // Send FormData instead of JSON
+            await axios.post(apiUrl, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
 
             // อัปเดต UI เมื่อส่งสำเร็จ
             setReplySuccess(true);
-            setReplyText('');
+            setReplyText(''); // Clear QuillEditor
+            setReplyName(''); // Clear name input
+            fetchFAQData(); // Fetch new data immediately
 
-            // โหลดข้อมูลใหม่เพื่อแสดงคำตอบที่เพิ่งส่ง
+            // Reset success message after 2 seconds
             setTimeout(() => {
-                fetchFAQData();
                 setReplySuccess(false);
             }, 2000);
 
@@ -203,7 +213,7 @@ export default function Home() {
             // Reset form and close modal
             setNewQuestion({ text: '', posted_by: '' });
             setShowModal(false);
-            
+
             // Refresh the data
             fetchFAQData();
         } catch (error) {
@@ -232,7 +242,7 @@ export default function Home() {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
                         <h2 className="text-2xl font-bold text-[#0A2463] mb-6">สร้างคำถามใหม่</h2>
-                        
+
                         {questionError && (
                             <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-4">
                                 {questionError}
@@ -281,11 +291,10 @@ export default function Home() {
                             <button
                                 onClick={handleSaveQuestion}
                                 disabled={isSubmittingQuestion}
-                                className={`px-6 py-3 rounded-lg text-white font-medium ${
-                                    isSubmittingQuestion
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
-                                }`}
+                                className={`px-6 py-3 rounded-lg text-white font-medium ${isSubmittingQuestion
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
+                                    }`}
                             >
                                 {isSubmittingQuestion ? (
                                     <span className="flex items-center">
@@ -379,9 +388,7 @@ export default function Home() {
                                                                     <div className="font-medium text-[#0A2463]">คำตอบจาก: {answer.answeredBy}</div>
                                                                 </div>
 
-                                                                <div className="pl-11 mb-3 text-base text-[#4B5563]">
-                                                                    {answer.text}
-                                                                </div>
+                                                                <p className="ql-editor pl-11 mb-3 text-base text-[#4B5563]" dangerouslySetInnerHTML={{ __html: answer.text }}></p>
 
                                                                 <div className="pl-11 text-right text-sm text-gray-500">
                                                                     {answer.createdAt}
@@ -391,7 +398,7 @@ export default function Home() {
                                                     </div>
 
                                                     <div className="mt-8 border-t border-gray-200 pt-6">
-                                                        <h4 className="text-lg font-medium text-[#0A2463] mb-4">ตอบคำถามนี้</h4>
+                                                        <h4 className="text-lg font-medium text-[#0A2463] mb-4">ช่วยตอบคำถามนี้</h4>
 
                                                         {replySuccess && (
                                                             <div className="bg-green-50 border border-green-200 text-green-700 p-3 rounded-lg mb-4 flex items-center">
@@ -410,34 +417,40 @@ export default function Home() {
 
                                                         <div className="flex flex-col">
                                                             {/* เพิ่มฟิลด์กรอกชื่อ */}
-                                                            <div className="mb-4 text-[black]">
-                                                                <label htmlFor="replyName" className="block text-sm font-medium text-gray-700 mb-1">ชื่อของคุณ</label>
-                                                                <input
-                                                                    type="text"
-                                                                    id="replyName"
-                                                                    value={replyName}
-                                                                    onChange={(e) => setReplyName(e.target.value)}
-                                                                    placeholder="กรอกชื่อของคุณ"
-                                                                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                                    disabled={isSubmitting}
-                                                                />
-                                                            </div>
 
-                                                            <textarea
-                                                                value={replyText}
-                                                                onChange={(e) => setReplyText(e.target.value)}
-                                                                placeholder="เขียนคำตอบของคุณที่นี่..."
-                                                                className="w-full text-[black] border border-gray-300 rounded-lg p-4 min-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                                disabled={isSubmitting}
-                                                            ></textarea>
+                                                            {
+                                                                replySuccess || (
+                                                                    <div>
+                                                                        <div className="mb-4 text-[black]">
+                                                                            <label htmlFor="replyName" className="block text-sm font-medium text-gray-700 mb-1">ชื่อของคุณ</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                id="replyName"
+                                                                                value={replyName}
+                                                                                onChange={(e) => setReplyName(e.target.value)}
+                                                                                placeholder="กรอกชื่อของคุณ"
+                                                                                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                                disabled={isSubmitting}
+                                                                            />
+                                                                        </div>
+                                                                        <Suspense fallback={<div>Loading editor...</div>}>
+                                                                            <QuillEditor
+                                                                                value={replyText}
+                                                                                onChange={(value) => setReplyText(value)}
+                                                                            />
+                                                                        </Suspense>
+                                                                    </div>
+                                                                )
+                                                            }
+
 
                                                             <div className="flex justify-end mt-4">
                                                                 <button
                                                                     onClick={() => submitReply(faq.id)}
                                                                     disabled={isSubmitting}
                                                                     className={`px-6 py-3 rounded-lg text-white font-medium cursor-pointer ${isSubmitting
-                                                                            ? 'bg-gray-400 cursor-not-allowed'
-                                                                            : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
+                                                                        ? 'bg-gray-400 cursor-not-allowed'
+                                                                        : 'bg-[#39A9DB] hover:bg-[#2D87AF] transition'
                                                                         }`}
                                                                 >
                                                                     {isSubmitting ? (
@@ -466,8 +479,8 @@ export default function Home() {
                                                     onClick={goToPrevPage}
                                                     disabled={pagination.prev === null}
                                                     className={`px-4 py-2 flex items-center rounded-lg ${pagination.prev === null
-                                                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                                            : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                                        : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                                                         }`}
                                                 >
                                                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -484,8 +497,8 @@ export default function Home() {
                                                     onClick={goToNextPage}
                                                     disabled={pagination.next === null}
                                                     className={`px-4 py-2 flex items-center rounded-lg ${pagination.next === null
-                                                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                                            : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                                        : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                                                         }`}
                                                 >
                                                     หน้าถัดไป
